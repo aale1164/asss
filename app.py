@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# تطبيق Dash لعرض إسقاط سمتي فارغ (بدون خريطة غليسون، شمس، قمر، نجوم)
+# تطبيق Dash يعرض إسقاطاً سمتيًا فارغًا تماماً (بدون أي خطوط أو عناصر)
 
 import dash
 from dash import html, dcc
@@ -12,11 +12,11 @@ app = dash.Dash(__name__)
 server = app.server
 
 # ============================================
-# إنشاء الشكل (Figure) فارغ تماماً باستثناء الإسقاط الجغرافي
+# إنشاء شكل فارغ تماماً
 # ============================================
 fig = go.Figure()
 
-# نقطة وهمية مخفية لإظهار الخريطة (بدون أي علامات)
+# نقطة وهمية مخفية (ضرورية لتفعيل الإسقاط)
 fig.add_trace(go.Scattergeo(
     lon=[0], lat=[0],
     mode='markers',
@@ -24,7 +24,7 @@ fig.add_trace(go.Scattergeo(
     showlegend=False
 ))
 
-# إعدادات الإسقاط الجغرافي (سمتي مسطح - مركزه القطب الشمالي) بدون أي عناصر خرائطية
+# إعدادات الإسقاط الجغرافي مع إخفاء خطوط الطول والعرض
 fig.update_geos(
     projection_type="azimuthal equidistant",
     projection_rotation=dict(lon=0, lat=90, roll=0),
@@ -34,24 +34,24 @@ fig.update_geos(
     showcountries=False,
     showlakes=False,
     showrivers=False,
-    # إظهار شبكة خطوط الطول والعرض فقط (بيضاء)
-    lataxis_showgrid=True,
-    lonaxis_showgrid=True,
-    lataxis_gridcolor="white",
-    lonaxis_gridcolor="white",
-    lataxis_gridwidth=0.5,
-    lonaxis_gridwidth=0.5,
-    lataxis_range=[-90, 90],
-    lonaxis_range=[-180, 180],
+    # إخفاء شبكة خطوط الطول والعرض تماماً
+    lataxis_showgrid=False,
+    lonaxis_showgrid=False,
+    lataxis_showline=False,
+    lonaxis_showline=False,
+    lataxis_tickvals=[],      # إخفاء علامات خطوط العرض
+    lonaxis_tickvals=[],      # إخفاء علامات خطوط الطول
+    lataxis_visible=False,    # إخفاء محور خطوط العرض بالكامل
+    lonaxis_visible=False,    # إخفاء محور خطوط الطول بالكامل
     bgcolor='black'
 )
 
 # تنسيق الشكل العام
 fig.update_layout(
     title=dict(
-        text='🗺️ إسقاط سمتي متساوي المسافات (خريطة فارغة) - تم إزالة كل العناصر',
+        text='إسقاط سمتي فارغ - تم إزالة كل العناصر بما فيها خطوط الطول والعرض',
         x=0.5,
-        font=dict(size=18, color='white')
+        font=dict(size=16, color='white')
     ),
     geo=dict(bgcolor='black'),
     paper_bgcolor='black',
@@ -65,7 +65,7 @@ fig.update_layout(
 app.layout = html.Div([
     dcc.Graph(figure=fig, config={'displayModeBar': True}),
     html.Div(
-        "لا توجد خريطة غليسون، ولا شمس، ولا قمر، ولا نجوم. فقط شبكة خطوط الطول والعرض.",
+        "خريطة فارغة تماماً: لا خريطة غليسون، لا شمس، لا قمر، لا نجوم، ولا خطوط طول وعرض.",
         style={
             'textAlign': 'center',
             'color': '#aaa',
