@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-# تطبيق Dash لعرض خريطة غليسون (الإسقاط السمتي متساوي المسافات) مع الشمس والقمر والنجوم
-# يعمل على Render و Hugging Face Spaces وغيرها من خدمات الاستضافة
+# تطبيق Dash لعرض خريطة غليسون فقط (بدون الخريطة الجغرافية السابقة) مع الشمس والقمر والنجوم
 
 import dash
 from dash import html, dcc
@@ -27,29 +26,28 @@ fig.add_trace(go.Scattergeo(
 ))
 
 # 2. إعدادات الإسقاط الجغرافي (سمتي مسطح - مركزه القطب الشمالي)
+# تم إزالة جميع عناصر الخريطة السابقة (السواحل، اليابسة، المحيطات، الدول، البحيرات)
 fig.update_geos(
     projection_type="azimuthal equidistant",
     projection_rotation=dict(lon=0, lat=90, roll=0),
-    showcoastlines=True,
-    coastlinecolor="DarkBlue",
-    showland=True,
-    landcolor="LightGreen",
-    showocean=True,
-    oceancolor="LightBlue",
-    showcountries=True,
-    countrycolor="gray",
-    showlakes=True,
-    lakecolor="LightBlue",
-    lataxis_showgrid=True,
-    lonaxis_showgrid=True,
+    showcoastlines=False,      # إزالة السواحل
+    showland=False,             # إزالة اليابسة
+    showocean=False,            # إزالة المحيطات
+    showcountries=False,        # إزالة الحدود
+    showlakes=False,            # إزالة البحيرات
+    showrivers=False,           # إزالة الأنهار
+    lataxis_showgrid=True,      # إبقاء شبكة خطوط العرض
+    lonaxis_showgrid=True,      # إبقاء شبكة خطوط الطول
     lataxis_gridcolor="white",
     lonaxis_gridcolor="white",
+    lataxis_gridwidth=0.5,
+    lonaxis_gridwidth=0.5,
     lataxis_range=[-90, 90],
-    lonaxis_range=[-180, 180]
+    lonaxis_range=[-180, 180],
+    bgcolor='black'
 )
 
-# 3. إضافة صورة خريطة غليسون كخلفية (اختياري، قد لا تظهر بشكل مثالي)
-# ملاحظة: إضافة الصور في geo ليس مدعوماً رسمياً، لكن يمكن تجربته
+# 3. إضافة صورة خريطة غليسون كخلفية كاملة (بديل الخريطة السابقة)
 fig.add_layout_image(
     dict(
         source="https://upload.wikimedia.org/wikipedia/commons/3/30/Gleason%27s_new_standard_map_of_the_world_-_on_the_projection_of_J._S._Christopher%2C_Modern_College%2C_Blackheath%2C_England%3B_scientifically_and_practically_correct%3B_as_%22it_is.%22_%2810143175716%29.jpg",
@@ -60,12 +58,12 @@ fig.add_layout_image(
         sizex=360,
         sizey=180,
         sizing="stretch",
-        opacity=0.7,
+        opacity=0.9,
         layer="below"
     )
 )
 
-# 4. إضافة الشمس (نقطة ذهبية مع هالة)
+# 4. إضافة الشمس (نقطة ذهبية)
 fig.add_trace(go.Scattergeo(
     lon=[0], lat=[45],
     mode='markers',
@@ -83,14 +81,14 @@ fig.add_trace(go.Scattergeo(
     name='القمر 🌙'
 ))
 
-# 6. إضافة النجوم (100 نقطة عشوائية بيضاء)
+# 6. إضافة النجوم (150 نقطة عشوائية بيضاء)
 np.random.seed(42)
-star_lons = np.random.uniform(-180, 180, 100)
-star_lats = np.random.uniform(-90, 90, 100)
+star_lons = np.random.uniform(-180, 180, 150)
+star_lats = np.random.uniform(-90, 90, 150)
 fig.add_trace(go.Scattergeo(
     lon=star_lons, lat=star_lats,
     mode='markers',
-    marker=dict(size=3, color='white', opacity=0.7),
+    marker=dict(size=2.5, color='white', opacity=0.8),
     name='النجوم ✨'
 ))
 
@@ -98,20 +96,20 @@ fig.add_trace(go.Scattergeo(
 fig.add_trace(go.Scattergeo(
     lon=[0], lat=[90],
     mode='markers',
-    marker=dict(size=6, color='white', symbol='x'),
+    marker=dict(size=6, color='red', symbol='x', line=dict(width=2)),
     name='القطب الشمالي'
 ))
 
 # 8. تنسيق الشكل العام
 fig.update_layout(
     title=dict(
-        text='🌍 خريطة غليسون (الإسقاط السمتي متساوي المسافات) - مع الشمس والقمر والنجوم',
+        text='🗺️ خريطة غليسون 1892 (الإسقاط السمتي) - مع الشمس والقمر والنجوم',
         x=0.5,
         font=dict(size=18, color='white')
     ),
     geo=dict(bgcolor='black'),
     paper_bgcolor='black',
-    height=700,
+    height=750,
     margin=dict(l=0, r=0, t=60, b=0),
     legend=dict(
         font=dict(color='white'),
@@ -127,18 +125,18 @@ fig.update_layout(
 app.layout = html.Div([
     dcc.Graph(figure=fig, config={'displayModeBar': True}),
     html.Div(
-        "خريطة غليسون (1892) - الإسقاط السمتي متساوي المسافات | يمكنك التكبير والتدوير بالماوس",
+        "خريطة غليسون الأصلية (1892) - تم إزالة الخريطة الجغرافية السابقة بالكامل | يمكنك التكبير والتدوير",
         style={
             'textAlign': 'center',
-            'color': 'white',
+            'color': '#aaa',
             'marginTop': '10px',
-            'fontSize': '14px'
+            'fontSize': '13px'
         }
     )
 ])
 
 # ============================================
-# تشغيل التطبيق (للتجربة المحلية)
+# تشغيل التطبيق
 # ============================================
 if __name__ == '__main__':
     app.run(debug=True)
