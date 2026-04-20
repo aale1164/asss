@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# تطبيق Dash لنشر محاكاة الأرض المسطحة (الإسقاط السمتي متساوي المسافات)
+# تطبيق Dash لعرض خريطة غليسون (الإسقاط السمتي متساوي المسافات) مع الشمس والقمر والنجوم
 # يعمل على Render و Hugging Face Spaces وغيرها من خدمات الاستضافة
 
 import dash
@@ -11,7 +11,7 @@ import numpy as np
 # إنشاء تطبيق Dash مع تعريف server للنشر
 # ============================================
 app = dash.Dash(__name__)
-server = app.server   # هذا السطر ضروري لخدمات الاستضافة مثل Render
+server = app.server
 
 # ============================================
 # إنشاء الشكل (Figure) الخاص بـ Plotly
@@ -48,7 +48,24 @@ fig.update_geos(
     lonaxis_range=[-180, 180]
 )
 
-# 3. إضافة الشمس (نقطة ذهبية مع هالة)
+# 3. إضافة صورة خريطة غليسون كخلفية (اختياري، قد لا تظهر بشكل مثالي)
+# ملاحظة: إضافة الصور في geo ليس مدعوماً رسمياً، لكن يمكن تجربته
+fig.add_layout_image(
+    dict(
+        source="https://upload.wikimedia.org/wikipedia/commons/3/30/Gleason%27s_new_standard_map_of_the_world_-_on_the_projection_of_J._S._Christopher%2C_Modern_College%2C_Blackheath%2C_England%3B_scientifically_and_practically_correct%3B_as_%22it_is.%22_%2810143175716%29.jpg",
+        xref="x",
+        yref="y",
+        x=-180,
+        y=90,
+        sizex=360,
+        sizey=180,
+        sizing="stretch",
+        opacity=0.7,
+        layer="below"
+    )
+)
+
+# 4. إضافة الشمس (نقطة ذهبية مع هالة)
 fig.add_trace(go.Scattergeo(
     lon=[0], lat=[45],
     mode='markers',
@@ -57,7 +74,7 @@ fig.add_trace(go.Scattergeo(
     name='الشمس ☀️'
 ))
 
-# 4. إضافة القمر (نقطة فضية)
+# 5. إضافة القمر (نقطة فضية)
 fig.add_trace(go.Scattergeo(
     lon=[-120], lat=[20],
     mode='markers',
@@ -66,7 +83,7 @@ fig.add_trace(go.Scattergeo(
     name='القمر 🌙'
 ))
 
-# 5. إضافة النجوم (100 نقطة عشوائية بيضاء)
+# 6. إضافة النجوم (100 نقطة عشوائية بيضاء)
 np.random.seed(42)
 star_lons = np.random.uniform(-180, 180, 100)
 star_lats = np.random.uniform(-90, 90, 100)
@@ -77,7 +94,7 @@ fig.add_trace(go.Scattergeo(
     name='النجوم ✨'
 ))
 
-# 6. إضافة نقطة القطب الشمالي (مركز الخريطة)
+# 7. إضافة نقطة القطب الشمالي (مركز الخريطة)
 fig.add_trace(go.Scattergeo(
     lon=[0], lat=[90],
     mode='markers',
@@ -85,10 +102,10 @@ fig.add_trace(go.Scattergeo(
     name='القطب الشمالي'
 ))
 
-# 7. تنسيق الشكل العام
+# 8. تنسيق الشكل العام
 fig.update_layout(
     title=dict(
-        text='🌍 محاكاة الأرض المسطحة - الإسقاط السمتي متساوي المسافات<br>مع الشمس والقمر والنجوم',
+        text='🌍 خريطة غليسون (الإسقاط السمتي متساوي المسافات) - مع الشمس والقمر والنجوم',
         x=0.5,
         font=dict(size=18, color='white')
     ),
@@ -110,7 +127,7 @@ fig.update_layout(
 app.layout = html.Div([
     dcc.Graph(figure=fig, config={'displayModeBar': True}),
     html.Div(
-        "يمكنك التكبير والتدوير بالماوس - الإسقاط السمتي متساوي المسافات",
+        "خريطة غليسون (1892) - الإسقاط السمتي متساوي المسافات | يمكنك التكبير والتدوير بالماوس",
         style={
             'textAlign': 'center',
             'color': 'white',
