@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-# تطبيق Dash - شاشة مقسمة (يسار: صورة ASdddd112.jpg، يمين: حاسبة انحناء الأرض)
+# تطبيق Dash - شاشة مقسمة:
+# اليسار: صورة بحجم القسم بالكامل (بدون أي حواجز)
+# اليمين: تعليمات + حاسبة انحناء الأرض
 
 import dash
 from dash import html, dcc, Input, Output
@@ -8,6 +10,7 @@ import math
 app = dash.Dash(__name__)
 server = app.server
 
+# ثوابت انحناء الأرض
 R_km = 6371.0
 
 def curvature_drop(distance_km):
@@ -20,6 +23,7 @@ def horizon_distance(observer_height_m):
         return 0.0
     return math.sqrt(2 * R_km * (observer_height_m / 1000))
 
+# تنسيق الصفحة
 app.layout = html.Div(
     style={
         'display': 'flex',
@@ -31,47 +35,72 @@ app.layout = html.Div(
         'fontFamily': 'Arial, sans-serif'
     },
     children=[
-        # القسم الأيسر: الصورة (باسم ASdddd112.jpg)
+        # القسم الأيسر: الصورة فقط (تملأ القسم بالكامل)
         html.Div(
             style={
                 'flex': '1',
-                'backgroundColor': '#1e1e2f',
+                'backgroundColor': 'black',  # خلفية سوداء في حال الصورة لا تغطي كل شيء
                 'display': 'flex',
                 'justifyContent': 'center',
                 'alignItems': 'center',
-                'padding': '20px'
+                'padding': '0',
+                'margin': '0',
+                'overflow': 'hidden'  # لمنع أي تمرير غير مرغوب
             },
             children=[
                 html.Img(
-                    src='/ASdddd112.jpg',   # الصورة في جذر المشروع (أو استخدم /assets/ASdddd112.jpg إذا كانت داخل assets)
+                    src='/ASdddd112.jpg',   # الصورة في جذر المشروع (أو استخدم الرابط المباشر)
                     style={
-                        'width': '80%',
-                        'height': 'auto',
-                        'maxHeight': '90%',
-                        'objectFit': 'contain',
-                        'borderRadius': '12px',
-                        'boxShadow': '0 4px 12px rgba(0,0,0,0.5)'
+                        'width': '100%',      # تغطي كامل عرض القسم
+                        'height': '100%',     # تغطي كامل ارتفاع القسم
+                        'objectFit': 'cover',  # تغطي المساحة بدون تشويه (قد تقص أطراف الصورة)
+                        # إذا أردت رؤية الصورة كاملة بدون قص استخدم 'contain' بدل 'cover'
+                        # ولكن قد تظهر خلفية سوداء على الجوانب
                     }
                 )
             ]
         ),
-        # القسم الأيمن: حاسبة انحناء الأرض (بدون تغيير)
+        # القسم الأيمن: تعليمات + حاسبة الانحناء
         html.Div(
             style={
                 'flex': '1',
                 'backgroundColor': '#0d0d1a',
                 'color': 'white',
-                'padding': '30px',
+                'padding': '20px',
                 'display': 'flex',
                 'flexDirection': 'column',
-                'justifyContent': 'center',
+                'justifyContent': 'flex-start',  # محاذاة من الأعلى
                 'alignItems': 'center',
-                'overflowY': 'auto'
+                'overflowY': 'auto',
+                'fontFamily': 'Arial, sans-serif'
             },
             children=[
-                html.H1("🌍 حاسبة انحناء الأرض", style={'textAlign': 'center', 'marginBottom': '30px'}),
+                # صندوق التعليمات
+                html.Div(
+                    style={
+                        'backgroundColor': '#1e1e2f',
+                        'padding': '15px',
+                        'borderRadius': '10px',
+                        'marginBottom': '25px',
+                        'width': '90%',
+                        'textAlign': 'right',
+                        'borderRight': '4px solid #4CAF50'
+                    },
+                    children=[
+                        html.H3("📘 تعليمات:", style={'margin': '0 0 10px 0', 'color': '#4CAF50'}),
+                        html.Ul([
+                            html.Li("أدخل المسافة (بالكيلومتر أو الميل)."),
+                            html.Li("اضغط على زر 'احسب الانحناء'."),
+                            html.Li("ستظهر قيمة الانخفاض الناتج عن انحناء الأرض بالأمتار والأقدام."),
+                            html.Li("القيمة النظرية لا تأخذ في الاعتبار الانكسار الجوي."),
+                            html.Li("يمكنك استخدام زر التكبير والتدوير بالماوس لرؤية الصورة بشكل أفضل.")
+                        ], style={'margin': '0', 'paddingRight': '20px'})
+                    ]
+                ),
+                # حاسبة الانحناء
+                html.H1("🌍 حاسبة انحناء الأرض", style={'textAlign': 'center', 'marginBottom': '20px'}),
                 html.Hr(style={'width': '80%', 'borderColor': '#444'}),
-                html.Label("أدخل المسافة:", style={'fontSize': '18px', 'marginTop': '20px'}),
+                html.Label("أدخل المسافة:", style={'fontSize': '18px', 'marginTop': '10px'}),
                 dcc.Input(
                     id='distance-input',
                     type='number',
@@ -118,12 +147,12 @@ app.layout = html.Div(
                              'padding': '20px',
                              'borderRadius': '12px',
                              'width': '80%',
-                             'marginTop': '20px',
+                             'marginTop': '10px',
                              'textAlign': 'center',
                              'border': '1px solid #444'
                          }),
                 html.Div(id='horizon-container',
-                         style={'marginTop': '20px', 'fontSize': '14px', 'color': '#aaa'})
+                         style={'marginTop': '20px', 'fontSize': '14px', 'color': '#aaa', 'textAlign': 'center'})
             ]
         )
     ]
