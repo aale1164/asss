@@ -1,0 +1,45 @@
+body {
+    background-color: #0b0f19;
+}
+
+.control-panel {
+    width: 24%;
+    display: inline-block;
+    vertical-align: top;
+    padding: 15px;
+    background: linear-gradient(135deg, #f5f7fa, #e4e7ec);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    border-radius: 10px;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.control-panel * {
+    color: #1f2937;
+}
+
+.graph-panel {
+    width: 75%;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.rc-slider-track {
+    background-color: #3b82f6;
+}
+
+.rc-slider-rail {
+    background-color: #cbd5e1;
+}
+
+.rc-slider-handle {
+    border: 3px solid #3b82f6;
+}
+
+.rc-slider-mark-text {
+    background: white;
+    color: black;
+    border-radius: 6px;
+    padding: 2px 5px;
+    border: 1px solid #ddd;
+}
