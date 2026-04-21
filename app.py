@@ -69,29 +69,82 @@ def create_figure(model, obj_h, eye_h, dist, zoom, alt):
     return fig
 
 app.layout = html.Div([
+    # CSS مخصص: نصوص لوحة التحكم باللون الأسود، وأرقام الشرائح سوداء بخلفية فاتحة
     html.Style('''
-        .rc-slider-mark-text { color: black !important; font-size: 12px !important; font-weight: bold !important; background-color: #e0e0e0 !important; padding: 2px 5px !important; border-radius: 4px !important; border: 1px solid #aaa !important; white-space: nowrap !important; }
-        .rc-slider-tooltip-inner { background-color: #333 !important; color: white !important; }
-        label { color: white !important; font-weight: bold !important; }
-        .Select-control, .Select-menu-outer { background-color: #222 !important; color: white !important; }
-        .Select-value-label { color: white !important; }
+        /* تنسيق عناصر لوحة التحكم (التسميات والعناوين) */
+        .control-label, label {
+            color: black !important;
+            font-weight: bold !important;
+            font-size: 14px !important;
+        }
+        /* عنوان لوحة التحكم */
+        h2 {
+            color: black !important;
+        }
+        /* الأرقام على الشرائح */
+        .rc-slider-mark-text {
+            color: black !important;
+            font-size: 12px !important;
+            font-weight: bold !important;
+            background-color: #e0e0e0 !important;
+            padding: 2px 5px !important;
+            border-radius: 4px !important;
+            border: 1px solid #aaa !important;
+            white-space: nowrap !important;
+        }
+        /* نافذة القيمة المنبثقة */
+        .rc-slider-tooltip-inner {
+            background-color: #333 !important;
+            color: white !important;
+        }
+        /* باقي عناصر الشريط */
+        .rc-slider-dot { border-color: #aaa !important; }
+        .rc-slider-handle { border-color: #4CAF50 !important; background-color: #4CAF50 !important; }
+        .rc-slider-track { background-color: #4CAF50 !important; }
+        .rc-slider-rail { background-color: #555 !important; }
+        /* القائمة المنسدلة */
+        .Select-control, .Select-menu-outer {
+            background-color: #f0f0f0 !important;
+            color: black !important;
+        }
+        .Select-value-label {
+            color: black !important;
+        }
+        .Select-option {
+            background-color: #f0f0f0 !important;
+            color: black !important;
+        }
+        .Select-option.is-focused {
+            background-color: #4CAF50 !important;
+            color: white !important;
+        }
+        /* خلفية حاوية المعلومات */
+        #info {
+            background-color: #f8f8f8 !important;
+            color: black !important;
+        }
     '''),
     html.Div(
-        style={'display': 'flex', 'flexDirection': 'row', 'height': '100vh', 'padding': '20px', 'gap': '20px', 'backgroundColor': '#000', 'color': 'white'},
+        style={'display': 'flex', 'flexDirection': 'row', 'height': '100vh', 'padding': '20px', 'gap': '20px', 'backgroundColor': '#e0e0e0', 'color': 'black'},
         children=[
             html.Div(
-                style={'flex': '1', 'backgroundColor': '#111', 'borderRadius': '12px', 'padding': '15px', 'overflowY': 'auto'},
+                style={'flex': '1', 'backgroundColor': '#ffffff', 'borderRadius': '12px', 'padding': '15px', 'overflowY': 'auto', 'boxShadow': '0 2px 8px rgba(0,0,0,0.1)'},
                 children=[
-                    html.H2("لوحة التحكم", style={'textAlign': 'center'}),
+                    html.H2("🎛️ لوحة التحكم", style={'textAlign': 'center', 'color': 'black'}),
                     html.Hr(),
-                    html.Label("نموذج المحاكاة:"),
+                    html.Label("نموذج المحاكاة:", style={'color': 'black'}),
                     dcc.Dropdown(id='model', options=[{'label':' أرض مسطحة','value':'flat'},{'label':' أرض كروية','value':'curved'}], value='flat', clearable=False),
-                    html.Label("ارتفاع الجسم (م):"), dcc.Slider(id='obj', min=1, max=100, step=1, value=50, marks={1:'1',50:'50',100:'100'}),
-                    html.Label("ارتفاع العين (م):"), dcc.Slider(id='eye', min=0.1, max=10, step=0.1, value=1.7, marks={0.1:'0.1',5:'5',10:'10'}),
-                    html.Label("المسافة (كم):"), dcc.Slider(id='dist', min=1, max=100, step=1, value=20, marks={1:'1',50:'50',100:'100'}),
-                    html.Label("عامل التكبير:"), dcc.Slider(id='zoom', min=0, max=5, step=0.2, value=0, marks={0:'0',2:'2',5:'5'}),
-                    html.Label("الارتفاع الحالي (كم):"), dcc.Slider(id='alt', min=0, max=50, step=0.5, value=10, marks={0:'0',25:'25',50:'50'}),
-                    html.Div(id='info', style={'marginTop':'20px','backgroundColor':'#1e1e2f','padding':'10px','borderRadius':'8px'})
+                    html.Label("ارتفاع الجسم (م):", style={'color': 'black'}),
+                    dcc.Slider(id='obj', min=1, max=100, step=1, value=50, marks={1:'1',25:'25',50:'50',75:'75',100:'100'}),
+                    html.Label("ارتفاع العين (م):", style={'color': 'black'}),
+                    dcc.Slider(id='eye', min=0.1, max=10, step=0.1, value=1.7, marks={0.1:'0.1',2:'2',5:'5',8:'8',10:'10'}),
+                    html.Label("المسافة (كم):", style={'color': 'black'}),
+                    dcc.Slider(id='dist', min=1, max=100, step=1, value=20, marks={1:'1',25:'25',50:'50',75:'75',100:'100'}),
+                    html.Label("عامل التكبير:", style={'color': 'black'}),
+                    dcc.Slider(id='zoom', min=0, max=5, step=0.2, value=0, marks={0:'0',1:'1',2:'2',3:'3',4:'4',5:'5'}),
+                    html.Label("الارتفاع الحالي (كم):", style={'color': 'black'}),
+                    dcc.Slider(id='alt', min=0, max=50, step=0.5, value=10, marks={0:'0',10:'10',20:'20',30:'30',40:'40',50:'50'}),
+                    html.Div(id='info', style={'marginTop':'20px','backgroundColor':'#f0f0f0','padding':'10px','borderRadius':'8px','color':'black'})
                 ]
             ),
             html.Div(style={'flex': '2', 'backgroundColor': '#0d0d1a', 'borderRadius': '12px', 'padding': '10px'}, children=[dcc.Graph(id='graph', style={'height':'85vh'})])
