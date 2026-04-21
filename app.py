@@ -32,12 +32,12 @@ def create_figure(model, obj_h, eye_h, dist, zoom, alt):
     if model == "flat":
         y = obj_h / (x * 1000) * eye_h
         fig.add_trace(go.Scatter(x=x, y=y, line=dict(color="cyan"), name="Flat"))
-        title = "Flat Model"
+        title = "Flat Model - نموذج مسطح"
     else:
         drop = curvature_drop_m(x)
         y = np.maximum(0, obj_h - drop)
         fig.add_trace(go.Scatter(x=x, y=y, line=dict(color="orange"), name="Curved"))
-        title = "Curved Model"
+        title = "Curved Model - نموذج كروي"
 
     fig.update_layout(
         title=title,
@@ -50,11 +50,7 @@ def create_figure(model, obj_h, eye_h, dist, zoom, alt):
 
 # ================= LAYOUT =================
 app.layout = html.Div(
-    style={
-        "display": "flex",
-        "flexDirection": "row",
-        "height": "100vh"
-    },
+    style={"display": "flex", "height": "100vh"},
     children=[
 
         dcc.Store(id="sidebar-state", data=True),
@@ -71,43 +67,34 @@ app.layout = html.Div(
             },
             children=[
 
-                html.Button(
-                    "☰",
-                    id="toggle-btn",
-                    style={
-                        "fontSize": "20px",
-                        "padding": "5px 10px",
-                        "marginBottom": "10px",
-                        "cursor": "pointer"
-                    }
-                ),
+                html.Button("☰ Toggle - إظهار/إخفاء", id="toggle-btn"),
 
-                html.H3("Control Panel"),
+                html.H3("Control Panel - لوحة التحكم"),
 
                 dcc.Dropdown(
                     id="model",
                     options=[
-                        {"label": "Flat", "value": "flat"},
-                        {"label": "Curved", "value": "curved"}
+                        {"label": "Flat - مسطح", "value": "flat"},
+                        {"label": "Curved - كروي", "value": "curved"}
                     ],
                     value="flat"
                 ),
 
                 html.Br(),
 
-                html.Label("Object Height"),
+                html.Label("Object Height - ارتفاع الجسم"),
                 dcc.Slider(id="obj", min=1, max=100, value=50),
 
-                html.Label("Eye Height"),
+                html.Label("Eye Height - ارتفاع العين"),
                 dcc.Slider(id="eye", min=0.1, max=10, value=1.7),
 
-                html.Label("Distance"),
+                html.Label("Distance - المسافة"),
                 dcc.Slider(id="dist", min=1, max=100, value=20),
 
-                html.Label("Zoom"),
+                html.Label("Zoom - التكبير"),
                 dcc.Slider(id="zoom", min=0, max=5, value=0),
 
-                html.Label("Altitude"),
+                html.Label("Altitude - الارتفاع"),
                 dcc.Slider(id="alt", min=0, max=50, value=10),
             ]
         ),
@@ -122,7 +109,7 @@ app.layout = html.Div(
     ]
 )
 
-# ================= TOGGLE SIDEBAR =================
+# ================= TOGGLE =================
 @app.callback(
     Output("sidebar", "style"),
     Output("sidebar-state", "data"),
