@@ -27,16 +27,33 @@ def create_figure(model, obj_h, eye_h, dist, zoom, alt):
     x = np.linspace(0.1, max_dist, 200)
 
     fig = go.Figure()
-    fig.add_hline(y=0, line_color="lime", line_dash="dash")
+
+    # ===== مستوى العين =====
+    fig.add_hline(
+        y=0,
+        line_width=3,
+        line_color="#00ff88",
+        line_dash="dash",
+        annotation_text="Eye Level - مستوى العين",
+        annotation_font=dict(color="white", size=12)
+    )
 
     if model == "flat":
         y = obj_h / (x * 1000) * eye_h
-        fig.add_trace(go.Scatter(x=x, y=y, line=dict(color="cyan"), name="Flat"))
+        fig.add_trace(go.Scatter(
+            x=x, y=y,
+            line=dict(color="cyan"),
+            name="Flat - مسطح"
+        ))
         title = "Flat Model - نموذج مسطح"
     else:
         drop = curvature_drop_m(x)
         y = np.maximum(0, obj_h - drop)
-        fig.add_trace(go.Scatter(x=x, y=y, line=dict(color="orange"), name="Curved"))
+        fig.add_trace(go.Scatter(
+            x=x, y=y,
+            line=dict(color="orange"),
+            name="Curved - كروي"
+        ))
         title = "Curved Model - نموذج كروي"
 
     fig.update_layout(
@@ -46,7 +63,9 @@ def create_figure(model, obj_h, eye_h, dist, zoom, alt):
         font=dict(color="white"),
         margin=dict(l=20, r=20, t=40, b=20)
     )
+
     return fig
+
 
 # ================= LAYOUT =================
 app.layout = html.Div(
@@ -63,7 +82,8 @@ app.layout = html.Div(
                 "transition": "0.3s",
                 "backgroundColor": "#f5f7fa",
                 "padding": "15px",
-                "overflowY": "auto"
+                "overflowY": "auto",
+                "display": "block"
             },
             children=[
 
@@ -109,7 +129,8 @@ app.layout = html.Div(
     ]
 )
 
-# ================= TOGGLE =================
+
+# ================= TOGGLE FIX =================
 @app.callback(
     Output("sidebar", "style"),
     Output("sidebar-state", "data"),
@@ -120,22 +141,29 @@ app.layout = html.Div(
 def toggle_sidebar(n, state):
     state = not state
 
+    full_style = {
+        "width": "320px",
+        "transition": "0.3s",
+        "backgroundColor": "#f5f7fa",
+        "padding": "15px",
+        "overflowY": "auto",
+        "display": "block"
+    }
+
+    collapsed_style = {
+        "width": "60px",
+        "transition": "0.3s",
+        "backgroundColor": "#f5f7fa",
+        "padding": "10px",
+        "overflow": "hidden",
+        "display": "block"
+    }
+
     if state:
-        return {
-            "width": "320px",
-            "transition": "0.3s",
-            "backgroundColor": "#f5f7fa",
-            "padding": "15px",
-            "overflowY": "auto"
-        }, state
+        return full_style, state
     else:
-        return {
-            "width": "60px",
-            "transition": "0.3s",
-            "backgroundColor": "#f5f7fa",
-            "padding": "10px",
-            "overflow": "hidden"
-        }, state
+        return collapsed_style, state
+
 
 # ================= UPDATE =================
 @app.callback(
@@ -149,6 +177,7 @@ def toggle_sidebar(n, state):
 )
 def update(m, o, e, d, z, a):
     return create_figure(m, o, e, d, z, a)
+
 
 # ================= RUN =================
 if __name__ == "__main__":
