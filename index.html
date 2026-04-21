@@ -83,6 +83,17 @@ button:hover {
     padding: 20px;
 }
 
+/* AI BOX */
+#insight {
+    margin-top: 15px;
+    padding: 15px;
+    background: #111827;
+    border-radius: 10px;
+    border: 1px solid #3b82f6;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
 /* Footer */
 .footer {
     width: 100%;
@@ -127,6 +138,11 @@ button:hover {
     <!-- Graph -->
     <div class="graph-panel">
         <div id="chart"></div>
+
+        <!-- AI INSIGHT -->
+        <div id="insight">
+            AI Insight: جاهز لتحليل البيانات...
+        </div>
     </div>
 
 </div>
@@ -139,7 +155,7 @@ button:hover {
 
 <script>
 
-/* Generate Chart */
+/* Generate Chart + AI */
 function generateData() {
     let points = document.getElementById("points").value;
     let x = [];
@@ -164,11 +180,34 @@ function generateData() {
     };
 
     Plotly.newPlot('chart', data, layout);
+
+    // ===== AI INSIGHT =====
+    let sum = 0;
+    for (let i = 0; i < y.length; i++) {
+        sum += y[i];
+    }
+
+    let avg = sum / y.length;
+
+    let insightText = "";
+
+    if (avg > 70) {
+        insightText = "📈 اتجاه قوي جدًا (High Growth Trend)";
+    } else if (avg > 40) {
+        insightText = "📊 اتجاه مستقر بنمو متوسط";
+    } else {
+        insightText = "📉 بيانات منخفضة - تحتاج تحسين";
+    }
+
+    document.getElementById("insight").innerHTML =
+        "AI Insight: " + insightText;
 }
 
 /* Reset */
 function resetChart() {
     document.getElementById("chart").innerHTML = "";
+    document.getElementById("insight").innerHTML =
+        "AI Insight: جاهز لتحليل البيانات...";
 }
 
 /* Export */
