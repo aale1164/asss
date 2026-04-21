@@ -89,7 +89,7 @@ app.layout = html.Div([
 
         html.Div(id="info")
 
-    ], style={style={
+    ], style={
     "width": "24%",
     "display": "inline-block",
     "verticalAlign": "top",
