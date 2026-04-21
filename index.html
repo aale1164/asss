@@ -1,57 +1,55 @@
 function generateData(){
 
-    let points=document.getElementById("points").value;
-    let x=[],y=[];
+    let points = document.getElementById("points").value;
+    let x = [], y = [];
 
-    for(let i=0;i<points;i++){
+    for(let i = 0; i < points; i++){
         x.push(i);
-        y.push(Math.random()*100);
+        y.push(Math.random() * 100);
     }
 
-    let data=[{
-        x:x,
-        y:y,
-        type:'scatter',
-        mode:'lines+markers',
-        line:{color:'#3b82f6',width:3}
+    let data = [{
+        x: x,
+        y: y,
+        type: 'scatter',
+        mode: 'lines+markers',
+        line: {color: '#3b82f6', width: 3}
     }];
 
-    let layout={
-        paper_bgcolor:"transparent",
-        plot_bgcolor:"transparent",
-        font:{color:"white"}
+    let layout = {
+        paper_bgcolor: "transparent",
+        plot_bgcolor: "transparent",
+        font: {color: "white"}
     };
 
-    Plotly.newPlot("chart",data,layout,{displayModeBar:false});
+    Plotly.newPlot("chart", data, layout, {displayModeBar: false});
 
-    // ================= AI ENGINE =================
-    let avg = y.reduce((a,b)=>a+b)/y.length;
+    // ================= AI =================
+    let avg = y.reduce((a,b) => a + b) / y.length;
     let first = y[0];
-    let last = y[y.length-1];
+    let last = y[y.length - 1];
 
     let trend = last > first ? "📈 صاعد" : "📉 نازل";
-
     let strength = Math.abs(last - first);
 
     let volatility = 0;
-    for(let i=1;i<y.length;i++){
-        volatility += Math.abs(y[i]-y[i-1]);
+    for(let i = 1; i < y.length; i++){
+        volatility += Math.abs(y[i] - y[i - 1]);
     }
 
     volatility = (volatility / y.length).toFixed(2);
 
     let confidence = Math.min(100, (strength + avg/2)).toFixed(1);
 
-    document.getElementById("ai-text").innerHTML = `
-        📊 الاتجاه: <b>${trend}</b><br>
-        📌 المتوسط: ${avg.toFixed(2)}<br>
-        ⚡ قوة الحركة: ${strength.toFixed(2)}<br>
-        📉 التذبذب: ${volatility}<br>
-        🎯 ثقة AI: ${confidence}%<br><br>
-        🤖 تحليل لحظي للبيانات
-    `;
+    document.getElementById("ai-text").innerHTML =
+        "📊 الاتجاه: <b>" + trend + "</b><br>" +
+        "📌 المتوسط: " + avg.toFixed(2) + "<br>" +
+        "⚡ قوة الحركة: " + strength.toFixed(2) + "<br>" +
+        "📉 التذبذب: " + volatility + "<br>" +
+        "🎯 ثقة AI: " + confidence + "%<br><br>" +
+        "🤖 تحليل لحظي للبيانات";
 }
 
-/* ================= LIVE MODE ================= */
-generateData(); // أول تشغيل
-setInterval(generateData, 1000); // كل ثانية تحديث
+/* LIVE MODE */
+generateData();
+setInterval(generateData, 1000);
