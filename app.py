@@ -76,7 +76,7 @@ app.layout = html.Div(
     style={
         "display": "flex",
         "flexDirection": "row",
-        "height": "100vh",
+        "height": "75vh",
         "overflow": "hidden"
     },
     children=[
@@ -133,7 +133,7 @@ app.layout = html.Div(
             style={
                 "flex": "1",
                 "padding": "10px",
-                "height": "100vh"
+                "height": "75vh"
             },
             children=[
                 dcc.Graph(
