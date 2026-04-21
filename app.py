@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# تطبيق Dash مع أرقام شرائح واضحة (بيضاء على خلفية داكنة)
+# تطبيق Dash مع أرقام شرائح سوداء واضحة
 
 import dash
 from dash import html, dcc, Input, Output
@@ -71,49 +71,36 @@ def create_figure(model, obj_h, eye_h, dist, zoom, alt):
     return fig
 
 app.layout = html.Div([
-    # CSS قوي لضمان أرقام الشرائح بيضاء على خلفية داكنة
+    # CSS لجعل أرقام الشرائح باللون الأسود
     html.Style('''
-        /* خلفية داكنة للأرقام */
         .rc-slider-mark-text {
-            color: white !important;
-            background-color: #222 !important;
-            padding: 2px 4px !important;
-            border-radius: 4px !important;
+            color: black !important;
             font-size: 12px !important;
             font-weight: bold !important;
-            border: 1px solid #555 !important;
-            white-space: nowrap !important;
+            background-color: transparent !important;
         }
-        /* نافذة القيمة المنبثقة */
         .rc-slider-tooltip-inner {
             background-color: #000 !important;
             color: white !important;
             border: 1px solid #4CAF50 !important;
-            font-weight: bold !important;
         }
-        /* النقاط الصغيرة */
         .rc-slider-dot {
             border-color: #aaa !important;
         }
-        /* مقبض التحكم */
         .rc-slider-handle {
             border-color: #4CAF50 !important;
             background-color: #4CAF50 !important;
         }
-        /* مسار الشريط */
         .rc-slider-track {
             background-color: #4CAF50 !important;
         }
-        /* خلفية الشريط */
         .rc-slider-rail {
             background-color: #555 !important;
         }
-        /* النصوص الأخرى */
         label, .control-label {
             color: white !important;
             font-weight: bold !important;
         }
-        /* القائمة المنسدلة */
         .Select-control, .Select-menu-outer {
             background-color: #222 !important;
             color: white !important;
