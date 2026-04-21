@@ -69,40 +69,12 @@ def create_figure(model, obj_h, eye_h, dist, zoom, alt):
     return fig
 
 app.layout = html.Div([
-    # CSS قوي وحاسم لتغيير ألوان أرقام الشرائح إلى الأسود مع خلفية فاتحة
     html.Style('''
-        /* العنصر الذي يحتوي على رقم العلامة */
-        .rc-slider-mark-text {
-            color: black !important;
-            font-size: 12px !important;
-            font-weight: bold !important;
-            background-color: #e0e0e0 !important;  /* خلفية رمادية فاتحة لضمان التباين */
-            padding: 2px 5px !important;
-            border-radius: 4px !important;
-            border: 1px solid #aaa !important;
-            white-space: nowrap !important;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
-        }
-        /* إزالة أي خلفية بيضاء افتراضية */
-        .rc-slider-mark {
-            background-color: transparent !important;
-        }
-        /* نافذة القيمة المنبثقة */
-        .rc-slider-tooltip-inner {
-            background-color: #333 !important;
-            color: white !important;
-            font-weight: bold !important;
-        }
-        /* باقي عناصر الشريط */
-        .rc-slider-dot { border-color: #aaa !important; }
-        .rc-slider-handle { border-color: #4CAF50 !important; background-color: #4CAF50 !important; }
-        .rc-slider-track { background-color: #4CAF50 !important; }
-        .rc-slider-rail { background-color: #555 !important; }
-        label, .control-label { color: white !important; font-weight: bold !important; }
+        .rc-slider-mark-text { color: black !important; font-size: 12px !important; font-weight: bold !important; background-color: #e0e0e0 !important; padding: 2px 5px !important; border-radius: 4px !important; border: 1px solid #aaa !important; white-space: nowrap !important; }
+        .rc-slider-tooltip-inner { background-color: #333 !important; color: white !important; }
+        label { color: white !important; font-weight: bold !important; }
         .Select-control, .Select-menu-outer { background-color: #222 !important; color: white !important; }
         .Select-value-label { color: white !important; }
-        .Select-option { background-color: #222 !important; color: white !important; }
-        .Select-option.is-focused { background-color: #4CAF50 !important; }
     '''),
     html.Div(
         style={'display': 'flex', 'flexDirection': 'row', 'height': '100vh', 'padding': '20px', 'gap': '20px', 'backgroundColor': '#000', 'color': 'white'},
@@ -114,16 +86,11 @@ app.layout = html.Div([
                     html.Hr(),
                     html.Label("نموذج المحاكاة:"),
                     dcc.Dropdown(id='model', options=[{'label':' أرض مسطحة','value':'flat'},{'label':' أرض كروية','value':'curved'}], value='flat', clearable=False),
-                    html.Label("ارتفاع الجسم (م):"),
-                    dcc.Slider(id='obj', min=1, max=100, step=1, value=50, marks={1:'1',25:'25',50:'50',75:'75',100:'100'}),
-                    html.Label("ارتفاع العين (م):"),
-                    dcc.Slider(id='eye', min=0.1, max=10, step=0.1, value=1.7, marks={0.1:'0.1',2:'2',5:'5',8:'8',10:'10'}),
-                    html.Label("المسافة (كم):"),
-                    dcc.Slider(id='dist', min=1, max=100, step=1, value=20, marks={1:'1',25:'25',50:'50',75:'75',100:'100'}),
-                    html.Label("عامل التكبير:"),
-                    dcc.Slider(id='zoom', min=0, max=5, step=0.2, value=0, marks={0:'0',1:'1',2:'2',3:'3',4:'4',5:'5'}),
-                    html.Label("الارتفاع الحالي (كم):"),
-                    dcc.Slider(id='alt', min=0, max=50, step=0.5, value=10, marks={0:'0',10:'10',20:'20',30:'30',40:'40',50:'50'}),
+                    html.Label("ارتفاع الجسم (م):"), dcc.Slider(id='obj', min=1, max=100, step=1, value=50, marks={1:'1',50:'50',100:'100'}),
+                    html.Label("ارتفاع العين (م):"), dcc.Slider(id='eye', min=0.1, max=10, step=0.1, value=1.7, marks={0.1:'0.1',5:'5',10:'10'}),
+                    html.Label("المسافة (كم):"), dcc.Slider(id='dist', min=1, max=100, step=1, value=20, marks={1:'1',50:'50',100:'100'}),
+                    html.Label("عامل التكبير:"), dcc.Slider(id='zoom', min=0, max=5, step=0.2, value=0, marks={0:'0',2:'2',5:'5'}),
+                    html.Label("الارتفاع الحالي (كم):"), dcc.Slider(id='alt', min=0, max=50, step=0.5, value=10, marks={0:'0',25:'25',50:'50'}),
                     html.Div(id='info', style={'marginTop':'20px','backgroundColor':'#1e1e2f','padding':'10px','borderRadius':'8px'})
                 ]
             ),
