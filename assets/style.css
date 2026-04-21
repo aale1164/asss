@@ -1,7 +1,9 @@
+
 body {
     background-color: #0b0f19;
 }
 
+/* ================= CONTROL PANEL ================= */
 .control-panel {
     width: 24%;
     display: inline-block;
@@ -18,12 +20,14 @@ body {
     color: #1f2937;
 }
 
+/* ================= GRAPH ================= */
 .graph-panel {
     width: 75%;
     display: inline-block;
     vertical-align: top;
 }
 
+/* ================= SLIDERS ================= */
 .rc-slider-track {
     background-color: #3b82f6;
 }
@@ -42,4 +46,26 @@ body {
     border-radius: 6px;
     padding: 2px 5px;
     border: 1px solid #ddd;
+}
+
+/* ================= SIDEBAR TOGGLE SYSTEM ================= */
+
+/* الحالة المفتوحة */
+#sidebar.open {
+    width: 320px;
+    transition: 0.3s;
+    overflow-y: auto;
+}
+
+/* الحالة المصغرة */
+#sidebar.collapsed {
+    width: 60px;
+    transition: 0.3s;
+    overflow: hidden;
+}
+
+/* إخفاء المحتوى عند التصغير */
+#sidebar.collapsed * {
+    opacity: 0;
+    pointer-events: none;
 }
