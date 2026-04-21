@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aale Analytics</title>
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #0b0f19;
+    color: white;
+}
+
+/* Top Bar */
+.topbar {
+    width: 100%;
+    padding: 15px 25px;
+    background: #111827;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+.brand {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.status {
+    color: #10b981;
+}
+
+/* Layout */
+.container {
+    display: flex;
+}
+
+/* Control Panel */
+.control-panel {
+    width: 25%;
+    padding: 20px;
+    background: #1f2937;
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+}
+
+.control-panel h3 {
+    margin-top: 0;
+}
+
+.control-panel input {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 5px;
+}
+
+/* Buttons */
+button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 6px;
+    background: #3b82f6;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #2563eb;
+}
+
+/* Graph */
+.graph-panel {
+    width: 75%;
+    padding: 20px;
+}
+
+/* Footer */
+.footer {
+    width: 100%;
+    background: #111827;
+    text-align: center;
+    padding: 15px;
+    position: fixed;
+    bottom: 0;
+}
+
+.footer a {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Top Bar -->
+<div class="topbar">
+    <div class="brand">Aale Analytics™</div>
+    <div class="status">● Online</div>
+</div>
+
+<!-- Main -->
+<div class="container">
+
+    <!-- Controls -->
+    <div class="control-panel">
+        <h3>لوحة التحكم</h3>
+
+        <label>عدد النقاط</label>
+        <input type="number" id="points" value="10">
+
+        <button onclick="generateData()">تحديث البيانات</button>
+        <button onclick="resetChart()">إعادة تعيين</button>
+        <button onclick="exportImage()">تحميل صورة</button>
+    </div>
+
+    <!-- Graph -->
+    <div class="graph-panel">
+        <div id="chart"></div>
+    </div>
+
+</div>
+
+<!-- Footer -->
+<div class="footer">
+    © 2026 Aale Analytics — Built by 
+    <a href="https://x.com/aale1164" target="_blank">@aale1164</a>
+</div>
+
+<script>
+
+/* Generate Chart */
+function generateData() {
+    let points = document.getElementById("points").value;
+    let x = [];
+    let y = [];
+
+    for (let i = 0; i < points; i++) {
+        x.push(i + 1);
+        y.push(Math.floor(Math.random() * 100));
+    }
+
+    let data = [{
+        x: x,
+        y: y,
+        type: 'scatter',
+        mode: 'lines+markers'
+    }];
+
+    let layout = {
+        paper_bgcolor: "#0b0f19",
+        plot_bgcolor: "#0b0f19",
+        font: { color: "white" }
+    };
+
+    Plotly.newPlot('chart', data, layout);
+}
+
+/* Reset */
+function resetChart() {
+    document.getElementById("chart").innerHTML = "";
+}
+
+/* Export */
+function exportImage() {
+    Plotly.downloadImage('chart', {format: 'png'});
+}
+
+/* Load default */
+generateData();
+
+</script>
+
+</body>
+</html>
