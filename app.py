@@ -1,19 +1,29 @@
 # -*- coding: utf-8 -*-
-# تطبيق Dash - شاشة مقسمة (يمين: حاسبة انحناء الأرض، يسار: فارغ)
+# تطبيق Dash - شاشة مقسمة (يسار: صورة 54.jpg، يمين: حاسبة انحناء الأرض)
 
 import dash
-from dash import html, dcc, Input, Output, State
+from dash import html, dcc, Input, Output
 import math
 
-# إعداد التطبيق
 app = dash.Dash(__name__)
 server = app.server
 
-# ثوابت
-R_km = 6371.0          # نصف قطر الأرض بالكيلومترات
-R_miles = 3959.0       # نصف قطر الأرض بالأميال
+# ثوابت انحناء الأرض
+R_km = 6371.0  # نصف القطر بالكيلومترات
 
-# تنسيق الصفحة الرئيسية
+def curvature_drop(distance_km):
+    """حساب الانخفاض بسبب الانحناء بالأمتار"""
+    if distance_km < 0:
+        return 0.0
+    return (distance_km ** 2) / (2 * R_km) * 1000
+
+def horizon_distance(observer_height_m):
+    """مسافة الأفق بالكيلومترات لراصد ارتفاعه بالأمتار"""
+    if observer_height_m < 0:
+        return 0.0
+    return math.sqrt(2 * R_km * (observer_height_m / 1000))
+
+# تنسيق الصفحة
 app.layout = html.Div(
     style={
         'display': 'flex',
@@ -25,23 +35,31 @@ app.layout = html.Div(
         'fontFamily': 'Arial, sans-serif'
     },
     children=[
-        # القسم الأيسر (فارغ، يمكنك إضافة أي محتوى لاحقاً)
+        # القسم الأيسر: الصورة (بحجم نصف القسم تقريباً)
         html.Div(
             style={
                 'flex': '1',
                 'backgroundColor': '#1e1e2f',
-                'color': 'white',
-                'padding': '20px',
                 'display': 'flex',
                 'flexDirection': 'column',
                 'justifyContent': 'center',
-                'alignItems': 'center'
+                'alignItems': 'center',
+                'padding': '20px'
             },
             children=[
-                html.H2("القسم الأيسر", style={'color': '#aaa'}),
-                html.P("يمكنك استخدام هذا القسم لاحقاً لعرض رسوم بيانية أو تعليمات.", style={'textAlign': 'center'}),
-                html.Img(src="https://cdn.pixabay.com/photo/2020/03/25/12/26/earth-4968778_1280.png", 
-                         style={'width': '80%', 'maxWidth': '300px', 'opacity': 0.6})
+                html.Img(
+                    src='/54.jpg',   # الصورة موجودة في جذر المستودع
+                    style={
+                        'maxWidth': '50%',      # نصف عرض القسم الأيسر
+                        'maxHeight': '50%',     # نصف ارتفاع القسم الأيسر
+                        'width': 'auto',
+                        'height': 'auto',
+                        'objectFit': 'contain',
+                        'borderRadius': '12px',
+                        'boxShadow': '0 6px 12px rgba(0,0,0,0.4)'
+                    }
+                ),
+                html.P("خريطة غليسون (1892)", style={'color': '#aaa', 'marginTop': '20px', 'fontSize': '14px'})
             ]
         ),
         # القسم الأيمن: حاسبة انحناء الأرض
@@ -60,8 +78,6 @@ app.layout = html.Div(
             children=[
                 html.H1("🌍 حاسبة انحناء الأرض", style={'textAlign': 'center', 'marginBottom': '30px'}),
                 html.Hr(style={'width': '80%', 'borderColor': '#444'}),
-                
-                # إدخال المسافة
                 html.Label("أدخل المسافة:", style={'fontSize': '18px', 'marginTop': '20px'}),
                 dcc.Input(
                     id='distance-input',
@@ -80,8 +96,6 @@ app.layout = html.Div(
                         'textAlign': 'center'
                     }
                 ),
-                
-                # اختيار وحدة المسافة
                 html.Label("الوحدة:", style={'fontSize': '18px', 'marginTop': '10px'}),
                 dcc.RadioItems(
                     id='unit-selector',
@@ -93,8 +107,6 @@ app.layout = html.Div(
                     labelStyle={'display': 'inline-block', 'margin': '10px', 'fontSize': '16px'},
                     style={'textAlign': 'center'}
                 ),
-                
-                # زر حساب (اختياري، لكن يمكننا الاستجابة الفورية، سنستخدم الإدخال المباشر)
                 html.Button("احسب الانحناء", id='calc-button', n_clicks=0,
                             style={
                                 'backgroundColor': '#4CAF50',
@@ -107,65 +119,36 @@ app.layout = html.Div(
                                 'margin': '20px 0',
                                 'width': '60%'
                             }),
-                
-                # عرض النتائج
-                html.Div(
-                    id='result-container',
-                    style={
-                        'backgroundColor': '#1e1e2f',
-                        'padding': '20px',
-                        'borderRadius': '12px',
-                        'width': '80%',
-                        'marginTop': '20px',
-                        'textAlign': 'center',
-                        'border': '1px solid #444'
-                    }
-                ),
-                
-                # معلومات إضافية: مسافة الأفق
-                html.Div(
-                    id='horizon-container',
-                    style={'marginTop': '20px', 'fontSize': '14px', 'color': '#aaa'}
-                )
+                html.Div(id='result-container',
+                         style={
+                             'backgroundColor': '#1e1e2f',
+                             'padding': '20px',
+                             'borderRadius': '12px',
+                             'width': '80%',
+                             'marginTop': '20px',
+                             'textAlign': 'center',
+                             'border': '1px solid #444'
+                         }),
+                html.Div(id='horizon-container',
+                         style={'marginTop': '20px', 'fontSize': '14px', 'color': '#aaa'})
             ]
         )
     ]
 )
 
-# دوال مساعدة للحسابات
-def curvature_drop(distance_km):
-    """حساب الانخفاض بسبب انحناء الأرض (بالمتر)"""
-    if distance_km < 0:
-        return 0.0
-    drop_m = (distance_km ** 2) / (2 * R_km) * 1000
-    return drop_m
-
-def horizon_distance(observer_height_m):
-    """مسافة الأفق بالكيلومترات بناءً على ارتفاع الراصد بالأمتار"""
-    # d_km = sqrt(2 * R_km * height_m / 1000)  لأن R_km, height_km = height_m/1000
-    if observer_height_m < 0:
-        return 0.0
-    d_km = math.sqrt(2 * R_km * (observer_height_m / 1000))
-    return d_km
-
-# تحديث النتائج عند الضغط على الزر أو تغيير الإدخال
 @app.callback(
     [Output('result-container', 'children'),
      Output('horizon-container', 'children')],
     [Input('calc-button', 'n_clicks'),
      Input('distance-input', 'value'),
-     Input('unit-selector', 'value')],
-    [State('distance-input', 'value'),
-     State('unit-selector', 'value')]
+     Input('unit-selector', 'value')]
 )
-def update_results(n_clicks, dist_val, unit_val, dist_state, unit_state):
-    # استخدام القيم الحالية (بما أن الإدخالات موجودة)
+def update_results(n_clicks, dist_val, unit_val):
     if dist_val is None:
         dist_val = 0
     distance = float(dist_val)
     unit = unit_val if unit_val else 'km'
     
-    # تحويل المسافة إلى كيلومترات للحساب
     if unit == 'mile':
         distance_km = distance * 1.60934
         unit_name = 'ميل'
@@ -176,10 +159,9 @@ def update_results(n_clicks, dist_val, unit_val, dist_state, unit_state):
     drop_m = curvature_drop(distance_km)
     drop_ft = drop_m * 3.28084
     
-    # عرض النتيجة بشكل جميل
     result_text = html.Div([
         html.H3(f"المسافة: {distance:.2f} {unit_name}", style={'margin': '0 0 10px 0'}),
-        html.P(f"📉 مقدار الانحناء (الانخفاض):", style={'fontSize': '16px', 'margin': '5px'}),
+        html.P("📉 مقدار الانحناء (الانخفاض):", style={'fontSize': '16px', 'margin': '5px'}),
         html.H2(f"{drop_m:.2f} متر", style={'color': '#ffaa00', 'margin': '5px'}),
         html.P(f"أي ما يعادل {drop_ft:.2f} قدم", style={'fontSize': '14px', 'color': '#ccc'}),
         html.Hr(style={'width': '80%', 'borderColor': '#555'}),
@@ -187,17 +169,14 @@ def update_results(n_clicks, dist_val, unit_val, dist_state, unit_state):
                style={'fontSize': '12px', 'color': '#888'})
     ])
     
-    # حساب مسافة الأفق لارتفاع افتراضي (مثلاً ارتفاع عين الراصد 1.7 متر)
-    eye_height = 1.7  # متر
+    eye_height = 1.7
     horizon_km = horizon_distance(eye_height)
     horizon_miles = horizon_km * 0.621371
     horizon_text = html.Div([
         html.P(f"👁️ لشخص ارتفاع عينيه {eye_height} متر، المسافة إلى الأفق ≈ {horizon_km:.2f} كم ({horizon_miles:.2f} ميل).",
                style={'margin': '5px'})
     ])
-    
     return result_text, horizon_text
 
-# تشغيل التطبيق
 if __name__ == '__main__':
     app.run(debug=True)
