@@ -3,13 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>منصة الاحترافية | Pro Dashboard</title>
-  <!-- خط عصري للعربية -->
+  <title>منصة الاحترافية | Pro AI Dashboard</title>
+  <!-- خط عربي عصري -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <!-- أيقونات احترافية (Font Awesome) -->
+  <!-- أيقونات -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- highlight.js لتنسيق الكود -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+  <!-- Chart.js للرسوم البيانية -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     * {
       margin: 0;
@@ -76,13 +82,11 @@
       100% { opacity: 0.6; transform: scale(1); }
     }
 
-    /* الحاوية الرئيسية */
     .container {
       max-width: 1400px;
       margin: 0 auto;
     }
 
-    /* الشبكة الاحترافية */
     .grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -90,7 +94,6 @@
       margin: 30px 0 20px;
     }
 
-    /* بطاقة بتصميم صور وأيقونات متناسقة */
     .card {
       background: rgba(12, 22, 38, 0.7);
       backdrop-filter: blur(8px);
@@ -109,7 +112,6 @@
       box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5);
     }
 
-    /* تأثير ضوئي عند التحويم */
     .card::after {
       content: "";
       position: absolute;
@@ -131,7 +133,6 @@
       opacity: 1;
     }
 
-    /* حاوية الصورة / الأيقونة بمقاس متناسق */
     .image-wrapper {
       width: 90px;
       height: 90px;
@@ -152,7 +153,6 @@
       border-color: #3b82f6;
     }
 
-    /* الصور الداخلية (أيقونات فونت أوسوم أو صور SVG) بمقاس ثابت */
     .image-wrapper i {
       font-size: 46px;
       color: #e0edff;
@@ -166,21 +166,6 @@
       filter: drop-shadow(0 0 12px #90c0ff);
     }
 
-    /* بالنسبة للبطاقات التي نستخدم فيها صور SVG مخصصة (صور متناسقة) */
-    .image-wrapper img {
-      width: 56px;
-      height: 56px;
-      object-fit: contain;
-      filter: brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-      transition: 0.2s;
-    }
-
-    .card:hover .image-wrapper img {
-      transform: scale(1.06);
-      filter: brightness(0) invert(1) drop-shadow(0 0 10px #7ab0ff);
-    }
-
-    /* عنوان البطاقة */
     .card-title {
       font-size: 1.3rem;
       font-weight: 700;
@@ -189,7 +174,6 @@
       letter-spacing: -0.3px;
     }
 
-    /* وصف صغير / قيمة إحصائية */
     .card-stat {
       font-size: 1rem;
       font-weight: 500;
@@ -202,7 +186,6 @@
       margin-top: 5px;
     }
 
-    /* تذييل الصفحة */
     .footer {
       text-align: center;
       padding: 24px 0 10px;
@@ -214,202 +197,466 @@
       margin-top: 25px;
     }
 
-    /* تجاوب مع الشاشات المتوسطة */
-    @media (max-width: 1100px) {
-      .grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 18px;
-      }
-      .brand { font-size: 1.5rem; }
+    /* ========== مودال الصفحة الداخلية ========== */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
     }
 
-    @media (max-width: 700px) {
-      .grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-      }
-      .topbar {
-        padding: 14px 18px;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 10px;
-      }
-      .image-wrapper {
-        width: 75px;
-        height: 75px;
-      }
-      .image-wrapper i {
-        font-size: 38px;
-      }
+    .modal-container {
+      background: rgba(8, 18, 30, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      border-radius: 40px;
+      width: 95%;
+      max-width: 1300px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 28px 25px;
+      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(59,130,246,0.2);
+      scrollbar-width: thin;
+      scrollbar-color: #3b82f6 #0f1a2b;
     }
 
-    @media (max-width: 480px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-      body { padding: 0 10px 20px; }
+    .modal-container::-webkit-scrollbar { width: 6px; }
+    .modal-container::-webkit-scrollbar-track { background: #0f1a2b; border-radius: 10px; }
+    .modal-container::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #2a3c58;
+      padding-bottom: 18px;
+      margin-bottom: 20px;
     }
 
-    /* تنسيق إضافي للبطاقات: حدود متوهجة */
-    .card:nth-child(1) .image-wrapper { background: linear-gradient(145deg, #1e4b8f, #0c1a2b); }
-    .card:nth-child(2) .image-wrapper { background: linear-gradient(145deg, #3a2c6b, #140e2b); }
-    .card:nth-child(3) .image-wrapper { background: linear-gradient(145deg, #2d6e5a, #0e2620); }
-    .card:nth-child(4) .image-wrapper { background: linear-gradient(145deg, #9e5f2b, #301e0e); }
-    .card:nth-child(5) .image-wrapper { background: linear-gradient(145deg, #3f3f6b, #14142b); }
-    .card:nth-child(6) .image-wrapper { background: linear-gradient(145deg, #2b506e, #0e1f2e); }
-    .card:nth-child(7) .image-wrapper { background: linear-gradient(145deg, #4f3f7a, #1e1735); }
-    .card:nth-child(8) .image-wrapper { background: linear-gradient(145deg, #2f786a, #0f2e28); }
-    .card:nth-child(9) .image-wrapper { background: linear-gradient(145deg, #b47a3a, #3b2812); }
-    .card:nth-child(10) .image-wrapper { background: linear-gradient(145deg, #436b8c, #142433); }
-
-    /* نص توضيحي للقسم */
-    .section-hint {
-      margin: 5px 0 0;
-      font-size: 0.9rem;
-      color: #aac3e0;
+    .modal-header h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #c6ddff, #60a5fa);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
+
+    .modal-header i {
+      font-size: 28px;
+      color: #60a5fa;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .modal-header i:hover { color: #ff7b7b; transform: scale(1.1); }
+
+    .code-section {
+      background: #0d1624;
+      border-radius: 24px;
+      padding: 18px;
+      margin-bottom: 30px;
+      border: 1px solid #2e4a6b;
+      direction: ltr;
+      text-align: left;
+    }
+    .code-section pre {
+      margin: 0;
+      border-radius: 16px;
+      font-size: 15px;
+      max-height: 280px;
+      overflow: auto;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.9fr;
+      gap: 20px;
+      margin: 25px 0;
+    }
+
+    .stats-panel {
+      background: rgba(20, 35, 55, 0.6);
+      border-radius: 28px;
+      padding: 22px;
+      border: 1px solid #2e4c70;
+      backdrop-filter: blur(5px);
+    }
+
+    .stats-panel h3 {
+      color: #aac8ff;
+      margin-bottom: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 5px;
+      border-bottom: 1px dashed #3a5670;
+    }
+
+    .metric-label { color: #bbd1f0; }
+    .metric-value { font-weight: 700; color: #e0edff; }
+
+    .chart-container {
+      background: rgba(20, 35, 55, 0.6);
+      border-radius: 28px;
+      padding: 20px;
+      border: 1px solid #2e4c70;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      background: #0b1622;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .data-table th {
+      background: #1f3a5f;
+      color: #e2ecff;
+      padding: 12px 8px;
+      font-weight: 600;
+    }
+    .data-table td {
+      padding: 10px 8px;
+      border-bottom: 1px solid #253d59;
+    }
+
+    .action-bar {
+      display: flex;
+      gap: 15px;
+      margin-top: 25px;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      background: rgba(59, 130, 246, 0.15);
+      border: 1.5px solid #3b82f6;
+      color: white;
+      padding: 12px 28px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: 0.2s;
+    }
+    .btn:hover {
+      background: #3b82f6;
+      box-shadow: 0 0 20px #3b82f6;
+    }
+
+    @media (max-width: 1100px) { .grid { grid-template-columns: repeat(3, 1fr); } .results-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 700px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="brand">
-    <i class="fas fa-cube" style="margin-left: 10px; color: #3b82f6;"></i> 
-    منصة آفاق | Pro
-  </div>
-  <div class="live-badge">
-    <i class="fas fa-circle"></i> 
-    <span>نظام مباشر · LIVE</span>
-    <i class="fas fa-shield-alt" style="margin-right: 8px; opacity: 0.9;"></i>
-  </div>
+  <div class="brand"><i class="fas fa-cube" style="margin-left: 10px; color: #3b82f6;"></i> منصة آفاق | Pro</div>
+  <div class="live-badge"><i class="fas fa-circle"></i> نظام مباشر · LIVE <i class="fas fa-shield-alt" style="margin-right: 8px;"></i></div>
 </div>
 
 <div class="container">
-  <!-- الشبكة الرئيسية: 10 أقسام بصور وأيقونات متناسقة -->
   <div class="grid">
-    
-    <!-- 1. تحليل بيانات -->
-    <div class="card">
-      <div class="image-wrapper">
-        <!-- صورة احترافية: أيقونة بيانية مع رسم بياني -->
-        <i class="fas fa-chart-pie"></i>
-      </div>
+    <!-- 1. تحليل بيانات (يفتح المودال) -->
+    <div class="card" data-modal="aiModal">
+      <div class="image-wrapper"><i class="fas fa-chart-pie"></i></div>
       <div class="card-title">تحليل بيانات</div>
       <div class="card-stat">+٢٤ تقرير</div>
-      <div class="section-hint">ذكاء الأعمال</div>
     </div>
-    
-    <!-- 2. ذكاء اصطناعي -->
-    <div class="card">
-      <div class="image-wrapper">
-        <i class="fas fa-brain"></i>
-      </div>
+    <!-- 2. ذكاء اصطناعي (يفتح المودال أيضاً) -->
+    <div class="card" data-modal="aiModal">
+      <div class="image-wrapper"><i class="fas fa-brain"></i></div>
       <div class="card-title">ذكاء اصطناعي</div>
       <div class="card-stat">نموذج GPT-6</div>
-      <div class="section-hint">تعلّم عميق</div>
     </div>
-    
-    <!-- 3. تقويم هجري (صورة متناسقة: أيقونة تقويم + هلال) -->
+    <!-- 3. تقويم هجري -->
     <div class="card">
       <div class="image-wrapper">
-        <!-- استخدام أيقونتين متراكبتين لإيحاء بالتقويم الهجري -->
-        <div style="position: relative; display: flex; align-items: center; justify-content: center;">
-          <i class="fas fa-calendar-alt" style="font-size: 44px;"></i>
-          <i class="fas fa-moon" style="position: absolute; font-size: 22px; bottom: -6px; right: -10px; color: #ffe484; filter: drop-shadow(0 0 5px #fbbf24);"></i>
-        </div>
+        <i class="fas fa-calendar-alt"></i>
+        <i class="fas fa-moon" style="position: absolute; font-size: 20px; margin-top: 15px; margin-right: 15px; color: #ffe484;"></i>
       </div>
       <div class="card-title">تقويم هجري</div>
       <div class="card-stat">١٤٤٨ هـ</div>
-      <div class="section-hint">مواقيت الصلاة</div>
     </div>
-    
     <!-- 4. إحصائيات -->
     <div class="card">
-      <div class="image-wrapper">
-        <i class="fas fa-chart-line"></i>
-      </div>
+      <div class="image-wrapper"><i class="fas fa-chart-line"></i></div>
       <div class="card-title">إحصائيات</div>
       <div class="card-stat">+١٨.٥٪ نمو</div>
-      <div class="section-hint">مؤشرات الأداء</div>
     </div>
-    
     <!-- 5. إعدادات -->
     <div class="card">
-      <div class="image-wrapper">
-        <i class="fas fa-sliders-h"></i>
-      </div>
+      <div class="image-wrapper"><i class="fas fa-sliders-h"></i></div>
       <div class="card-title">إعدادات</div>
       <div class="card-stat">تحكم متقدم</div>
-      <div class="section-hint">تخصيص النظام</div>
     </div>
-    
     <!-- 6. حماية -->
     <div class="card">
-      <div class="image-wrapper">
-        <i class="fas fa-shield-virus"></i>
-      </div>
+      <div class="image-wrapper"><i class="fas fa-shield-virus"></i></div>
       <div class="card-title">حماية</div>
       <div class="card-stat">جدار ناري نشط</div>
-      <div class="section-hint">مصادقة ثنائية</div>
     </div>
-    
     <!-- 7. شبكة -->
     <div class="card">
-      <div class="image-wrapper">
-        <i class="fas fa-network-wired"></i>
-      </div>
+      <div class="image-wrapper"><i class="fas fa-network-wired"></i></div>
       <div class="card-title">شبكة</div>
       <div class="card-stat">٥.٢ جيجابت/ث</div>
-      <div class="section-hint">نطاق ترددي</div>
     </div>
-    
     <!-- 8. بيانات مباشرة -->
     <div class="card">
-      <div class="image-wrapper">
-        <i class="fas fa-satellite-dish"></i>
-      </div>
+      <div class="image-wrapper"><i class="fas fa-satellite-dish"></i></div>
       <div class="card-title">بيانات مباشرة</div>
       <div class="card-stat">تحديث كل ٣ ثوان</div>
-      <div class="section-hint">تدفق حي</div>
     </div>
-    
     <!-- 9. مالية -->
     <div class="card">
-      <div class="image-wrapper">
-        <i class="fas fa-coins"></i>
-      </div>
+      <div class="image-wrapper"><i class="fas fa-coins"></i></div>
       <div class="card-title">مالية</div>
       <div class="card-stat">$١٢.٤ مليار</div>
-      <div class="section-hint">محفظة استثمارية</div>
     </div>
-    
     <!-- 10. تخزين -->
     <div class="card">
-      <div class="image-wrapper">
-        <i class="fas fa-database"></i>
-      </div>
+      <div class="image-wrapper"><i class="fas fa-database"></i></div>
       <div class="card-title">تخزين</div>
       <div class="card-stat">٧٨٪ مستخدم</div>
-      <div class="section-hint">سحابة هجينة</div>
     </div>
   </div>
-
-  <!-- تذييل احترافي -->
   <div class="footer">
-    <i class="fas fa-crown" style="color: #fbbf24; margin-left: 8px;"></i>
-    © 2026 Pro Dashboard — تصميم احترافي بصور وأيقونات متناسقة 
+    <i class="fas fa-crown" style="color: #fbbf24; margin-left: 8px;"></i> © 2026 Pro Dashboard — تصميم احترافي بصور وأيقونات متناسقة 
     <i class="fas fa-rocket" style="margin-right: 10px; color: #3b82f6;"></i>
-    <br>
-    <span style="font-size: 0.9rem; opacity: 0.7;">جاهز للتوسع · واجهة عصرية بمقاسات موحدة</span>
   </div>
 </div>
 
-<!-- إضافة تأثيرات بسيطة إضافية (اختياري) -->
+<!-- ========== المودال: صفحة داخلية لعرض كود الشبكة العصبية ومحاكاة النتائج ========== -->
+<div class="modal-overlay" id="aiModal">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h2><i class="fas fa-microchip" style="margin-left: 12px;"></i> تدريب شبكة عصبية · تحليل البيانات</h2>
+      <i class="fas fa-times" id="closeModalBtn"></i>
+    </div>
+    
+    <!-- عرض الكود البرمجي (نفس كود البايثون المطلوب) -->
+    <div class="code-section">
+      <pre><code class="language-python" id="pythonCode">
+# -*- coding: utf-8 -*-
+import numpy as np, pandas as pd, matplotlib.pyplot as plt
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+# تحميل البيانات وتنظيفها ...
+df = pd.read_csv("linear_student_pass.csv")
+# معالجة القيم المفقودة والغير منطقية
+for col in ['hours_studied','midterm_score','attendance_pct']:
+    df[col] = df[col].fillna(df[col].median())
+df['midterm_score'] = df['midterm_score'].clip(0,100)
+
+# تقسيم وتوحيد
+X = df[['hours_studied','midterm_score','attendance_pct']]
+y = df['pass_final']
+X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.2)
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# نموذج شبكة عصبية (طبقة واحدة)
+model = Sequential([Dense(1, activation='sigmoid', input_shape=(3,))])
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+history = model.fit(X_train, y_train, epochs=50, validation_split=0.2, verbose=0)
+test_loss, test_acc = model.evaluate(X_test, y_test)
+print(f"Test Accuracy: {test_acc:.4f}")
+      </code></pre>
+    </div>
+
+    <!-- لوحة النتائج والإحصائيات -->
+    <div class="results-grid">
+      <div class="stats-panel">
+        <h3><i class="fas fa-chart-bar"></i> ملخص التدريب والتقييم</h3>
+        <div class="metric-row"><span class="metric-label">حجم البيانات الكلي</span><span class="metric-value" id="totalSamples">600</span></div>
+        <div class="metric-row"><span class="metric-label">بيانات التدريب</span><span class="metric-value" id="trainSize">384</span></div>
+        <div class="metric-row"><span class="metric-label">بيانات الاختبار</span><span class="metric-value" id="testSize">96</span></div>
+        <div class="metric-row"><span class="metric-label">عدد الحقبات (epochs)</span><span class="metric-value">50</span></div>
+        <div class="metric-row"><span class="metric-label">دقة التدريب النهائية</span><span class="metric-value" id="trainAcc">0.932</span></div>
+        <div class="metric-row"><span class="metric-label">دقة الاختبار</span><span class="metric-value" id="testAcc">0.916</span></div>
+        <div class="metric-row"><span class="metric-label">الخسارة (Test Loss)</span><span class="metric-value" id="testLoss">0.274</span></div>
+        <div style="margin-top: 25px;">
+          <h4 style="color:#b0cdff; margin-bottom: 10px;"><i class="fas fa-table"></i> أول 5 صفوف من البيانات</h4>
+          <table class="data-table">
+            <thead><tr><th>ساعات</th><th>نصفي</th><th>حضور%</th><th>نجاح</th></tr></thead>
+            <tbody id="dataPreview">
+              <tr><td>12.4</td><td>78.2</td><td>86</td><td>1</td></tr>
+              <tr><td>6.2</td><td>45.0</td><td>62</td><td>0</td></tr>
+              <tr><td>18.9</td><td>91.5</td><td>94</td><td>1</td></tr>
+              <tr><td>3.1</td><td>30.2</td><td>51</td><td>0</td></tr>
+              <tr><td>14.7</td><td>82.3</td><td>88</td><td>1</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="chart-container">
+        <h3 style="margin-bottom: 15px; color:#b8d0ff"><i class="fas fa-chart-line"></i> منحنيات التدريب</h3>
+        <canvas id="lossChart" width="400" height="200" style="max-height:200px; width:100%;"></canvas>
+        <canvas id="accChart" width="400" height="200" style="max-height:200px; width:100%; margin-top:20px;"></canvas>
+        <p style="text-align:center; margin-top:12px; opacity:0.8;">📊 محاكاة مرئية لنتائج نموذج الشبكة العصبية</p>
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn" id="runSimulationBtn"><i class="fas fa-play"></i> محاكاة تشغيل الكود</button>
+      <button class="btn" id="closeFooterBtn"><i class="fas fa-check"></i> إغلاق</button>
+    </div>
+  </div>
+</div>
+
 <script>
   (function() {
-    // مجرد لمسة: تغيير بسيط في شارة البث المباشر
-    console.log('✨ Pro Dashboard | تصميم بصور متناسقة مع الواجهة');
+    // تفعيل highlight.js
+    hljs.highlightAll();
+
+    // Modal Elements
+    const modal = document.getElementById('aiModal');
+    const closeBtn = document.getElementById('closeModalBtn');
+    const closeFooter = document.getElementById('closeFooterBtn');
+    
+    // فتح المودال عند الضغط على بطاقات محددة
+    document.querySelectorAll('[data-modal="aiModal"]').forEach(card => {
+      card.addEventListener('click', () => {
+        modal.style.display = 'flex';
+      });
+    });
+
+    function closeModal() { modal.style.display = 'none'; }
+    closeBtn.addEventListener('click', closeModal);
+    closeFooter.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+    // الرسوم البيانية
+    let lossChart, accChart;
+    const ctxLoss = document.getElementById('lossChart').getContext('2d');
+    const ctxAcc = document.getElementById('accChart').getContext('2d');
+
+    function generateEpochData(baseLoss=0.68, baseAcc=0.55) {
+      const epochs = 50;
+      const loss = []; const val_loss = [];
+      const acc = []; const val_acc = [];
+      for (let i=0; i<epochs; i++) {
+        let l = baseLoss * Math.exp(-0.06*i) + 0.05*Math.sin(i/3) + 0.02*Math.random();
+        let vl = l * (1 + 0.15*Math.sin(i/4)) + 0.01;
+        let a = baseAcc + (1-baseAcc-0.05)*(1-Math.exp(-0.08*i)) + 0.01*Math.cos(i/5);
+        let va = a - 0.02 - 0.01*Math.random();
+        loss.push(Math.min(0.9, Math.max(0.1, l)));
+        val_loss.push(Math.min(0.95, Math.max(0.15, vl)));
+        acc.push(Math.min(0.98, Math.max(0.4, a)));
+        val_acc.push(Math.min(0.97, Math.max(0.45, va)));
+      }
+      return { loss, val_loss, acc, val_acc };
+    }
+
+    function initCharts() {
+      const data = generateEpochData(0.68, 0.58);
+      if (lossChart) lossChart.destroy();
+      if (accChart) accChart.destroy();
+      
+      lossChart = new Chart(ctxLoss, {
+        type: 'line',
+        data: {
+          labels: Array.from({length:50},(_,i)=>i+1),
+          datasets: [
+            { label: 'خسارة التدريب', data: data.loss, borderColor: '#3b82f6', backgroundColor: 'transparent', tension:0.2, borderWidth:2 },
+            { label: 'خسارة التحقق', data: data.val_loss, borderColor: '#f97316', backgroundColor: 'transparent', tension:0.2, borderWidth:2, borderDash:[5,3] }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: '#ccc' } } }, scales: { x: { ticks: { color: '#aaa' } }, y: { ticks: { color: '#aaa' } } } }
+      });
+      
+      accChart = new Chart(ctxAcc, {
+        type: 'line',
+        data: {
+          labels: Array.from({length:50},(_,i)=>i+1),
+          datasets: [
+            { label: 'دقة التدريب', data: data.acc, borderColor: '#10b981', backgroundColor: 'transparent', tension:0.2, borderWidth:2 },
+            { label: 'دقة التحقق', data: data.val_acc, borderColor: '#facc15', backgroundColor: 'transparent', tension:0.2, borderWidth:2, borderDash:[5,3] }
+          ]
+        },
+        options: { responsive: true, plugins: { legend: { labels: { color: '#ccc' } } }, scales: { x: { ticks: { color: '#aaa' } }, y: { ticks: { color: '#aaa' } } } }
+      });
+    }
+
+    // تحديث الإحصائيات والجدول والرسوم (محاكاة)
+    function simulateRun() {
+      // تحديث مقاييس عشوائية لكن معقولة
+      const trainAcc = (0.91 + Math.random()*0.06).toFixed(3);
+      const testAcc = (0.90 + Math.random()*0.05).toFixed(3);
+      const testLoss = (0.20 + Math.random()*0.15).toFixed(3);
+      document.getElementById('trainAcc').textContent = trainAcc;
+      document.getElementById('testAcc').textContent = testAcc;
+      document.getElementById('testLoss').textContent = testLoss;
+      
+      // تحديث جدول المعاينة ببيانات عشوائية جديدة
+      const tbody = document.getElementById('dataPreview');
+      let html = '';
+      for (let i=0; i<5; i++) {
+        let h = (Math.random()*24).toFixed(1);
+        let m = (Math.random()*100).toFixed(1);
+        let a = Math.floor(Math.random()*40+60);
+        let pass = (parseFloat(h)*0.15 + parseFloat(m)*0.05 + a*0.02 > 4.5) ? 1 : 0;
+        html += `<tr><td>${h}</td><td>${m}</td><td>${a}</td><td>${pass}</td></tr>`;
+      }
+      tbody.innerHTML = html;
+      
+      // إعادة رسم المنحنيات بمعاملات مختلفة قليلاً
+      const newBaseLoss = 0.65 + Math.random()*0.1;
+      const newBaseAcc = 0.55 + Math.random()*0.1;
+      const newData = generateEpochData(newBaseLoss, newBaseAcc);
+      lossChart.data.datasets[0].data = newData.loss;
+      lossChart.data.datasets[1].data = newData.val_loss;
+      accChart.data.datasets[0].data = newData.acc;
+      accChart.data.datasets[1].data = newData.val_acc;
+      lossChart.update();
+      accChart.update();
+      
+      // تحديث أعداد البيانات (ثابتة نسبياً)
+      document.getElementById('totalSamples').textContent = '600';
+      document.getElementById('trainSize').textContent = '384';
+      document.getElementById('testSize').textContent = '96';
+    }
+
+    document.getElementById('runSimulationBtn').addEventListener('click', simulateRun);
+    
+    // عند فتح المودال أول مرة يتم تهيئة الرسوم
+    const observer = new MutationObserver((mutations, obs) => {
+      if (modal.style.display === 'flex') {
+        if (!lossChart) initCharts(); else { lossChart.update(); accChart.update(); }
+      }
+    });
+    observer.observe(modal, { attributes: true, attributeFilter: ['style'] });
+    
+    // تهيئة أولية عند تحميل الصفحة (حتى لا تكون فارغة)
+    window.addEventListener('load', () => {
+      // نجهز الرسم مسبقاً
+      initCharts();
+    });
   })();
 </script>
+<!-- ضبط إضافي لأيقونة التقويم -->
+<style>
+  .card .image-wrapper { position: relative; }
+  .fa-moon { position: absolute; bottom: 12px; right: 18px; }
+</style>
 </body>
 </html>
