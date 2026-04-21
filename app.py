@@ -4,6 +4,7 @@ from dash import html, dcc, Input, Output
 import plotly.graph_objects as go
 import numpy as np
 import math
+import os
 
 app = dash.Dash(__name__)
 server = app.server
@@ -53,7 +54,7 @@ def create_figure(model, obj_h, eye_h, dist, zoom, alt):
 
         fig.add_vline(x=vanish_km, line_dash="dot", line_color="gray", annotation_text=f"نقطة التلاشي {vanish_km:.1f} كم")
 
-        title = "نموذج الأرض المسطحة - المنظور الخطي"
+        title = "نموذج الأرض المسطحة - المنظور"
 
     else:
         drop = curvature_drop_m(distances)
@@ -65,18 +66,17 @@ def create_figure(model, obj_h, eye_h, dist, zoom, alt):
         fig.add_trace(go.Scatter(x=[dist], y=[cur_visible], mode='markers', marker=dict(size=12, color='#FF4D4D'), name='الجسم الحالي'))
 
         dip = horizon_dip_deg(alt)
-        fig.add_hline(y=-dip, line_width=3, line_color="#3b82f6", line_dash="dot", annotation_text=f"الأفق الكروي ({dip:.2f}°)")
+        fig.add_hline(y=-dip, line_width=3, line_color="#3b82f6", line_dash="dot", annotation_text=f"الأفق ({dip:.2f}°)")
 
         title = "نموذج الأرض الكروية - الانحناء"
 
     fig.update_layout(
-        title=dict(text=title, x=0.5, font=dict(color='white', size=16)),
+        title=dict(text=title, x=0.5, font=dict(color='white')),
         xaxis=dict(title="المسافة (كم)", range=[0, max_dist], gridcolor='#333', color='white'),
-        yaxis=dict(title="الارتفاع المرئي (م)", gridcolor='#333', color='white'),
+        yaxis=dict(title="الارتفاع (م)", gridcolor='#333', color='white'),
         plot_bgcolor='#0d0d1a',
         paper_bgcolor='#0d0d1a',
-        legend=dict(font=dict(color='white'), bgcolor='rgba(0,0,0,0.5)'),
-        margin=dict(l=40, r=40, t=60, b=40)
+        legend=dict(font=dict(color='white')),
     )
 
     return fig
@@ -85,9 +85,7 @@ def create_figure(model, obj_h, eye_h, dist, zoom, alt):
 app.layout = html.Div([
 
     html.Style('''
-        body {
-            background-color: #0b0f19;
-        }
+        body { background-color: #0b0f19; }
 
         .control-panel {
             background: linear-gradient(135deg, #f5f7fa, #e4e7ec);
@@ -99,13 +97,8 @@ app.layout = html.Div([
             color: #1f2937;
         }
 
-        .rc-slider-track {
-            background-color: #3b82f6;
-        }
-
-        .rc-slider-rail {
-            background-color: #cbd5e1;
-        }
+        .rc-slider-track { background-color: #3b82f6; }
+        .rc-slider-rail { background-color: #cbd5e1; }
 
         .rc-slider-handle {
             border: solid 3px #3b82f6;
@@ -149,34 +142,20 @@ app.layout = html.Div([
 
             html.Div(
                 className="control-panel",
-                style={'flex': '1', 'borderRadius': '12px', 'padding': '15px', 'overflowY': 'auto'},
+                style={'flex': '1', 'borderRadius': '12px', 'padding': '15px'},
                 children=[
-                    html.H2("🎛️ لوحة التحكم", style={'textAlign': 'center'}),
-                    html.Hr(),
+                    html.H2("🎛️ لوحة التحكم"),
+                    html.Label("النموذج"),
+                    dcc.Dropdown(id='model', options=[
+                        {'label':'مسطح','value':'flat'},
+                        {'label':'كروي','value':'curved'}
+                    ], value='flat'),
 
-                    html.Label("نموذج المحاكاة:"),
-                    dcc.Dropdown(id='model',
-                        options=[
-                            {'label':'أرض مسطحة','value':'flat'},
-                            {'label':'أرض كروية','value':'curved'}
-                        ],
-                        value='flat', clearable=False
-                    ),
-
-                    html.Label("ارتفاع الجسم (م):"),
-                    dcc.Slider(id='obj', min=1, max=100, step=1, value=50),
-
-                    html.Label("ارتفاع العين (م):"),
-                    dcc.Slider(id='eye', min=0.1, max=10, step=0.1, value=1.7),
-
-                    html.Label("المسافة (كم):"),
-                    dcc.Slider(id='dist', min=1, max=100, step=1, value=20),
-
-                    html.Label("عامل التكبير:"),
-                    dcc.Slider(id='zoom', min=0, max=5, step=0.2, value=0),
-
-                    html.Label("الارتفاع الحالي (كم):"),
-                    dcc.Slider(id='alt', min=0, max=50, step=0.5, value=10),
+                    dcc.Slider(id='obj', min=1, max=100, value=50),
+                    dcc.Slider(id='eye', min=0.1, max=10, value=1.7),
+                    dcc.Slider(id='dist', min=1, max=100, value=20),
+                    dcc.Slider(id='zoom', min=0, max=5, value=0),
+                    dcc.Slider(id='alt', min=0, max=50, value=10),
 
                     html.Div(id='info', className="info-box")
                 ]
@@ -184,7 +163,7 @@ app.layout = html.Div([
 
             html.Div(
                 style={'flex': '2'},
-                children=[dcc.Graph(id='graph', style={'height': '90vh'})]
+                children=[dcc.Graph(id='graph')]
             )
         ]
     )
@@ -193,20 +172,23 @@ app.layout = html.Div([
 
 @app.callback(
     [Output('graph', 'figure'), Output('info', 'children')],
-    [Input('model', 'value'), Input('obj', 'value'), Input('eye', 'value'),
-     Input('dist', 'value'), Input('zoom', 'value'), Input('alt', 'value')]
+    [Input('model', 'value'), Input('obj', 'value'),
+     Input('eye', 'value'), Input('dist', 'value'),
+     Input('zoom', 'value'), Input('alt', 'value')]
 )
 def update(model, obj, eye, dist, zoom, alt):
     fig = create_figure(model, obj, eye, dist, zoom, alt)
 
     info = html.Div([
-        html.P(f"الانخفاض = {curvature_drop_m(dist):.2f} متر"),
-        html.P(f"الأفق = {math.sqrt(2*R_KM*(eye/1000)):.2f} كم"),
-        html.P(f"زاوية الأفق = {horizon_dip_deg(alt):.2f}°")
+        html.P(f"الانخفاض: {curvature_drop_m(dist):.2f} متر"),
+        html.P(f"الأفق: {math.sqrt(2*R_KM*(eye/1000)):.2f} كم"),
+        html.P(f"زاوية الأفق: {horizon_dip_deg(alt):.2f}°")
     ])
 
     return fig, info
 
 
+# 🔥 هذا أهم تعديل للـ Deploy
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 8050))
+    app.run(host='0.0.0.0', port=port, debug=False)
