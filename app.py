@@ -87,9 +87,7 @@ app.layout = html.Div([
             "borderRadius": "10px"
         },
         children=[
-
             html.H2("🎛️ اختر النموذج من الأسفل"),
-
             dcc.Dropdown(
                 id="model",
                 options=[
@@ -100,7 +98,6 @@ app.layout = html.Div([
             ),
 
             html.Br(),
-
             html.Label("ارتفاع الجسم"),
             dcc.Slider(id="obj", min=1, max=100, value=50),
 
@@ -120,7 +117,7 @@ app.layout = html.Div([
         ]
     ),
 
-    # ===== الرسم البياني + الفوتر =====
+    # ===== العمود الأيمن (الرسم فقط) =====
     html.Div(
         style={
             "width": "76%",
@@ -129,36 +126,30 @@ app.layout = html.Div([
             "paddingLeft": "10px"
         },
         children=[
-
             dcc.Graph(
                 id="graph",
-                style={
-                    "height": "95vh",
-                    "width": "100%"
-                }
-            ),
-
-            # ===== الفوتر (اسمك + تويتر) =====
-            html.Div(
-                style={
-                    "textAlign": "center",
-                    "padding": "10px",
-                    "color": "white",
-                    "fontSize": "14px",
-                    "opacity": "0.8"
-                },
-                children=[
-                    html.Hr(),
-                    html.P("برمجة وتطوير: عدناني"),
-                    html.P("X (Twitter): @aale1164")
-                ]
+                style={"height": "95vh", "width": "100%"}
             )
+        ]
+    ),
 
+    # 🔴🔥 الفوتر (خارج الأعمدة بالكامل - هذا الحل الصحيح)
+    html.Div(
+        style={
+            "textAlign": "center",
+            "padding": "10px",
+            "color": "white",
+            "backgroundColor": "#0b0f19",
+            "fontSize": "14px"
+        },
+        children=[
+            html.Hr(),
+            html.P("برمجة وتطوير: عـدنـانـي"),
+            html.P("X (Twitter): @aale1164")
         ]
     )
 
 ])
-
 
 @app.callback(
     [Output("graph", "figure"), Output("info", "children")],
