@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # تطبيق Dash - شاشة مقسمة:
 # اليسار: صورة بحجم كامل
-# اليمين: أعلى (تعليمات) + أسفل (حاسبة) - حجمه 50% من عرضه الأصلي
+# اليمين: أعلى (تعليمات) بنسبة 40% من الارتفاع، أسفل (حاسبة) بنسبة 60%
+# مع استخدام خط "Tharwat Emara Ruqaa" في التعليمات فقط ومحاذاة اليمين
 
 import dash
 from dash import html, dcc, Input, Output
@@ -47,7 +48,7 @@ app.layout = html.Div(
             },
             children=[
                 html.Img(
-                    src='/ASdddd112.jpg',  # استخدم المسار الصحيح
+                    src='/ASdddd112.jpg',  # استخدم المسار الصحيح أو الرابط المباشر
                     style={
                         'width': '100%',
                         'height': '100%',
@@ -56,10 +57,10 @@ app.layout = html.Div(
                 )
             ]
         ),
-        # القسم الأيمن: تم تصغير عرضه إلى 50% من المساحة الأصلية
+        # القسم الأيمن: عرض ثابت 25% من الشاشة، وتقسيم عمودي (40% تعليمات، 60% حاسبة)
         html.Div(
             style={
-                'width': '25%',            # جعل العرض 25% بدلاً من 50% من الشاشة الكاملة (نصف الحجم الأصلي)
+                'width': '25%',
                 'display': 'flex',
                 'flexDirection': 'column',
                 'backgroundColor': '#0d0d1a',
@@ -70,31 +71,33 @@ app.layout = html.Div(
                 'overflow': 'hidden'
             },
             children=[
-                # الجزء العلوي: التعليمات (نصف ارتفاع القسم الأيمن)
+                # الجزء العلوي: التعليمات - 40% من الارتفاع
                 html.Div(
                     style={
-                        'flex': '1',
+                        'flex': '0.4',  # 40% من الارتفاع الكلي للقسم الأيمن
                         'backgroundColor': '#1e1e2f',
                         'padding': '10px',
                         'overflowY': 'auto',
                         'borderBottom': '1px solid #333',
-                        'fontSize': '0.9rem'
+                        'fontFamily': 'Tharwat Emara Ruqaa, "Traditional Arabic", Tahoma, sans-serif',
+                        'textAlign': 'right',  # محاذاة النص إلى اليمين
+                        'direction': 'rtl'     # لدعم اللغة العربية بشكل أفضل
                     },
                     children=[
-                        html.H4("📘 تعليمات:", style={'color': '#4CAF50', 'marginTop': '0', 'marginBottom': '8px'}),
+                        html.H4("📘 تعليمات:", style={'color': '#4CAF50', 'marginTop': '0', 'marginBottom': '8px', 'textAlign': 'right'}),
                         html.Ul([
                             html.Li("أدخل المسافة (كيلومتر أو ميل)."),
                             html.Li("اضغط على زر 'احسب الانحناء'."),
                             html.Li("ستظهر قيمة الانخفاض الناتج عن انحناء الأرض بالأمتار والأقدام."),
                             html.Li("القيمة النظرية لا تأخذ في الاعتبار الانكسار الجوي."),
                             html.Li("يمكنك استخدام التكبير والتدوير بالماوس لرؤية الصورة بشكل أفضل.")
-                        ], style={'paddingRight': '15px', 'margin': '0'})
+                        ], style={'paddingRight': '15px', 'margin': '0', 'textAlign': 'right'})
                     ]
                 ),
-                # الجزء السفلي: حاسبة الانحناء (نصف ارتفاع القسم الأيمن)
+                # الجزء السفلي: حاسبة الانحناء - 60% من الارتفاع
                 html.Div(
                     style={
-                        'flex': '1',
+                        'flex': '0.6',  # 60% من الارتفاع
                         'backgroundColor': '#0d0d1a',
                         'padding': '10px',
                         'display': 'flex',
