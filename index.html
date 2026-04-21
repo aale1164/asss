@@ -3,118 +3,144 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aale Analytics Pro</title>
+<title>Aale AI Command Center</title>
 
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
 <style>
 
-body {
-    margin: 0;
-    font-family: 'Arial';
-    background: radial-gradient(circle at top, #111827, #0b0f19);
-    color: white;
+:root{
+    --bg:#070A12;
+    --panel:rgba(255,255,255,0.04);
+    --stroke:rgba(255,255,255,0.08);
+    --blue:#3b82f6;
+    --cyan:#22d3ee;
+}
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:
+        radial-gradient(circle at 20% 20%, #0f172a, transparent 40%),
+        radial-gradient(circle at 80% 0%, #1e293b, transparent 35%),
+        var(--bg);
+    color:white;
 }
 
 /* ================= TOP BAR ================= */
-.topbar {
-    display: flex;
-    justify-content: space-between;
-    padding: 18px 30px;
-    background: rgba(17, 24, 39, 0.7);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    padding:16px 24px;
+    background:var(--panel);
+    border-bottom:1px solid var(--stroke);
+    backdrop-filter: blur(12px);
 }
 
-.brand {
-    font-size: 22px;
-    font-weight: bold;
-    letter-spacing: 1px;
-    color: #60a5fa;
+.brand{
+    font-size:20px;
+    font-weight:bold;
+    background:linear-gradient(90deg,var(--blue),var(--cyan));
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
 }
 
-.status {
-    color: #10b981;
-    font-weight: bold;
+.status{
+    color:#22c55e;
+    font-weight:bold;
 }
 
 /* ================= LAYOUT ================= */
-.container {
-    display: flex;
-    height: calc(100vh - 120px);
+.container{
+    display:flex;
+    height:calc(100vh - 110px);
 }
 
 /* ================= CONTROL PANEL ================= */
-.control-panel {
-    width: 25%;
-    padding: 20px;
-    background: rgba(31, 41, 55, 0.7);
-    backdrop-filter: blur(12px);
-    border-right: 1px solid rgba(255,255,255,0.1);
-    overflow-y: auto;
+.control-panel{
+    width:22%;
+    padding:18px;
+    background:var(--panel);
+    border-right:1px solid var(--stroke);
+    backdrop-filter: blur(16px);
 }
 
-.control-panel h3 {
-    margin-top: 0;
-    color: #60a5fa;
+.card{
+    background:rgba(255,255,255,0.03);
+    border:1px solid var(--stroke);
+    padding:14px;
+    border-radius:14px;
+    margin-bottom:12px;
+}
+
+label{
+    font-size:12px;
+    opacity:0.8;
 }
 
 /* inputs */
-input {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: none;
-    margin: 10px 0;
-    background: #111827;
-    color: white;
+input{
+    width:100%;
+    padding:10px;
+    margin-top:6px;
+    border-radius:10px;
+    border:1px solid var(--stroke);
+    background:#0b1220;
+    color:white;
 }
 
 /* buttons */
-button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    border: none;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.2s;
+button{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(135deg,var(--blue),#1d4ed8);
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.25s;
 }
 
-button:hover {
-    transform: scale(1.03);
-    box-shadow: 0 10px 25px rgba(59,130,246,0.3);
+button:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 30px rgba(59,130,246,0.3);
 }
 
 /* ================= GRAPH ================= */
-.graph-panel {
-    width: 75%;
-    padding: 20px;
+.graph-panel{
+    width:78%;
+    padding:16px;
+}
+
+/* graph container glow */
+#chart{
+    height:100%;
+    border-radius:16px;
+    border:1px solid var(--stroke);
+    box-shadow:0 0 40px rgba(59,130,246,0.08);
 }
 
 /* ================= FOOTER ================= */
-.footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    text-align: center;
-    padding: 12px;
-    background: rgba(17,24,39,0.8);
+.footer{
+    position:fixed;
+    bottom:0;
+    width:100%;
+    padding:10px;
+    text-align:center;
+    background:rgba(0,0,0,0.3);
     backdrop-filter: blur(10px);
-    border-top: 1px solid rgba(255,255,255,0.1);
+    border-top:1px solid var(--stroke);
 }
 
-.footer a {
-    color: #60a5fa;
-    text-decoration: none;
-    font-weight: bold;
+.footer a{
+    color:var(--cyan);
+    text-decoration:none;
 }
 
-.footer a:hover {
-    color: #93c5fd;
+.footer a:hover{
+    text-shadow:0 0 10px var(--cyan);
 }
 
 </style>
@@ -122,25 +148,28 @@ button:hover {
 
 <body>
 
-<!-- TOP -->
 <div class="topbar">
-    <div class="brand">Aale Analytics PRO</div>
-    <div class="status">● LIVE SYSTEM</div>
+    <div class="brand">Aale AI Command Center</div>
+    <div class="status">● SYSTEM ONLINE</div>
 </div>
 
-<!-- MAIN -->
 <div class="container">
 
     <!-- CONTROL -->
     <div class="control-panel">
-        <h3>Control Panel - لوحة التحكم</h3>
 
-        <label>عدد النقاط</label>
-        <input type="number" id="points" value="10">
+        <div class="card">
+            <label>DATA POINTS</label>
+            <input type="number" id="points" value="15">
+            <button onclick="generateData()">RUN ANALYSIS</button>
+        </div>
 
-        <button onclick="generateData()">تحديث البيانات</button>
-        <button onclick="resetChart()">إعادة ضبط</button>
-        <button onclick="exportImage()">تحميل الصورة</button>
+        <div class="card">
+            <label>CONTROL MODE</label>
+            <button onclick="resetChart()">RESET GRID</button>
+            <button onclick="exportImage()">EXPORT SNAPSHOT</button>
+        </div>
+
     </div>
 
     <!-- GRAPH -->
@@ -150,47 +179,46 @@ button:hover {
 
 </div>
 
-<!-- FOOTER -->
 <div class="footer">
-    © 2026 Aale Analytics PRO — Built by 
+    © 2026 Aale AI Command Center — Built by 
     <a href="https://x.com/aale1164" target="_blank">@aale1164</a>
 </div>
 
 <script>
 
-function generateData() {
-    let points = document.getElementById("points").value;
-    let x = [];
-    let y = [];
+function generateData(){
+    let points=document.getElementById("points").value;
+    let x=[],y=[];
 
-    for (let i = 0; i < points; i++) {
+    for(let i=0;i<points;i++){
         x.push(i);
-        y.push(Math.floor(Math.random() * 100));
+        y.push(Math.sin(i/2)*50 + Math.random()*10);
     }
 
-    let data = [{
-        x: x,
-        y: y,
-        type: 'scatter',
-        mode: 'lines+markers',
-        line: {color: '#3b82f6'}
+    let data=[{
+        x:x,
+        y:y,
+        type:'scatter',
+        mode:'lines',
+        line:{color:'#3b82f6',width:3}
     }];
 
-    let layout = {
-        paper_bgcolor: "transparent",
-        plot_bgcolor: "transparent",
-        font: {color: "white"}
+    let layout={
+        paper_bgcolor:"rgba(0,0,0,0)",
+        plot_bgcolor:"rgba(0,0,0,0)",
+        font:{color:"white"},
+        margin:{l:30,r:10,t:10,b:30}
     };
 
-    Plotly.newPlot('chart', data, layout);
+    Plotly.newPlot("chart",data,layout,{displayModeBar:false});
 }
 
-function resetChart() {
-    document.getElementById("chart").innerHTML = "";
+function resetChart(){
+    document.getElementById("chart").innerHTML="";
 }
 
-function exportImage() {
-    Plotly.downloadImage('chart', {format: 'png'});
+function exportImage(){
+    Plotly.downloadImage("chart",{format:"png"});
 }
 
 generateData();
