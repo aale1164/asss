@@ -122,7 +122,7 @@ def create_figure(model, obj_h, eye_h, dist, zoom, alt):
 
 app.layout = html.Div([
 
-    # ===== لوحة التحكم (ثابتة مثل ما هي) =====
+    # ===== لوحة التحكم =====
     html.Div(
         style={
             "width": "24%",
@@ -169,7 +169,7 @@ app.layout = html.Div([
         ]
     ),
 
-    # ===== الرسم البياني (هذا هو التعديل الحقيقي) =====
+    # ===== الرسم البياني =====
     html.Div(
         style={
             "width": "76%",
@@ -178,7 +178,6 @@ app.layout = html.Div([
             "paddingLeft": "10px"
         },
         children=[
-
             dcc.Graph(
                 id="graph",
                 style={
@@ -186,12 +185,10 @@ app.layout = html.Div([
                     "width": "100%"
                 }
             )
-
         ]
     )
 
 ])
-
 
 @app.callback(
     [Output("graph", "figure"), Output("info", "children")],
