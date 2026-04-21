@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
-# صفحة مقسمة إلى 6 مربعات متساوية (صفين، 3 أعمدة)
-# الترقيم الجديد بعد التعديل:
-# الصف العلوي (من اليمين): 3 تعليمات، 2 حاسبة، 1 رسم بياني
-# الصف السفلي (من اليمين): 6 فارغ، 5 فارغ، 4 فارغ
-# جميع النصوص محاذاة إلى اليمين
-# الرسم البياني مع إيضاحات متناسقة
+# صفحة مقسمة إلى 6 مربعات متساوية تمامًا في الحجم
+# جميع المربعات لها نفس الـ padding والهيكل
 
 import dash
 from dash import html, dcc, Input, Output
@@ -54,6 +50,15 @@ def create_graph(distance_km, drop_m):
     )
     return fig
 
+# نمط موحد لجميع المربعات لضمان التساوي التام
+common_style = {
+    'position': 'relative',
+    'padding': '10px',
+    'overflow': 'auto',
+    'display': 'flex',
+    'flexDirection': 'column'
+}
+
 app.layout = html.Div(
     style={
         'display': 'grid',
@@ -65,13 +70,13 @@ app.layout = html.Div(
         'backgroundColor': '#000',
         'margin': '0',
         'padding': '0',
-        'direction': 'rtl'  # محاذاة عامة لليمين
+        'direction': 'rtl'
     },
     children=[
-        # ---- الصف العلوي (من اليمين إلى اليسار) ----
-        # العمود 1 (أقصى اليمين) -> الرقم 3: تعليمات
+        # ---- الصف العلوي ----
+        # مربع رقم 3 (تعليمات)
         html.Div(
-            style={'backgroundColor': '#1e1e2f', 'position': 'relative', 'padding': '10px', 'overflow': 'auto', 'textAlign': 'right'},
+            style={**common_style, 'backgroundColor': '#1e1e2f', 'textAlign': 'right'},
             children=[
                 html.Div("3", style={'position': 'absolute', 'top': 10, 'right': 10, 'color': '#aaa', 'fontSize': 20}),
                 html.H4("📘 تعليمات:", style={'color': 'white', 'marginTop': 35, 'textAlign': 'right'}),
@@ -84,9 +89,9 @@ app.layout = html.Div(
                 ], style={'color': 'white', 'paddingRight': '20px'})
             ]
         ),
-        # العمود 2 (الوسط) -> الرقم 2: حاسبة
+        # مربع رقم 2 (حاسبة)
         html.Div(
-            style={'backgroundColor': '#0d0d1a', 'position': 'relative', 'padding': '10px', 'display': 'flex', 'flexDirection': 'column', 'justifyContent': 'center', 'textAlign': 'right'},
+            style={**common_style, 'backgroundColor': '#0d0d1a', 'textAlign': 'right', 'justifyContent': 'center'},
             children=[
                 html.Div("2", style={'position': 'absolute', 'top': 10, 'right': 10, 'color': '#aaa', 'fontSize': 20}),
                 html.H5("🌍 حاسبة الانحناء", style={'textAlign': 'center', 'color': 'white', 'marginTop': 30}),
@@ -101,28 +106,28 @@ app.layout = html.Div(
                 html.Div(id='res-div', style={'backgroundColor': '#1e1e2f', 'padding': '8px', 'borderRadius': '6px', 'marginTop': '10px', 'fontSize': 12, 'color': 'white', 'textAlign': 'center'})
             ]
         ),
-        # العمود 3 (أقصى اليسار) -> الرقم 1: رسم بياني
+        # مربع رقم 1 (رسم بياني)
         html.Div(
-            style={'backgroundColor': '#0d0d1a', 'position': 'relative', 'padding': '5px', 'textAlign': 'right'},
+            style={**common_style, 'backgroundColor': '#0d0d1a', 'padding': '5px', 'overflow': 'hidden'},
             children=[
                 html.Div("1", style={'position': 'absolute', 'top': 10, 'right': 10, 'color': '#aaa', 'fontSize': 20, 'zIndex': 10}),
                 dcc.Graph(id='graph', config={'displayModeBar': False}, style={'height': '100%', 'width': '100%'})
             ]
         ),
-        # ---- الصف السفلي (من اليمين إلى اليسار) ----
-        # المربع 6 (فارغ) - كان رقم 4 سابقاً
+        # ---- الصف السفلي ----
+        # مربع رقم 6 (فارغ) - تم تعديل الرقم من 4 إلى 6 حسب طلبك السابق
         html.Div(
-            style={'backgroundColor': '#111', 'position': 'relative', 'textAlign': 'right'},
+            style={**common_style, 'backgroundColor': '#111', 'textAlign': 'right'},
             children=[html.Div("6", style={'position': 'absolute', 'top': 10, 'right': 10, 'color': '#888', 'fontSize': 20})]
         ),
-        # المربع 5 (فارغ)
+        # مربع رقم 5 (فارغ)
         html.Div(
-            style={'backgroundColor': '#111', 'position': 'relative', 'textAlign': 'right'},
+            style={**common_style, 'backgroundColor': '#111', 'textAlign': 'right'},
             children=[html.Div("5", style={'position': 'absolute', 'top': 10, 'right': 10, 'color': '#888', 'fontSize': 20})]
         ),
-        # المربع 4 (فارغ) - كان رقم 6 سابقاً
+        # مربع رقم 4 (فارغ)
         html.Div(
-            style={'backgroundColor': '#111', 'position': 'relative', 'textAlign': 'right'},
+            style={**common_style, 'backgroundColor': '#111', 'textAlign': 'right'},
             children=[html.Div("4", style={'position': 'absolute', 'top': 10, 'right': 10, 'color': '#888', 'fontSize': 20})]
         )
     ]
