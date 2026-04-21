@@ -142,7 +142,7 @@ app.layout = html.Div(
             },
             children=[
 
-                html.H2("🎛️ إختـر النمـوذج من الأسـقل"),
+                html.H2("🎛️ إختـر النمـوذج من الأسـفـل"),
 
                 dcc.Dropdown(
                     id="model",
