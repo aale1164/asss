@@ -42,7 +42,7 @@ function generateData(){
     let confidence = Math.min(100, (strength + avg/2)).toFixed(1);
 
     document.getElementById("ai-text").innerHTML =
-        "📊 الاتجاه: <b>" + trend + "</b><br>" +
+        "📊 الاتجاه: " + trend + "<br>" +
         "📌 المتوسط: " + avg.toFixed(2) + "<br>" +
         "⚡ قوة الحركة: " + strength.toFixed(2) + "<br>" +
         "📉 التذبذب: " + volatility + "<br>" +
@@ -50,6 +50,6 @@ function generateData(){
         "🤖 تحليل لحظي للبيانات";
 }
 
-/* LIVE MODE */
+// ================= LIVE MODE =================
 generateData();
 setInterval(generateData, 1000);
