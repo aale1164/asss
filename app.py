@@ -120,7 +120,7 @@ app.layout = html.Div(
                 html.Label("الارتفاع"),
                 dcc.Slider(id="alt", min=0, max=50, value=10),
 
-                html.Div(id="info", style={"marginTop": "15px"}),
+                html.Div(id="info", style={"marginTop": "8.5px"}),
 
                 html.Hr(),
                 html.P("برمجة وتطوير: عدناني"),
