@@ -26,52 +26,21 @@ def create_figure(model, obj_h, eye_h, dist, zoom, alt):
     distances = np.linspace(0.1, max_dist, 200)
 
     fig = go.Figure()
-
-    fig.add_hline(
-        y=0,
-        line_color="lime",
-        line_dash="dash",
-        annotation_text="مستوى العين"
-    )
+    fig.add_hline(y=0, line_color="lime", line_dash="dash", annotation_text="مستوى العين")
 
     if model == "flat":
         angular = obj_h / (distances * 1000)
         top = angular * (eye_h + obj_h / 2)
         bottom = angular * (eye_h - obj_h / 2)
 
-        fig.add_trace(go.Scatter(
-            x=distances,
-            y=top,
-            name="القمة",
-            line=dict(color="cyan")
-        ))
-
-        fig.add_trace(go.Scatter(
-            x=distances,
-            y=bottom,
-            name="القاعدة",
-            fill="tonexty",
-            line=dict(color="red")
-        ))
+        fig.add_trace(go.Scatter(x=distances, y=top, name="القمة", line=dict(color="cyan")))
+        fig.add_trace(go.Scatter(x=distances, y=bottom, name="القاعدة", fill="tonexty", line=dict(color="red")))
 
         cur_top = (obj_h / (dist * 1000)) * (eye_h + obj_h / 2)
         cur_bottom = (obj_h / (dist * 1000)) * (eye_h - obj_h / 2)
 
-        fig.add_trace(go.Scatter(
-            x=[dist],
-            y=[cur_top],
-            mode="markers",
-            marker=dict(size=10, color="cyan"),
-            name="القمة الحالية"
-        ))
-
-        fig.add_trace(go.Scatter(
-            x=[dist],
-            y=[cur_bottom],
-            mode="markers",
-            marker=dict(size=10, color="red"),
-            name="القاعدة الحالية"
-        ))
+        fig.add_trace(go.Scatter(x=[dist], y=[cur_top], mode="markers", marker=dict(size=10, color="cyan")))
+        fig.add_trace(go.Scatter(x=[dist], y=[cur_bottom], mode="markers", marker=dict(size=10, color="red")))
 
         title = "نموذج الأرض المسطحة"
 
@@ -79,31 +48,13 @@ def create_figure(model, obj_h, eye_h, dist, zoom, alt):
         drop = curvature_drop_m(distances)
         visible = np.maximum(0, obj_h - drop)
 
-        fig.add_trace(go.Scatter(
-            x=distances,
-            y=visible,
-            name="المرئي",
-            line=dict(color="orange")
-        ))
+        fig.add_trace(go.Scatter(x=distances, y=visible, name="المرئي", line=dict(color="orange")))
 
         cur = max(0, obj_h - curvature_drop_m(dist))
-
-        fig.add_trace(go.Scatter(
-            x=[dist],
-            y=[cur],
-            mode="markers",
-            marker=dict(size=10, color="red"),
-            name="الجسم الحالي"
-        ))
+        fig.add_trace(go.Scatter(x=[dist], y=[cur], mode="markers", marker=dict(size=10, color="red")))
 
         dip = horizon_dip_deg(alt)
-
-        fig.add_hline(
-            y=-dip,
-            line_color="blue",
-            line_dash="dot",
-            annotation_text=f"الأفق ({dip:.2f}°)"
-        )
+        fig.add_hline(y=-dip, line_color="blue", line_dash="dot")
 
         title = "نموذج الأرض الكروية"
 
@@ -120,80 +71,95 @@ def create_figure(model, obj_h, eye_h, dist, zoom, alt):
     return fig
 
 
-app.layout = html.Div(
-    style={
-        "display": "flex",
-        "flexDirection": "row",
-        "height": "100vh",
-        "overflow": "hidden"
-    },
-    children=[
+app.layout = html.Div([
 
-        # ===== لوحة التحكم: اختيار نموذج المحاكاة =====
-        html.Div(
-            style={
-                "flex": "0 0 24%",
-                "padding": "15px",
-                "backgroundColor": "#f5f7fa",
-                "height": "100vh",
-                "overflowY": "auto",
-                "boxShadow": "0 4px 12px rgba(0,0,0,0.15)",
-                "borderRadius": "10px"
-            },
-            children=[
+    # ===== لوحة التحكم =====
+    html.Div(
+        style={
+            "width": "24%",
+            "display": "inline-block",
+            "verticalAlign": "top",
+            "padding": "15px",
+            "backgroundColor": "#f5f7fa",
+            "height": "100vh",
+            "overflowY": "auto",
+            "boxShadow": "0 4px 12px rgba(0,0,0,0.15)",
+            "borderRadius": "10px"
+        },
+        children=[
 
-                html.H2("🎛️ إختـر النمـوذج من الأسـفـل"),
+            html.H2("🎛️ اختر النموذج من الأسفل"),
 
-                dcc.Dropdown(
-                    id="model",
-                    options=[
-                        {"label": "مسطح", "value": "flat"},
-                        {"label": "كروي", "value": "curved"}
-                    ],
-                    value="flat"
-                ),
+            dcc.Dropdown(
+                id="model",
+                options=[
+                    {"label": "مسطح", "value": "flat"},
+                    {"label": "كروي", "value": "curved"}
+                ],
+                value="flat"
+            ),
 
-                html.Br(),
+            html.Br(),
 
-                html.Label("ارتفاع الجسم"),
-                dcc.Slider(id="obj", min=1, max=100, value=50),
+            html.Label("ارتفاع الجسم"),
+            dcc.Slider(id="obj", min=1, max=100, value=50),
 
-                html.Label("ارتفاع العين"),
-                dcc.Slider(id="eye", min=0.1, max=10, value=1.7),
+            html.Label("ارتفاع العين"),
+            dcc.Slider(id="eye", min=0.1, max=10, value=1.7),
 
-                html.Label("المسافة"),
-                dcc.Slider(id="dist", min=1, max=100, value=20),
+            html.Label("المسافة"),
+            dcc.Slider(id="dist", min=1, max=100, value=20),
 
-                html.Label("التكبير"),
-                dcc.Slider(id="zoom", min=0, max=5, value=0),
+            html.Label("التكبير"),
+            dcc.Slider(id="zoom", min=0, max=5, value=0),
 
-                html.Label("الارتفاع"),
-                dcc.Slider(id="alt", min=0, max=50, value=10),
+            html.Label("الارتفاع"),
+            dcc.Slider(id="alt", min=0, max=50, value=10),
 
-                html.Div(id="info", style={"marginTop": "15px"})
-            ]
-        ),
+            html.Div(id="info", style={"marginTop": "15px"})
+        ]
+    ),
 
-        # ===== الرسم البياني =====
-        html.Div(
-            style={
-                "flex": "1",
-                "padding": "10px",
-                "height": "100vh"
-            },
-            children=[
-                dcc.Graph(
-                    id="graph",
-                    style={
-                        "height": "100%",
-                        "width": "100%"
-                    }
-                )
-            ]
-        )
+    # ===== الرسم البياني + الفوتر =====
+    html.Div(
+        style={
+            "width": "76%",
+            "display": "inline-block",
+            "verticalAlign": "top",
+            "paddingLeft": "10px"
+        },
+        children=[
 
-    ]
-)
+            dcc.Graph(
+                id="graph",
+                style={
+                    "height": "95vh",
+                    "width": "100%"
+                }
+            ),
+
+            # ===== الفوتر (اسمك + تويتر) =====
+            html.Div(
+                style={
+                    "textAlign": "center",
+                    "padding": "10px",
+                    "color": "white",
+                    "fontSize": "14px",
+                    "opacity": "0.8"
+                },
+                children=[
+                    html.Hr(),
+                    html.P("برمجة وتطوير: عدناني"),
+                    html.P("X (Twitter): @aale1164")
+                ]
+            )
+
+        ]
+    )
+
+])
+
+
 @app.callback(
     [Output("graph", "figure"), Output("info", "children")],
     [Input("model", "value"),
