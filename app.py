@@ -110,6 +110,35 @@ app.layout = html.Div(
 
                 html.Label("Altitude - الارتفاع"),
                 dcc.Slider(id="alt", min=0, max=50, value=10),
+
+                # ===== FOOTER =====
+                html.Hr(),
+
+                html.Div(
+                    [
+                        html.Div(
+                            "برمجة وتصميم عدناني",
+                            style={"fontWeight": "bold", "marginBottom": "8px"}
+                        ),
+
+                        html.A(
+                            "@aale1164",
+                            href="https://x.com/aale1164",
+                            target="_blank",
+                            style={
+                                "color": "#1DA1F2",
+                                "textDecoration": "none",
+                                "fontWeight": "bold",
+                                "fontSize": "14px"
+                            }
+                        )
+                    ],
+                    style={
+                        "marginTop": "20px",
+                        "padding": "10px",
+                        "borderTop": "1px solid #ddd"
+                    }
+                )
             ]
         ),
 
