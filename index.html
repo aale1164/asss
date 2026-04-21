@@ -1,133 +1,415 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pro Dashboard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>منصة الاحترافية | Pro Dashboard</title>
+  <!-- خط عصري للعربية -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <!-- أيقونات احترافية (Font Awesome) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-<style>
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background: radial-gradient(circle at 20% 10%, #0b1424, #03070e);
+      color: #ffffff;
+      min-height: 100vh;
+      padding: 0 16px 32px;
+      direction: rtl;
+    }
 
-body{
-    margin:0;
-    font-family:Arial;
-    background: radial-gradient(circle at top, #0f172a, #0b0f19);
-    color:white;
-}
+    /* شريط علوي زجاجي */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 28px;
+      margin: 20px 0 10px;
+      background: rgba(18, 28, 46, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(74, 144, 226, 0.2);
+      border-radius: 60px;
+      box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5);
+    }
 
-/* ================= TOP BAR ================= */
-.topbar{
-    display:flex;
-    justify-content:space-between;
-    padding:18px 25px;
-    background:rgba(255,255,255,0.03);
-    backdrop-filter: blur(10px);
-    border-bottom:1px solid rgba(255,255,255,0.08);
-}
+    .brand {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #a0c8ff, #3b82f6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.5px;
+    }
 
-.brand{
-    font-size:20px;
-    font-weight:bold;
-    color:#3b82f6;
-}
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(59, 130, 246, 0.2);
+      padding: 8px 18px;
+      border-radius: 40px;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #bdd3ff;
+    }
 
-/* ================= GRID ================= */
-.container{
-    padding:20px;
-}
+    .live-badge i {
+      color: #3b82f6;
+      font-size: 0.8rem;
+      animation: pulse 1.8s infinite;
+    }
 
-.grid{
-    display:grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap:15px;
-}
+    @keyframes pulse {
+      0% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.2); text-shadow: 0 0 8px #3b82f6; }
+      100% { opacity: 0.6; transform: scale(1); }
+    }
 
-/* ================= CARD ================= */
-.card{
-    background:rgba(255,255,255,0.04);
-    border:1px solid rgba(255,255,255,0.08);
-    padding:20px;
-    border-radius:15px;
-    text-align:center;
-    cursor:pointer;
-    transition:0.3s;
-    position:relative;
-    overflow:hidden;
-}
+    /* الحاوية الرئيسية */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
 
-/* hover animation */
-.card:hover{
-    transform:translateY(-5px);
-    background:rgba(59,130,246,0.15);
-    box-shadow:0 10px 25px rgba(59,130,246,0.2);
-}
+    /* الشبكة الاحترافية */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 22px;
+      margin: 30px 0 20px;
+    }
 
-/* glow animation */
-.card::before{
-    content:"";
-    position:absolute;
-    top:-50%;
-    left:-50%;
-    width:200%;
-    height:200%;
-    background: radial-gradient(circle, rgba(59,130,246,0.2), transparent 60%);
-    transform:rotate(25deg);
-    opacity:0;
-    transition:0.4s;
-}
+    /* بطاقة بتصميم صور وأيقونات متناسقة */
+    .card {
+      background: rgba(12, 22, 38, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 28px;
+      padding: 24px 12px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5);
+    }
 
-.card:hover::before{
-    opacity:1;
-}
+    /* تأثير ضوئي عند التحويم */
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 20%, rgba(59, 130, 246, 0.25), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s;
+      pointer-events: none;
+    }
 
-/* icon */
-.icon{
-    font-size:30px;
-    margin-bottom:10px;
-}
+    .card:hover {
+      transform: translateY(-8px);
+      background: rgba(20, 40, 65, 0.8);
+      border-color: rgba(59, 130, 246, 0.5);
+      box-shadow: 0 25px 30px -8px rgba(0, 20, 60, 0.6);
+    }
 
-/* footer */
-.footer{
-    text-align:center;
-    padding:15px;
-    margin-top:20px;
-    opacity:0.7;
-    font-size:14px;
-}
+    .card:hover::after {
+      opacity: 1;
+    }
 
-</style>
+    /* حاوية الصورة / الأيقونة بمقاس متناسق */
+    .image-wrapper {
+      width: 90px;
+      height: 90px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      background: linear-gradient(145deg, rgba(59, 130, 246, 0.2), rgba(16, 30, 54, 0.7));
+      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+      transition: 0.2s;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
 
+    .card:hover .image-wrapper {
+      background: linear-gradient(145deg, #1e3a6b, #0f1e32);
+      box-shadow: 0 0 18px #3b82f6, inset 0 0 8px rgba(255, 255, 255, 0.1);
+      border-color: #3b82f6;
+    }
+
+    /* الصور الداخلية (أيقونات فونت أوسوم أو صور SVG) بمقاس ثابت */
+    .image-wrapper i {
+      font-size: 46px;
+      color: #e0edff;
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+      transition: 0.2s;
+    }
+
+    .card:hover .image-wrapper i {
+      color: white;
+      transform: scale(1.05);
+      filter: drop-shadow(0 0 12px #90c0ff);
+    }
+
+    /* بالنسبة للبطاقات التي نستخدم فيها صور SVG مخصصة (صور متناسقة) */
+    .image-wrapper img {
+      width: 56px;
+      height: 56px;
+      object-fit: contain;
+      filter: brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+      transition: 0.2s;
+    }
+
+    .card:hover .image-wrapper img {
+      transform: scale(1.06);
+      filter: brightness(0) invert(1) drop-shadow(0 0 10px #7ab0ff);
+    }
+
+    /* عنوان البطاقة */
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin: 8px 0 6px;
+      color: #f0f6ff;
+      letter-spacing: -0.3px;
+    }
+
+    /* وصف صغير / قيمة إحصائية */
+    .card-stat {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #9bb9f0;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 4px 14px;
+      border-radius: 30px;
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.05);
+      margin-top: 5px;
+    }
+
+    /* تذييل الصفحة */
+    .footer {
+      text-align: center;
+      padding: 24px 0 10px;
+      opacity: 0.75;
+      font-size: 1rem;
+      font-weight: 400;
+      color: #b0c7e9;
+      border-top: 1px dashed rgba(100, 150, 220, 0.2);
+      margin-top: 25px;
+    }
+
+    /* تجاوب مع الشاشات المتوسطة */
+    @media (max-width: 1100px) {
+      .grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+      }
+      .brand { font-size: 1.5rem; }
+    }
+
+    @media (max-width: 700px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+      .topbar {
+        padding: 14px 18px;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+      }
+      .image-wrapper {
+        width: 75px;
+        height: 75px;
+      }
+      .image-wrapper i {
+        font-size: 38px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      body { padding: 0 10px 20px; }
+    }
+
+    /* تنسيق إضافي للبطاقات: حدود متوهجة */
+    .card:nth-child(1) .image-wrapper { background: linear-gradient(145deg, #1e4b8f, #0c1a2b); }
+    .card:nth-child(2) .image-wrapper { background: linear-gradient(145deg, #3a2c6b, #140e2b); }
+    .card:nth-child(3) .image-wrapper { background: linear-gradient(145deg, #2d6e5a, #0e2620); }
+    .card:nth-child(4) .image-wrapper { background: linear-gradient(145deg, #9e5f2b, #301e0e); }
+    .card:nth-child(5) .image-wrapper { background: linear-gradient(145deg, #3f3f6b, #14142b); }
+    .card:nth-child(6) .image-wrapper { background: linear-gradient(145deg, #2b506e, #0e1f2e); }
+    .card:nth-child(7) .image-wrapper { background: linear-gradient(145deg, #4f3f7a, #1e1735); }
+    .card:nth-child(8) .image-wrapper { background: linear-gradient(145deg, #2f786a, #0f2e28); }
+    .card:nth-child(9) .image-wrapper { background: linear-gradient(145deg, #b47a3a, #3b2812); }
+    .card:nth-child(10) .image-wrapper { background: linear-gradient(145deg, #436b8c, #142433); }
+
+    /* نص توضيحي للقسم */
+    .section-hint {
+      margin: 5px 0 0;
+      font-size: 0.9rem;
+      color: #aac3e0;
+    }
+  </style>
 </head>
-
 <body>
 
 <div class="topbar">
-    <div class="brand">Aale Pro Dashboard</div>
-    <div>● LIVE SYSTEM</div>
+  <div class="brand">
+    <i class="fas fa-cube" style="margin-left: 10px; color: #3b82f6;"></i> 
+    منصة آفاق | Pro
+  </div>
+  <div class="live-badge">
+    <i class="fas fa-circle"></i> 
+    <span>نظام مباشر · LIVE</span>
+    <i class="fas fa-shield-alt" style="margin-right: 8px; opacity: 0.9;"></i>
+  </div>
 </div>
 
 <div class="container">
-
-    <div class="grid">
-
-        <div class="card"><div class="icon">📊</div>تحليل بيانات</div>
-        <div class="card"><div class="icon">🧠</div>ذكاء اصطناعي</div>
-        <div class="card"><div class="icon">🗓️</div>تقويم هجري</div>
-        <div class="card"><div class="icon">📈</div>إحصائيات</div>
-        <div class="card"><div class="icon">⚙️</div>إعدادات</div>
-
-        <div class="card"><div class="icon">🔐</div>حماية</div>
-        <div class="card"><div class="icon">🌐</div>شبكة</div>
-        <div class="card"><div class="icon">📡</div>بيانات مباشرة</div>
-        <div class="card"><div class="icon">💰</div>مالية</div>
-        <div class="card"><div class="icon">📦</div>تخزين</div>
-
+  <!-- الشبكة الرئيسية: 10 أقسام بصور وأيقونات متناسقة -->
+  <div class="grid">
+    
+    <!-- 1. تحليل بيانات -->
+    <div class="card">
+      <div class="image-wrapper">
+        <!-- صورة احترافية: أيقونة بيانية مع رسم بياني -->
+        <i class="fas fa-chart-pie"></i>
+      </div>
+      <div class="card-title">تحليل بيانات</div>
+      <div class="card-stat">+٢٤ تقرير</div>
+      <div class="section-hint">ذكاء الأعمال</div>
     </div>
-
-    <div class="footer">
-        © 2026 Pro Dashboard — Ready for expansion 🚀
+    
+    <!-- 2. ذكاء اصطناعي -->
+    <div class="card">
+      <div class="image-wrapper">
+        <i class="fas fa-brain"></i>
+      </div>
+      <div class="card-title">ذكاء اصطناعي</div>
+      <div class="card-stat">نموذج GPT-6</div>
+      <div class="section-hint">تعلّم عميق</div>
     </div>
+    
+    <!-- 3. تقويم هجري (صورة متناسقة: أيقونة تقويم + هلال) -->
+    <div class="card">
+      <div class="image-wrapper">
+        <!-- استخدام أيقونتين متراكبتين لإيحاء بالتقويم الهجري -->
+        <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+          <i class="fas fa-calendar-alt" style="font-size: 44px;"></i>
+          <i class="fas fa-moon" style="position: absolute; font-size: 22px; bottom: -6px; right: -10px; color: #ffe484; filter: drop-shadow(0 0 5px #fbbf24);"></i>
+        </div>
+      </div>
+      <div class="card-title">تقويم هجري</div>
+      <div class="card-stat">١٤٤٨ هـ</div>
+      <div class="section-hint">مواقيت الصلاة</div>
+    </div>
+    
+    <!-- 4. إحصائيات -->
+    <div class="card">
+      <div class="image-wrapper">
+        <i class="fas fa-chart-line"></i>
+      </div>
+      <div class="card-title">إحصائيات</div>
+      <div class="card-stat">+١٨.٥٪ نمو</div>
+      <div class="section-hint">مؤشرات الأداء</div>
+    </div>
+    
+    <!-- 5. إعدادات -->
+    <div class="card">
+      <div class="image-wrapper">
+        <i class="fas fa-sliders-h"></i>
+      </div>
+      <div class="card-title">إعدادات</div>
+      <div class="card-stat">تحكم متقدم</div>
+      <div class="section-hint">تخصيص النظام</div>
+    </div>
+    
+    <!-- 6. حماية -->
+    <div class="card">
+      <div class="image-wrapper">
+        <i class="fas fa-shield-virus"></i>
+      </div>
+      <div class="card-title">حماية</div>
+      <div class="card-stat">جدار ناري نشط</div>
+      <div class="section-hint">مصادقة ثنائية</div>
+    </div>
+    
+    <!-- 7. شبكة -->
+    <div class="card">
+      <div class="image-wrapper">
+        <i class="fas fa-network-wired"></i>
+      </div>
+      <div class="card-title">شبكة</div>
+      <div class="card-stat">٥.٢ جيجابت/ث</div>
+      <div class="section-hint">نطاق ترددي</div>
+    </div>
+    
+    <!-- 8. بيانات مباشرة -->
+    <div class="card">
+      <div class="image-wrapper">
+        <i class="fas fa-satellite-dish"></i>
+      </div>
+      <div class="card-title">بيانات مباشرة</div>
+      <div class="card-stat">تحديث كل ٣ ثوان</div>
+      <div class="section-hint">تدفق حي</div>
+    </div>
+    
+    <!-- 9. مالية -->
+    <div class="card">
+      <div class="image-wrapper">
+        <i class="fas fa-coins"></i>
+      </div>
+      <div class="card-title">مالية</div>
+      <div class="card-stat">$١٢.٤ مليار</div>
+      <div class="section-hint">محفظة استثمارية</div>
+    </div>
+    
+    <!-- 10. تخزين -->
+    <div class="card">
+      <div class="image-wrapper">
+        <i class="fas fa-database"></i>
+      </div>
+      <div class="card-title">تخزين</div>
+      <div class="card-stat">٧٨٪ مستخدم</div>
+      <div class="section-hint">سحابة هجينة</div>
+    </div>
+  </div>
 
+  <!-- تذييل احترافي -->
+  <div class="footer">
+    <i class="fas fa-crown" style="color: #fbbf24; margin-left: 8px;"></i>
+    © 2026 Pro Dashboard — تصميم احترافي بصور وأيقونات متناسقة 
+    <i class="fas fa-rocket" style="margin-right: 10px; color: #3b82f6;"></i>
+    <br>
+    <span style="font-size: 0.9rem; opacity: 0.7;">جاهز للتوسع · واجهة عصرية بمقاسات موحدة</span>
+  </div>
 </div>
 
+<!-- إضافة تأثيرات بسيطة إضافية (اختياري) -->
+<script>
+  (function() {
+    // مجرد لمسة: تغيير بسيط في شارة البث المباشر
+    console.log('✨ Pro Dashboard | تصميم بصور متناسقة مع الواجهة');
+  })();
+</script>
 </body>
 </html>
