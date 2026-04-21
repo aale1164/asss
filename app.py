@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-# صفحة مقسمة إلى 6 مربعات (3 صفوف، عمودان)
-# العمود الأيمن (من الأعلى للأسفل): 1 تعليمات، 2 حاسبة، 3 رسم بياني
-# العمود الأيسر (من الأعلى للأسفل): 4 فارغ، 5 فارغ، 6 فارغ
+# صفحة مقسمة إلى 6 مربعات متساوية (صفين، 3 أعمدة)
+# الترقيم من اليمين إلى اليسار:
+# الصف العلوي: 1 تعليمات، 2 حاسبة، 3 رسم بياني
+# الصف السفلي: 4 فارغ، 5 فارغ، 6 فارغ
 
 import dash
 from dash import html, dcc, Input, Output
@@ -28,16 +29,15 @@ def create_graph(distance_km, drop_m):
                   annotation_text=f"{distance_km:.1f} كم", annotation_position="top right")
     fig.add_hline(y=drop_m, line_dash="dash", line_color="orange",
                   annotation_text=f"{drop_m:.2f} م", annotation_position="bottom right")
-    fig.update_layout(template="plotly_dark", height=200, margin=dict(l=10, r=10, t=30, b=10),
+    fig.update_layout(template="plotly_dark", margin=dict(l=10, r=10, t=30, b=10),
                       font=dict(color='white', size=9))
     return fig
 
-# تصميم الشبكة: صفوف 3، أعمدة 2
 app.layout = html.Div(
     style={
         'display': 'grid',
-        'gridTemplateRows': '1fr 1fr 1fr',   # 3 صفوف متساوية
-        'gridTemplateColumns': '1fr 1fr',     # عمودان متساويان
+        'gridTemplateRows': '1fr 1fr',      # صفان متساويان
+        'gridTemplateColumns': '1fr 1fr 1fr', # 3 أعمدة متساوية
         'height': '100vh',
         'width': '100vw',
         'gap': '2px',
@@ -46,36 +46,27 @@ app.layout = html.Div(
         'padding': '0'
     },
     children=[
-        # الصف 1، العمود 1 (أعلى يسار) -> المربع 4 (فارغ)
-        html.Div(
-            style={'backgroundColor': '#111', 'position': 'relative', 'padding': '10px'},
-            children=[html.Div("4", style={'position': 'absolute', 'top': 10, 'left': 10, 'color': '#888', 'fontSize': 20})]
-        ),
-        # الصف 1، العمود 2 (أعلى يمين) -> المربع 1 (تعليمات)
+        # ---- الصف العلوي (من اليمين إلى اليسار) ----
+        # العمود 3 (أقصى اليمين) -> المربع 1: تعليمات
         html.Div(
             style={'backgroundColor': '#1e1e2f', 'position': 'relative', 'padding': '10px', 'overflow': 'auto'},
             children=[
-                html.Div("1", style={'position': 'absolute', 'top': 10, 'left': 10, 'color': '#aaa', 'fontSize': 20}),
+                html.Div("1", style={'position': 'absolute', 'top': 10, 'right': 10, 'color': '#aaa', 'fontSize': 20}),
                 html.H4("📘 تعليمات:", style={'color': 'white', 'marginTop': 35}),
                 html.Ul([
                     html.Li("أدخل المسافة (كم أو ميل).", style={'color': 'white'}),
                     html.Li("اضغط على زر 'احسب'.", style={'color': 'white'}),
                     html.Li("ستظهر قيمة الانخفاض بالأمتار.", style={'color': 'white'}),
                     html.Li("الرسم البياني يتغير تلقائياً.", style={'color': 'white'}),
-                    html.Li("الحساب نظري (بدون انكسار).", style={'color': 'white'})
+                    html.Li("الحساب نظري (بدون انكسار جوي).", style={'color': 'white'})
                 ], style={'color': 'white'})
             ]
         ),
-        # الصف 2، العمود 1 (وسط يسار) -> المربع 5 (فارغ)
-        html.Div(
-            style={'backgroundColor': '#111', 'position': 'relative', 'padding': '10px'},
-            children=[html.Div("5", style={'position': 'absolute', 'top': 10, 'left': 10, 'color': '#888', 'fontSize': 20})]
-        ),
-        # الصف 2، العمود 2 (وسط يمين) -> المربع 2 (حاسبة)
+        # العمود 2 (الوسط) -> المربع 2: حاسبة
         html.Div(
             style={'backgroundColor': '#0d0d1a', 'position': 'relative', 'padding': '10px', 'display': 'flex', 'flexDirection': 'column', 'justifyContent': 'center'},
             children=[
-                html.Div("2", style={'position': 'absolute', 'top': 10, 'left': 10, 'color': '#aaa', 'fontSize': 20}),
+                html.Div("2", style={'position': 'absolute', 'top': 10, 'right': 10, 'color': '#aaa', 'fontSize': 20}),
                 html.H5("🌍 حاسبة الانحناء", style={'textAlign': 'center', 'color': 'white', 'marginTop': 30}),
                 html.Label("المسافة:", style={'fontSize': 12, 'color': 'white'}),
                 dcc.Input(id='dist-input', type='number', value=10, step=0.5,
@@ -88,18 +79,29 @@ app.layout = html.Div(
                 html.Div(id='res-div', style={'backgroundColor': '#1e1e2f', 'padding': '8px', 'borderRadius': '6px', 'marginTop': '10px', 'fontSize': 12, 'color': 'white', 'textAlign': 'center'})
             ]
         ),
-        # الصف 3، العمود 1 (أسفل يسار) -> المربع 6 (فارغ)
-        html.Div(
-            style={'backgroundColor': '#111', 'position': 'relative', 'padding': '10px'},
-            children=[html.Div("6", style={'position': 'absolute', 'top': 10, 'left': 10, 'color': '#888', 'fontSize': 20})]
-        ),
-        # الصف 3، العمود 2 (أسفل يمين) -> المربع 3 (رسم بياني)
+        # العمود 1 (أقصى اليسار) -> المربع 3: رسم بياني
         html.Div(
             style={'backgroundColor': '#0d0d1a', 'position': 'relative', 'padding': '5px'},
             children=[
-                html.Div("3", style={'position': 'absolute', 'top': 10, 'left': 10, 'color': '#aaa', 'fontSize': 20, 'zIndex': 10}),
+                html.Div("3", style={'position': 'absolute', 'top': 10, 'right': 10, 'color': '#aaa', 'fontSize': 20, 'zIndex': 10}),
                 dcc.Graph(id='graph', config={'displayModeBar': False}, style={'height': '100%'})
             ]
+        ),
+        # ---- الصف السفلي (من اليمين إلى اليسار) ----
+        # المربع 4 (فارغ)
+        html.Div(
+            style={'backgroundColor': '#111', 'position': 'relative'},
+            children=[html.Div("4", style={'position': 'absolute', 'top': 10, 'right': 10, 'color': '#888', 'fontSize': 20})]
+        ),
+        # المربع 5 (فارغ)
+        html.Div(
+            style={'backgroundColor': '#111', 'position': 'relative'},
+            children=[html.Div("5", style={'position': 'absolute', 'top': 10, 'right': 10, 'color': '#888', 'fontSize': 20})]
+        ),
+        # المربع 6 (فارغ)
+        html.Div(
+            style={'backgroundColor': '#111', 'position': 'relative'},
+            children=[html.Div("6", style={'position': 'absolute', 'top': 10, 'right': 10, 'color': '#888', 'fontSize': 20})]
         )
     ]
 )
