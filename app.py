@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# تطبيق Dash مبسط لمقارنة نموذج الأرض المسطحة والكروية
+# تطبيق Dash مع أرقام شرائح بيضاء واضحة
 
 import dash
 from dash import html, dcc, Input, Output
@@ -36,7 +36,6 @@ def create_figure(model, obj_h, eye_h, dist, zoom, alt):
         angular = obj_h / (distances * 1000)
         top = angular * (eye_h + obj_h/2)
         bottom = angular * (eye_h - obj_h/2)
-        # نقطة التلاشي
         vanish_deg = 0.02
         vanish_km = obj_h / (2 * math.tan(math.radians(vanish_deg))) / 1000
         top[distances > vanish_km] = 0
@@ -50,7 +49,7 @@ def create_figure(model, obj_h, eye_h, dist, zoom, alt):
         fig.add_trace(go.Scatter(x=[dist], y=[cur_top], mode='markers', marker=dict(size=10, color='cyan'), name='القمة الحالية'))
         fig.add_trace(go.Scatter(x=[dist], y=[cur_bottom], mode='markers', marker=dict(size=10, color='red'), name='القاعدة الحالية'))
         fig.add_vline(x=vanish_km, line_dash="dot", line_color="gray", annotation_text=f"نقطة التلاشي {vanish_km:.1f} كم")
-        title = f"نموذج الأرض المسطحة - المنظور الخطي"
+        title = "🌍 نموذج الأرض المسطحة - المنظور الخطي"
     else:
         drop = curvature_drop_m(distances)
         visible = np.maximum(0, obj_h - drop)
@@ -59,7 +58,7 @@ def create_figure(model, obj_h, eye_h, dist, zoom, alt):
         fig.add_trace(go.Scatter(x=[dist], y=[cur_visible], mode='markers', marker=dict(size=12, color='red'), name='الجسم الحالي'))
         dip = horizon_dip_deg(alt)
         fig.add_hline(y=-dip, line_width=3, line_color="blue", line_dash="dot", annotation_text=f"الأفق الكروي (انخفاض {dip:.2f}°)")
-        title = f"نموذج الأرض الكروية - الانحناء والأفق"
+        title = "🌍 نموذج الأرض الكروية - الانحناء والأفق"
     
     fig.update_layout(
         title=dict(text=title, x=0.5, font=dict(color='white', size=16)),
@@ -71,30 +70,116 @@ def create_figure(model, obj_h, eye_h, dist, zoom, alt):
     )
     return fig
 
-app.layout = html.Div(
-    style={'display': 'flex', 'flexDirection': 'row', 'height': '100vh', 'padding': '20px', 'gap': '20px', 'backgroundColor': '#000', 'color': 'white'},
-    children=[
-        html.Div(
-            style={'flex': '1', 'backgroundColor': '#111', 'borderRadius': '12px', 'padding': '15px'},
-            children=[
-                html.H2("لوحة التحكم", style={'textAlign': 'center'}),
-                html.Label("نموذج المحاكاة:"),
-                dcc.Dropdown(id='model', options=[{'label':'أرض مسطحة (منظور)', 'value':'flat'},{'label':'أرض كروية (انحناء)', 'value':'curved'}], value='flat', clearable=False),
-                html.Label("ارتفاع الجسم (م):"), dcc.Slider(id='obj', min=1, max=100, step=1, value=50, marks={1:'1',50:'50',100:'100'}),
-                html.Label("ارتفاع العين (م):"), dcc.Slider(id='eye', min=0.1, max=10, step=0.1, value=1.7, marks={0.1:'0.1',5:'5',10:'10'}),
-                html.Label("المسافة (كم):"), dcc.Slider(id='dist', min=1, max=100, step=1, value=20, marks={1:'1',50:'50',100:'100'}),
-                html.Label("عامل التكبير:"), dcc.Slider(id='zoom', min=0, max=5, step=0.2, value=0, marks={0:'0',2:'2',5:'5'}),
-                html.Label("الارتفاع الحالي (كم) - للأفق الكروي:"), dcc.Slider(id='alt', min=0, max=50, step=0.5, value=10, marks={0:'0',25:'25',50:'50'}),
-                html.Div(id='info', style={'marginTop':'20px', 'backgroundColor':'#1e1e2f', 'padding':'10px', 'borderRadius':'8px'})
-            ]
-        ),
-        html.Div(style={'flex': '2', 'backgroundColor': '#0d0d1a', 'borderRadius': '12px', 'padding': '10px'}, children=[dcc.Graph(id='graph', style={'height':'85vh'})])
-    ]
-)
+app.layout = html.Div([
+    # CSS قوي لضمان ظهور أرقام الشرائح باللون الأبيض
+    html.Style('''
+        /* جميع أرقام الشرائح */
+        .rc-slider-mark-text {
+            color: white !important;
+            font-size: 12px !important;
+            font-weight: bold !important;
+            text-shadow: 0px 0px 2px black !important;
+        }
+        /* نافذة القيمة المنبثقة */
+        .rc-slider-tooltip-inner {
+            background-color: #333 !important;
+            color: white !important;
+            border: 1px solid #aaa !important;
+            font-weight: bold !important;
+        }
+        /* النقاط الصغيرة على الشريط */
+        .rc-slider-dot {
+            border-color: #aaa !important;
+        }
+        /* مقبض التحكم */
+        .rc-slider-handle {
+            border-color: #4CAF50 !important;
+            background-color: #4CAF50 !important;
+        }
+        /* مسار الشريط */
+        .rc-slider-track {
+            background-color: #4CAF50 !important;
+        }
+        /* خلفية الشريط */
+        .rc-slider-rail {
+            background-color: #555 !important;
+        }
+        /* أي نص آخر داخل الحاوية */
+        label, .control-label {
+            color: white !important;
+            font-weight: bold !important;
+        }
+        /* القائمة المنسدلة */
+        .Select-control, .Select-menu-outer {
+            background-color: #222 !important;
+            color: white !important;
+        }
+        .Select-value-label {
+            color: white !important;
+        }
+        .Select-option {
+            background-color: #222 !important;
+            color: white !important;
+        }
+        .Select-option.is-focused {
+            background-color: #4CAF50 !important;
+        }
+    '''),
+    html.Div(
+        style={
+            'display': 'flex',
+            'flexDirection': 'row',
+            'height': '100vh',
+            'padding': '20px',
+            'gap': '20px',
+            'backgroundColor': '#000',
+            'color': 'white'
+        },
+        children=[
+            html.Div(
+                style={'flex': '1', 'backgroundColor': '#111', 'borderRadius': '12px', 'padding': '15px', 'overflowY': 'auto'},
+                children=[
+                    html.H2("🎛️ لوحة التحكم", style={'textAlign': 'center', 'color': 'white'}),
+                    html.Hr(),
+                    html.Label("نموذج المحاكاة:", style={'color': 'white'}),
+                    dcc.Dropdown(
+                        id='model',
+                        options=[{'label': ' أرض مسطحة (منظور خطي)', 'value': 'flat'},
+                                 {'label': ' أرض كروية (انحناء)', 'value': 'curved'}],
+                        value='flat',
+                        clearable=False,
+                        style={'backgroundColor': '#222', 'color': 'white'}
+                    ),
+                    html.Label("ارتفاع الجسم (م):", style={'color': 'white'}),
+                    dcc.Slider(id='obj', min=1, max=100, step=1, value=50,
+                               marks={1: '1', 25: '25', 50: '50', 75: '75', 100: '100'}),
+                    html.Label("ارتفاع العين (م):", style={'color': 'white'}),
+                    dcc.Slider(id='eye', min=0.1, max=10, step=0.1, value=1.7,
+                               marks={0.1: '0.1', 2: '2', 5: '5', 8: '8', 10: '10'}),
+                    html.Label("المسافة (كم):", style={'color': 'white'}),
+                    dcc.Slider(id='dist', min=1, max=100, step=1, value=20,
+                               marks={1: '1', 25: '25', 50: '50', 75: '75', 100: '100'}),
+                    html.Label("عامل التكبير (الزوم):", style={'color': 'white'}),
+                    dcc.Slider(id='zoom', min=0, max=5, step=0.2, value=0,
+                               marks={0: '0', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5'}),
+                    html.Label("الارتفاع الحالي (كم) – للأفق الكروي:", style={'color': 'white'}),
+                    dcc.Slider(id='alt', min=0, max=50, step=0.5, value=10,
+                               marks={0: '0', 10: '10', 20: '20', 30: '30', 40: '40', 50: '50'}),
+                    html.Div(id='info', style={'marginTop': '20px', 'backgroundColor': '#1e1e2f', 'padding': '10px', 'borderRadius': '8px', 'color': 'white'})
+                ]
+            ),
+            html.Div(
+                style={'flex': '2', 'backgroundColor': '#0d0d1a', 'borderRadius': '12px', 'padding': '10px'},
+                children=[dcc.Graph(id='graph', config={'displayModeBar': True}, style={'height': '85vh'})]
+            )
+        ]
+    )
+])
 
 @app.callback(
     [Output('graph', 'figure'), Output('info', 'children')],
-    [Input('model', 'value'), Input('obj', 'value'), Input('eye', 'value'), Input('dist', 'value'), Input('zoom', 'value'), Input('alt', 'value')]
+    [Input('model', 'value'), Input('obj', 'value'), Input('eye', 'value'),
+     Input('dist', 'value'), Input('zoom', 'value'), Input('alt', 'value')]
 )
 def update(model, obj, eye, dist, zoom, alt):
     if obj is None: obj = 50
@@ -104,9 +189,9 @@ def update(model, obj, eye, dist, zoom, alt):
     if alt is None: alt = 10
     fig = create_figure(model, obj, eye, dist, zoom, alt)
     info = html.Div([
-        html.P(f"الانخفاض الهندسي لـ {dist} كم = {curvature_drop_m(dist):.2f} متر"),
-        html.P(f"مسافة الأفق لارتفاع العين {eye} م = {math.sqrt(2*R_KM*(eye/1000)):.2f} كم"),
-        html.P(f"زاوية انخفاض الأفق عند {alt} كم = {horizon_dip_deg(alt):.2f} درجة")
+        html.P(f"📐 الانخفاض الهندسي لمسافة {dist} كم = {curvature_drop_m(dist):.2f} متر"),
+        html.P(f"👁️ مسافة الأفق لارتفاع العين {eye} م = {math.sqrt(2*R_KM*(eye/1000)):.2f} كم"),
+        html.P(f"📉 زاوية انخفاض الأفق عند ارتفاع {alt} كم = {horizon_dip_deg(alt):.2f} درجة")
     ])
     return fig, info
 
