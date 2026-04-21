@@ -1,55 +1,96 @@
-function generateData(){
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>التقويم الهجري</title>
 
-    let points = document.getElementById("points").value;
-    let x = [], y = [];
-
-    for(let i = 0; i < points; i++){
-        x.push(i);
-        y.push(Math.random() * 100);
-    }
-
-    let data = [{
-        x: x,
-        y: y,
-        type: 'scatter',
-        mode: 'lines+markers',
-        line: {color: '#3b82f6', width: 3}
-    }];
-
-    let layout = {
-        paper_bgcolor: "transparent",
-        plot_bgcolor: "transparent",
-        font: {color: "white"}
-    };
-
-    Plotly.newPlot("chart", data, layout, {displayModeBar: false});
-
-    // ================= AI =================
-    let avg = y.reduce((a,b) => a + b) / y.length;
-    let first = y[0];
-    let last = y[y.length - 1];
-
-    let trend = last > first ? "📈 صاعد" : "📉 نازل";
-    let strength = Math.abs(last - first);
-
-    let volatility = 0;
-    for(let i = 1; i < y.length; i++){
-        volatility += Math.abs(y[i] - y[i - 1]);
-    }
-
-    volatility = (volatility / y.length).toFixed(2);
-
-    let confidence = Math.min(100, (strength + avg/2)).toFixed(1);
-
-    document.getElementById("ai-text").innerHTML =
-        "📊 الاتجاه: " + trend + "<br>" +
-        "📌 المتوسط: " + avg.toFixed(2) + "<br>" +
-        "⚡ قوة الحركة: " + strength.toFixed(2) + "<br>" +
-        "📉 التذبذب: " + volatility + "<br>" +
-        "🎯 ثقة AI: " + confidence + "%<br><br>" +
-        "🤖 تحليل لحظي للبيانات";
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:#0b0f19;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
 }
 
-// ================= LIVE MODE =================
-generateData();
-setInterval(generateData, 1000);
+.card{
+    background:#111827;
+    padding:30px;
+    border-radius:15px;
+    text-align:center;
+    box-shadow:0 10px 30px rgba(0,0,0,0.5);
+    width:300px;
+}
+
+h1{
+    color:#3b82f6;
+    margin-bottom:20px;
+}
+
+.date{
+    font-size:18px;
+    margin-top:10px;
+}
+
+button{
+    margin-top:20px;
+    padding:10px;
+    width:100%;
+    border:none;
+    border-radius:10px;
+    background:#3b82f6;
+    color:white;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#2563eb;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+    <h1>التقويم الهجري</h1>
+
+    <div id="hijri" class="date">جاري التحميل...</div>
+    <div id="gregorian" class="date"></div>
+
+    <button onclick="loadDate()">تحديث التاريخ</button>
+</div>
+
+<script>
+
+function loadDate(){
+
+    let now = new Date();
+
+    // التقويم الميلادي
+    let greg = now.toLocaleDateString('ar-EG');
+
+    // التقويم الهجري
+    let hijri = now.toLocaleDateString('ar-SA-u-ca-islamic', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+
+    document.getElementById("gregorian").innerHTML =
+        "📅 الميلادي: " + greg;
+
+    document.getElementById("hijri").innerHTML =
+        "🕌 الهجري: " + hijri;
+}
+
+loadDate();
+
+</script>
+
+</body>
+</html>
