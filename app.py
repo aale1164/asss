@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 import dash
-from dash import html, dcc, Input, Output
+from dash import html, dcc, Input, Output, State
 import plotly.graph_objects as go
 import numpy as np
 import math
-import os
 
 app = dash.Dash(__name__)
 server = app.server
 
 R_KM = 6371.0
 
+# ================= الحسابات =================
 def curvature_drop_m(distance_km):
     return (distance_km ** 2) / (2 * R_KM) * 1000
 
@@ -21,156 +21,148 @@ def horizon_dip_deg(altitude_km):
     cos_theta = max(min(cos_theta, 1), -1)
     return np.degrees(np.arccos(cos_theta))
 
+# ================= الرسم =================
 def create_figure(model, obj_h, eye_h, dist, zoom, alt):
     max_dist = max(dist * 2, 10)
-    distances = np.linspace(0.1, max_dist, 200)
+    x = np.linspace(0.1, max_dist, 200)
 
     fig = go.Figure()
-    fig.add_hline(y=0, line_color="lime", line_dash="dash", annotation_text="مستوى العين")
+    fig.add_hline(y=0, line_color="lime", line_dash="dash")
 
     if model == "flat":
-        angular = obj_h / (distances * 1000)
-        top = angular * (eye_h + obj_h / 2)
-        bottom = angular * (eye_h - obj_h / 2)
-
-        fig.add_trace(go.Scatter(x=distances, y=top, name="القمة", line=dict(color="cyan")))
-        fig.add_trace(go.Scatter(x=distances, y=bottom, name="القاعدة", fill="tonexty", line=dict(color="red")))
-
-        cur_top = (obj_h / (dist * 1000)) * (eye_h + obj_h / 2)
-        cur_bottom = (obj_h / (dist * 1000)) * (eye_h - obj_h / 2)
-
-        fig.add_trace(go.Scatter(x=[dist], y=[cur_top], mode="markers", marker=dict(size=10, color="cyan")))
-        fig.add_trace(go.Scatter(x=[dist], y=[cur_bottom], mode="markers", marker=dict(size=10, color="red")))
-
-        title = "نموذج الأرض المسطحة"
-
+        y = obj_h / (x * 1000) * eye_h
+        fig.add_trace(go.Scatter(x=x, y=y, line=dict(color="cyan"), name="Flat"))
+        title = "Flat Model"
     else:
-        drop = curvature_drop_m(distances)
-        visible = np.maximum(0, obj_h - drop)
-
-        fig.add_trace(go.Scatter(x=distances, y=visible, name="المرئي", line=dict(color="orange")))
-
-        cur = max(0, obj_h - curvature_drop_m(dist))
-        fig.add_trace(go.Scatter(x=[dist], y=[cur], mode="markers", marker=dict(size=10, color="red")))
-
-        dip = horizon_dip_deg(alt)
-        fig.add_hline(y=-dip, line_color="blue", line_dash="dot")
-
-        title = "نموذج الأرض الكروية"
+        drop = curvature_drop_m(x)
+        y = np.maximum(0, obj_h - drop)
+        fig.add_trace(go.Scatter(x=x, y=y, line=dict(color="orange"), name="Curved"))
+        title = "Curved Model"
 
     fig.update_layout(
         title=title,
         plot_bgcolor="black",
         paper_bgcolor="black",
         font=dict(color="white"),
-        xaxis=dict(color="white"),
-        yaxis=dict(color="white"),
-        legend=dict(font=dict(color="white"))
+        margin=dict(l=20, r=20, t=40, b=20)
     )
-
     return fig
 
-
-# ===================== LAYOUT =====================
+# ================= LAYOUT =================
 app.layout = html.Div(
     style={
         "display": "flex",
         "flexDirection": "row",
-        "height": "85vh",
-        "overflow": "hidden"
+        "height": "100vh"
     },
     children=[
 
-        # ===== لوحة التحكم =====
+        dcc.Store(id="sidebar-state", data=True),
+
+        # ===== SIDEBAR =====
         html.Div(
+            id="sidebar",
             style={
-                "flex": "0 0 24%",
-                "padding": "15px",
+                "width": "320px",
+                "transition": "0.3s",
                 "backgroundColor": "#f5f7fa",
-                "overflowY": "auto",
-                "boxShadow": "0 4px 12px rgba(0,0,0,0.15)"
+                "padding": "15px",
+                "overflowY": "auto"
             },
             children=[
 
-                html.H2("🎛️ اختر النموذج من الأسفل"),
+                html.Button(
+                    "☰",
+                    id="toggle-btn",
+                    style={
+                        "fontSize": "20px",
+                        "padding": "5px 10px",
+                        "marginBottom": "10px",
+                        "cursor": "pointer"
+                    }
+                ),
+
+                html.H3("Control Panel"),
 
                 dcc.Dropdown(
                     id="model",
                     options=[
-                        {"label": "مسطح", "value": "flat"},
-                        {"label": "كروي", "value": "curved"}
+                        {"label": "Flat", "value": "flat"},
+                        {"label": "Curved", "value": "curved"}
                     ],
                     value="flat"
                 ),
 
                 html.Br(),
 
-                html.Label("ارتفاع الجسم"),
+                html.Label("Object Height"),
                 dcc.Slider(id="obj", min=1, max=100, value=50),
 
-                html.Label("ارتفاع العين"),
+                html.Label("Eye Height"),
                 dcc.Slider(id="eye", min=0.1, max=10, value=1.7),
 
-                html.Label("المسافة"),
+                html.Label("Distance"),
                 dcc.Slider(id="dist", min=1, max=100, value=20),
 
-                html.Label("التكبير"),
+                html.Label("Zoom"),
                 dcc.Slider(id="zoom", min=0, max=5, value=0),
 
-                html.Label("الارتفاع"),
+                html.Label("Altitude"),
                 dcc.Slider(id="alt", min=0, max=50, value=10),
-
-                html.Div(id="info", style={"marginTop": "8.5px"}),
-
-                html.Hr(),
-                html.P("برمجة وتطوير: عدناني"),
-                html.P("X (Twitter): @aale1164")
             ]
         ),
 
-        # ===== الرسم البياني =====
+        # ===== CHART =====
         html.Div(
-            style={
-                "flex": "1",
-                "padding": "10px",
-                "height": "85vh"
-            },
+            style={"flex": 1, "padding": "10px"},
             children=[
-                dcc.Graph(
-                    id="graph",
-                    style={
-                        "height": "100%",
-                        "width": "100%"
-                    }
-                )
+                dcc.Graph(id="graph", style={"height": "95vh"})
             ]
         )
-
     ]
 )
 
-
-# ===================== CALLBACK =====================
+# ================= TOGGLE SIDEBAR =================
 @app.callback(
-    [Output("graph", "figure"), Output("info", "children")],
-    [Input("model", "value"),
-     Input("obj", "value"),
-     Input("eye", "value"),
-     Input("dist", "value"),
-     Input("zoom", "value"),
-     Input("alt", "value")]
+    Output("sidebar", "style"),
+    Output("sidebar-state", "data"),
+    Input("toggle-btn", "n_clicks"),
+    State("sidebar-state", "data"),
+    prevent_initial_call=True
 )
-def update(model, obj, eye, dist, zoom, alt):
-    fig = create_figure(model, obj, eye, dist, zoom, alt)
+def toggle_sidebar(n, state):
+    state = not state
 
-    info = html.Div([
-        html.P(f"الانخفاض: {curvature_drop_m(dist):.2f} م"),
-        html.P(f"الأفق: {math.sqrt(2 * R_KM * (eye / 1000)):.2f} كم"),
-        html.P(f"زاوية الأفق: {horizon_dip_deg(alt):.2f}°")
-    ])
+    if state:
+        return {
+            "width": "320px",
+            "transition": "0.3s",
+            "backgroundColor": "#f5f7fa",
+            "padding": "15px",
+            "overflowY": "auto"
+        }, state
+    else:
+        return {
+            "width": "60px",
+            "transition": "0.3s",
+            "backgroundColor": "#f5f7fa",
+            "padding": "10px",
+            "overflow": "hidden"
+        }, state
 
-    return fig, info
+# ================= UPDATE =================
+@app.callback(
+    Output("graph", "figure"),
+    Input("model", "value"),
+    Input("obj", "value"),
+    Input("eye", "value"),
+    Input("dist", "value"),
+    Input("zoom", "value"),
+    Input("alt", "value")
+)
+def update(m, o, e, d, z, a):
+    return create_figure(m, o, e, d, z, a)
 
-
-# ===================== مهم للنشر =====================
-server = app.server
+# ================= RUN =================
+if __name__ == "__main__":
+    app.run_server(debug=False)
