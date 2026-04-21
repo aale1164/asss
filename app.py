@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 # تطبيق Dash - شاشة مقسمة:
 # اليسار: صورة بحجم كامل
-# اليمين: أعلى (تعليمات) بنسبة 40% من الارتفاع، أسفل (حاسبة) بنسبة 60%
-# مع استخدام خط "Tharwat Emara Ruqaa" في التعليمات فقط ومحاذاة اليمين
+# اليمين: أعلى (تعليمات) بارتفاع 32%، أسفل (حاسبة) بارتفاع 68%
+# خط التعليمات: Tharwat Emara Ruqaa عريض، محاذاة لليمين مع إزاحة
+# حذف ملاحظة الانكسار، واستبدالها بعبارة مسافة الأفق في حاوية النتائج
 
 import dash
 from dash import html, dcc, Input, Output
@@ -35,7 +36,7 @@ app.layout = html.Div(
         'overflow': 'hidden'
     },
     children=[
-        # القسم الأيسر: الصورة (يأخذ المساحة المتبقية)
+        # القسم الأيسر: الصورة
         html.Div(
             style={
                 'flex': '1',
@@ -48,7 +49,7 @@ app.layout = html.Div(
             },
             children=[
                 html.Img(
-                    src='/ASdddd112.jpg',  # استخدم المسار الصحيح أو الرابط المباشر
+                    src='/ASdddd112.jpg',  # ضع المسار الصحيح لصورتك
                     style={
                         'width': '100%',
                         'height': '100%',
@@ -57,7 +58,7 @@ app.layout = html.Div(
                 )
             ]
         ),
-        # القسم الأيمن: عرض ثابت 25% من الشاشة، وتقسيم عمودي (40% تعليمات، 60% حاسبة)
+        # القسم الأيمن
         html.Div(
             style={
                 'width': '25%',
@@ -71,17 +72,19 @@ app.layout = html.Div(
                 'overflow': 'hidden'
             },
             children=[
-                # الجزء العلوي: التعليمات - 40% من الارتفاع
+                # التعليمات (32% من الارتفاع) - تم تقليصها 20% من 40% سابقاً
                 html.Div(
                     style={
-                        'flex': '0.4',  # 40% من الارتفاع الكلي للقسم الأيمن
+                        'flex': '0.32',
                         'backgroundColor': '#1e1e2f',
                         'padding': '10px',
                         'overflowY': 'auto',
                         'borderBottom': '1px solid #333',
                         'fontFamily': 'Tharwat Emara Ruqaa, "Traditional Arabic", Tahoma, sans-serif',
-                        'textAlign': 'right',  # محاذاة النص إلى اليمين
-                        'direction': 'rtl'     # لدعم اللغة العربية بشكل أفضل
+                        'fontWeight': 'bold',   # جعل الخط عريضاً
+                        'textAlign': 'right',
+                        'direction': 'rtl',
+                        'paddingRight': '20px',  # إزاحة بمقدار حرفين تقريباً
                     },
                     children=[
                         html.H4("📘 تعليمات:", style={'color': '#4CAF50', 'marginTop': '0', 'marginBottom': '8px', 'textAlign': 'right'}),
@@ -94,12 +97,12 @@ app.layout = html.Div(
                         ], style={'paddingRight': '15px', 'margin': '0', 'textAlign': 'right'})
                     ]
                 ),
-                # الجزء السفلي: حاسبة الانحناء - 60% من الارتفاع
+                # حاسبة انحناء الأرض (68% من الارتفاع) - تم تقليص padding الداخلي
                 html.Div(
                     style={
-                        'flex': '0.6',  # 60% من الارتفاع
+                        'flex': '0.68',
                         'backgroundColor': '#0d0d1a',
-                        'padding': '10px',
+                        'padding': '6px',   # تقليص padding
                         'display': 'flex',
                         'flexDirection': 'column',
                         'alignItems': 'center',
@@ -107,7 +110,7 @@ app.layout = html.Div(
                         'overflowY': 'auto'
                     },
                     children=[
-                        html.H3("🌍 حاسبة انحناء الأرض", style={'textAlign': 'center', 'fontSize': '1.2rem', 'marginBottom': '10px'}),
+                        html.H3("🌍 حاسبة انحناء الأرض", style={'textAlign': 'center', 'fontSize': '1.2rem', 'marginBottom': '8px'}),
                         html.Label("أدخل المسافة:", style={'fontSize': '0.9rem'}),
                         dcc.Input(
                             id='distance-input',
@@ -116,7 +119,7 @@ app.layout = html.Div(
                             step=0.1,
                             style={
                                 'width': '80%',
-                                'padding': '6px',
+                                'padding': '5px',
                                 'fontSize': '0.9rem',
                                 'margin': '5px 0',
                                 'borderRadius': '6px',
@@ -126,7 +129,7 @@ app.layout = html.Div(
                                 'textAlign': 'center'
                             }
                         ),
-                        html.Label("الوحدة:", style={'fontSize': '0.9rem', 'marginTop': '5px'}),
+                        html.Label("الوحدة:", style={'fontSize': '0.9rem', 'marginTop': '3px'}),
                         dcc.RadioItems(
                             id='unit-selector',
                             options=[
@@ -141,12 +144,12 @@ app.layout = html.Div(
                                     style={
                                         'backgroundColor': '#4CAF50',
                                         'color': 'white',
-                                        'padding': '6px 12px',
+                                        'padding': '5px 10px',
                                         'fontSize': '0.9rem',
                                         'border': 'none',
                                         'borderRadius': '6px',
                                         'cursor': 'pointer',
-                                        'margin': '10px 0',
+                                        'margin': '8px 0',
                                         'width': '70%'
                                     }),
                         html.Div(id='result-container',
@@ -159,9 +162,7 @@ app.layout = html.Div(
                                      'border': '1px solid #444',
                                      'marginTop': '5px',
                                      'fontSize': '0.8rem'
-                                 }),
-                        html.Div(id='horizon-container',
-                                 style={'marginTop': '8px', 'fontSize': '0.7rem', 'color': '#aaa', 'textAlign': 'center'})
+                                 })
                     ]
                 )
             ]
@@ -170,8 +171,7 @@ app.layout = html.Div(
 )
 
 @app.callback(
-    [Output('result-container', 'children'),
-     Output('horizon-container', 'children')],
+    Output('result-container', 'children'),
     [Input('calc-button', 'n_clicks'),
      Input('distance-input', 'value'),
      Input('unit-selector', 'value')]
@@ -192,22 +192,22 @@ def update_results(n_clicks, dist_val, unit_val):
     drop_m = curvature_drop(distance_km)
     drop_ft = drop_m * 3.28084
     
+    # حساب مسافة الأفق (ارتفاع 1.7 م)
+    eye_height = 1.7
+    horizon_km = horizon_distance(eye_height)
+    horizon_miles = horizon_km * 0.621371
+    
     result_text = html.Div([
         html.P(f"المسافة: {distance:.2f} {unit_name}", style={'margin': '0 0 5px 0', 'fontWeight': 'bold'}),
         html.P("📉 مقدار الانحناء (الانخفاض):", style={'margin': '2px'}),
         html.H4(f"{drop_m:.2f} متر", style={'color': '#ffaa00', 'margin': '2px'}),
         html.P(f"أي ما يعادل {drop_ft:.2f} قدم", style={'fontSize': '0.7rem', 'margin': '2px'}),
         html.Hr(style={'margin': '5px 0'}),
-        html.P("ملاحظة: الحساب النظري يهمل الانكسار الجوي.", style={'fontSize': '0.6rem', 'margin': '2px'})
+        # استبدال الملاحظة بعبارة مسافة الأفق
+        html.P(f"👁️ مسافة الأفق (ارتفاع {eye_height} م) ≈ {horizon_km:.2f} كم ({horizon_miles:.2f} ميل)", 
+               style={'fontSize': '0.75rem', 'margin': '2px', 'color': '#aaa'})
     ])
-    
-    eye_height = 1.7
-    horizon_km = horizon_distance(eye_height)
-    horizon_miles = horizon_km * 0.621371
-    horizon_text = html.Div([
-        html.P(f"👁️ مسافة الأفق (ارتفاع {eye_height} م) ≈ {horizon_km:.2f} كم ({horizon_miles:.2f} ميل)", style={'margin': '0'})
-    ])
-    return result_text, horizon_text
+    return result_text
 
 if __name__ == '__main__':
     app.run(debug=True)
