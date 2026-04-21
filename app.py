@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# تطبيق Dash مع أرقام شرائح بيضاء واضحة
+# تطبيق Dash مع أرقام شرائح واضحة (بيضاء على خلفية داكنة)
 
 import dash
 from dash import html, dcc, Input, Output
@@ -71,23 +71,27 @@ def create_figure(model, obj_h, eye_h, dist, zoom, alt):
     return fig
 
 app.layout = html.Div([
-    # CSS قوي لضمان ظهور أرقام الشرائح باللون الأبيض
+    # CSS قوي لضمان أرقام الشرائح بيضاء على خلفية داكنة
     html.Style('''
-        /* جميع أرقام الشرائح */
+        /* خلفية داكنة للأرقام */
         .rc-slider-mark-text {
             color: white !important;
+            background-color: #222 !important;
+            padding: 2px 4px !important;
+            border-radius: 4px !important;
             font-size: 12px !important;
             font-weight: bold !important;
-            text-shadow: 0px 0px 2px black !important;
+            border: 1px solid #555 !important;
+            white-space: nowrap !important;
         }
         /* نافذة القيمة المنبثقة */
         .rc-slider-tooltip-inner {
-            background-color: #333 !important;
+            background-color: #000 !important;
             color: white !important;
-            border: 1px solid #aaa !important;
+            border: 1px solid #4CAF50 !important;
             font-weight: bold !important;
         }
-        /* النقاط الصغيرة على الشريط */
+        /* النقاط الصغيرة */
         .rc-slider-dot {
             border-color: #aaa !important;
         }
@@ -104,7 +108,7 @@ app.layout = html.Div([
         .rc-slider-rail {
             background-color: #555 !important;
         }
-        /* أي نص آخر داخل الحاوية */
+        /* النصوص الأخرى */
         label, .control-label {
             color: white !important;
             font-weight: bold !important;
