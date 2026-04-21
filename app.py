@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# تطبيق Dash - شاشة مقسمة (يسار: صورة 54.jpg، يمين: حاسبة انحناء الأرض)
+# تطبيق Dash - شاشة مقسمة (يسار: صورة الرابط، يمين: حاسبة انحناء الأرض)
 
 import dash
 from dash import html, dcc, Input, Output
@@ -8,22 +8,18 @@ import math
 app = dash.Dash(__name__)
 server = app.server
 
-# ثوابت انحناء الأرض
-R_km = 6371.0  # نصف القطر بالكيلومترات
+R_km = 6371.0
 
 def curvature_drop(distance_km):
-    """حساب الانخفاض بسبب الانحناء بالأمتار"""
     if distance_km < 0:
         return 0.0
     return (distance_km ** 2) / (2 * R_km) * 1000
 
 def horizon_distance(observer_height_m):
-    """مسافة الأفق بالكيلومترات لراصد ارتفاعه بالأمتار"""
     if observer_height_m < 0:
         return 0.0
     return math.sqrt(2 * R_km * (observer_height_m / 1000))
 
-# تنسيق الصفحة
 app.layout = html.Div(
     style={
         'display': 'flex',
@@ -35,34 +31,31 @@ app.layout = html.Div(
         'fontFamily': 'Arial, sans-serif'
     },
     children=[
-        # القسم الأيسر: الصورة (بحجم نصف القسم تقريباً)
+        # القسم الأيسر: الصورة من رابط مباشر
         html.Div(
             style={
                 'flex': '1',
                 'backgroundColor': '#1e1e2f',
                 'display': 'flex',
-                'flexDirection': 'column',
                 'justifyContent': 'center',
                 'alignItems': 'center',
                 'padding': '20px'
             },
             children=[
                 html.Img(
-                    src='/54.jpg',   # الصورة موجودة في جذر المستودع
+                    src='https://d.top4top.io/p_37623tfg41.jpg',  # الرابط المباشر للصورة
                     style={
-                        'maxWidth': '50%',      # نصف عرض القسم الأيسر
-                        'maxHeight': '50%',     # نصف ارتفاع القسم الأيسر
-                        'width': 'auto',
+                        'width': '80%',           # 80% من عرض القسم الأيسر
                         'height': 'auto',
+                        'maxHeight': '90%',
                         'objectFit': 'contain',
                         'borderRadius': '12px',
-                        'boxShadow': '0 6px 12px rgba(0,0,0,0.4)'
+                        'boxShadow': '0 4px 12px rgba(0,0,0,0.5)'
                     }
-                ),
-                html.P("خريطة غليسون (1892)", style={'color': '#aaa', 'marginTop': '20px', 'fontSize': '14px'})
+                )
             ]
         ),
-        # القسم الأيمن: حاسبة انحناء الأرض
+        # القسم الأيمن: حاسبة انحناء الأرض (بدون تغيير)
         html.Div(
             style={
                 'flex': '1',
