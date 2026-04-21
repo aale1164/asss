@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>منصة الاحترافية | Pro AI Dashboard</title>
+  <title>الشبكات العصبية الاصطناعية | Pro AI Lab</title>
   <!-- خط عربي عصري -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <!-- أيقونات -->
+  <!-- أيقونات احترافية -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <!-- highlight.js لتنسيق الكود -->
+  <!-- highlight.js لتنسيق الكود البرمجي -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
@@ -38,7 +38,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 18px 28px;
-      margin: 20px 0 10px;
+      margin: 20px 0 30px;
       background: rgba(18, 28, 46, 0.6);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
@@ -83,126 +83,134 @@
     }
 
     .container {
-      max-width: 1400px;
+      max-width: 1200px;
       margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 22px;
-      margin: 30px 0 20px;
-    }
-
-    .card {
-      background: rgba(12, 22, 38, 0.7);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 28px;
-      padding: 24px 12px 20px;
+    /* قسم الشبكات العصبية – بطاقة واحدة كبيرة */
+    .neural-card {
+      width: 100%;
+      max-width: 750px;
+      background: rgba(12, 22, 38, 0.75);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1.5px solid rgba(59, 130, 246, 0.3);
+      border-radius: 48px;
+      padding: 40px 30px;
+      margin: 20px 0 40px;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1);
+      transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1);
+      box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(59,130,246,0.1);
       position: relative;
       overflow: hidden;
-      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5);
     }
 
-    .card::after {
+    .neural-card::before {
       content: "";
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at 30% 20%, rgba(59, 130, 246, 0.25), transparent 70%);
+      background: radial-gradient(circle at 30% 20%, rgba(59, 130, 246, 0.2), transparent 70%);
       opacity: 0;
-      transition: opacity 0.4s;
+      transition: opacity 0.5s;
       pointer-events: none;
     }
 
-    .card:hover {
-      transform: translateY(-8px);
+    .neural-card:hover {
+      transform: translateY(-10px);
       background: rgba(20, 40, 65, 0.8);
-      border-color: rgba(59, 130, 246, 0.5);
-      box-shadow: 0 25px 30px -8px rgba(0, 20, 60, 0.6);
+      border-color: #3b82f6;
+      box-shadow: 0 30px 50px -10px #1e3a8a, 0 0 30px rgba(59,130,246,0.3);
     }
 
-    .card:hover::after {
+    .neural-card:hover::before {
       opacity: 1;
     }
 
-    .image-wrapper {
-      width: 90px;
-      height: 90px;
-      margin-bottom: 16px;
+    .icon-brain {
+      width: 130px;
+      height: 130px;
+      margin-bottom: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-      background: linear-gradient(145deg, rgba(59, 130, 246, 0.2), rgba(16, 30, 54, 0.7));
-      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
-      transition: 0.2s;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 35% 65% 70% 30% / 40% 35% 65% 60%;
+      background: linear-gradient(145deg, #1e3a6b, #0a1422);
+      box-shadow: 0 15px 25px -5px #00000080, inset 0 0 0 2px rgba(59,130,246,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: 0.3s;
     }
 
-    .card:hover .image-wrapper {
-      background: linear-gradient(145deg, #1e3a6b, #0f1e32);
-      box-shadow: 0 0 18px #3b82f6, inset 0 0 8px rgba(255, 255, 255, 0.1);
-      border-color: #3b82f6;
+    .neural-card:hover .icon-brain {
+      background: linear-gradient(145deg, #2b5797, #13223b);
+      box-shadow: 0 0 35px #3b82f6, inset 0 0 15px #7ab0ff;
+      border-color: #90c0ff;
     }
 
-    .image-wrapper i {
-      font-size: 46px;
+    .icon-brain i {
+      font-size: 70px;
       color: #e0edff;
-      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+      filter: drop-shadow(0 4px 8px black);
       transition: 0.2s;
     }
 
-    .card:hover .image-wrapper i {
+    .neural-card:hover .icon-brain i {
       color: white;
-      transform: scale(1.05);
-      filter: drop-shadow(0 0 12px #90c0ff);
+      transform: scale(1.08);
+      filter: drop-shadow(0 0 15px #a0c8ff);
     }
 
-    .card-title {
+    .neural-title {
+      font-size: 2.6rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff, #b0d0ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 15px;
+    }
+
+    .neural-sub {
       font-size: 1.3rem;
-      font-weight: 700;
-      margin: 8px 0 6px;
-      color: #f0f6ff;
-      letter-spacing: -0.3px;
+      color: #b8cef0;
+      margin-bottom: 20px;
+      font-weight: 500;
     }
 
-    .card-stat {
-      font-size: 1rem;
-      font-weight: 500;
-      color: #9bb9f0;
-      background: rgba(0, 0, 0, 0.2);
-      padding: 4px 14px;
-      border-radius: 30px;
-      backdrop-filter: blur(4px);
-      border: 1px solid rgba(255,255,255,0.05);
-      margin-top: 5px;
+    .neural-badge {
+      background: #3b82f6;
+      color: white;
+      padding: 10px 32px;
+      border-radius: 50px;
+      font-weight: bold;
+      font-size: 1.2rem;
+      box-shadow: 0 5px 15px #1e3a8a;
+      border: 1px solid #90c0ff;
     }
 
     .footer {
       text-align: center;
       padding: 24px 0 10px;
-      opacity: 0.75;
+      opacity: 0.8;
       font-size: 1rem;
-      font-weight: 400;
       color: #b0c7e9;
       border-top: 1px dashed rgba(100, 150, 220, 0.2);
-      margin-top: 25px;
+      margin-top: 30px;
+      width: 100%;
     }
 
-    /* ========== مودال الصفحة الداخلية ========== */
+    /* ========== النافذة الداخلية (Modal) ========== */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(10px);
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(12px);
       display: none;
       align-items: center;
       justify-content: center;
@@ -211,16 +219,16 @@
     }
 
     .modal-container {
-      background: rgba(8, 18, 30, 0.95);
+      background: rgba(6, 15, 28, 0.98);
       backdrop-filter: blur(20px);
-      border: 1px solid rgba(59, 130, 246, 0.4);
+      border: 1.5px solid rgba(59, 130, 246, 0.5);
       border-radius: 40px;
       width: 95%;
-      max-width: 1300px;
-      max-height: 90vh;
+      max-width: 1350px;
+      max-height: 92vh;
       overflow-y: auto;
       padding: 28px 25px;
-      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(59,130,246,0.2);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), 0 0 0 1px #3b82f6;
       scrollbar-width: thin;
       scrollbar-color: #3b82f6 #0f1a2b;
     }
@@ -239,7 +247,7 @@
     }
 
     .modal-header h2 {
-      font-size: 2rem;
+      font-size: 2.2rem;
       font-weight: 700;
       background: linear-gradient(135deg, #c6ddff, #60a5fa);
       -webkit-background-clip: text;
@@ -248,15 +256,16 @@
     }
 
     .modal-header i {
-      font-size: 28px;
+      font-size: 30px;
       color: #60a5fa;
       cursor: pointer;
       transition: 0.2s;
     }
     .modal-header i:hover { color: #ff7b7b; transform: scale(1.1); }
 
+    /* كود بايثون */
     .code-section {
-      background: #0d1624;
+      background: #0a121f;
       border-radius: 24px;
       padding: 18px;
       margin-bottom: 30px;
@@ -268,13 +277,14 @@
       margin: 0;
       border-radius: 16px;
       font-size: 15px;
-      max-height: 280px;
+      max-height: 300px;
       overflow: auto;
     }
 
+    /* لوحة النتائج والرسوم */
     .results-grid {
       display: grid;
-      grid-template-columns: 1.2fr 0.9fr;
+      grid-template-columns: 1.3fr 0.9fr;
       gap: 20px;
       margin: 25px 0;
     }
@@ -356,148 +366,149 @@
       box-shadow: 0 0 20px #3b82f6;
     }
 
-    @media (max-width: 1100px) { .grid { grid-template-columns: repeat(3, 1fr); } .results-grid { grid-template-columns: 1fr; } }
-    @media (max-width: 700px) { .grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 480px) { .grid { grid-template-columns: 1fr; } }
+    @media (max-width: 800px) {
+      .results-grid { grid-template-columns: 1fr; }
+      .neural-title { font-size: 2rem; }
+      .modal-header h2 { font-size: 1.8rem; }
+    }
   </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><i class="fas fa-cube" style="margin-left: 10px; color: #3b82f6;"></i> منصة آفاق | Pro</div>
-  <div class="live-badge"><i class="fas fa-circle"></i> نظام مباشر · LIVE <i class="fas fa-shield-alt" style="margin-right: 8px;"></i></div>
+  <div class="brand">
+    <i class="fas fa-microchip" style="margin-left: 12px; color: #3b82f6;"></i> 
+    مختبر الذكاء الاصطناعي | ANN
+  </div>
+  <div class="live-badge">
+    <i class="fas fa-circle"></i> 
+    <span>نظام تدريب · LIVE</span>
+    <i class="fas fa-shield-alt" style="margin-right: 8px;"></i>
+  </div>
 </div>
 
 <div class="container">
-  <div class="grid">
-    <!-- 1. تحليل بيانات (يفتح المودال) -->
-    <div class="card" data-modal="aiModal">
-      <div class="image-wrapper"><i class="fas fa-chart-pie"></i></div>
-      <div class="card-title">تحليل بيانات</div>
-      <div class="card-stat">+٢٤ تقرير</div>
+  <!-- القسم الوحيد: الشبكات العصبية الاصطناعية -->
+  <div class="neural-card" id="openNeuralModal">
+    <div class="icon-brain">
+      <i class="fas fa-brain"></i>
     </div>
-    <!-- 2. ذكاء اصطناعي (يفتح المودال أيضاً) -->
-    <div class="card" data-modal="aiModal">
-      <div class="image-wrapper"><i class="fas fa-brain"></i></div>
-      <div class="card-title">ذكاء اصطناعي</div>
-      <div class="card-stat">نموذج GPT-6</div>
+    <div class="neural-title">الشبكات العصبية الاصطناعية</div>
+    <div class="neural-sub">Artificial Neural Networks</div>
+    <div class="neural-badge">
+      <i class="fas fa-play" style="margin-left: 8px;"></i> افتح بيئة التطوير
     </div>
-    <!-- 3. تقويم هجري -->
-    <div class="card">
-      <div class="image-wrapper">
-        <i class="fas fa-calendar-alt"></i>
-        <i class="fas fa-moon" style="position: absolute; font-size: 20px; margin-top: 15px; margin-right: 15px; color: #ffe484;"></i>
-      </div>
-      <div class="card-title">تقويم هجري</div>
-      <div class="card-stat">١٤٤٨ هـ</div>
-    </div>
-    <!-- 4. إحصائيات -->
-    <div class="card">
-      <div class="image-wrapper"><i class="fas fa-chart-line"></i></div>
-      <div class="card-title">إحصائيات</div>
-      <div class="card-stat">+١٨.٥٪ نمو</div>
-    </div>
-    <!-- 5. إعدادات -->
-    <div class="card">
-      <div class="image-wrapper"><i class="fas fa-sliders-h"></i></div>
-      <div class="card-title">إعدادات</div>
-      <div class="card-stat">تحكم متقدم</div>
-    </div>
-    <!-- 6. حماية -->
-    <div class="card">
-      <div class="image-wrapper"><i class="fas fa-shield-virus"></i></div>
-      <div class="card-title">حماية</div>
-      <div class="card-stat">جدار ناري نشط</div>
-    </div>
-    <!-- 7. شبكة -->
-    <div class="card">
-      <div class="image-wrapper"><i class="fas fa-network-wired"></i></div>
-      <div class="card-title">شبكة</div>
-      <div class="card-stat">٥.٢ جيجابت/ث</div>
-    </div>
-    <!-- 8. بيانات مباشرة -->
-    <div class="card">
-      <div class="image-wrapper"><i class="fas fa-satellite-dish"></i></div>
-      <div class="card-title">بيانات مباشرة</div>
-      <div class="card-stat">تحديث كل ٣ ثوان</div>
-    </div>
-    <!-- 9. مالية -->
-    <div class="card">
-      <div class="image-wrapper"><i class="fas fa-coins"></i></div>
-      <div class="card-title">مالية</div>
-      <div class="card-stat">$١٢.٤ مليار</div>
-    </div>
-    <!-- 10. تخزين -->
-    <div class="card">
-      <div class="image-wrapper"><i class="fas fa-database"></i></div>
-      <div class="card-title">تخزين</div>
-      <div class="card-stat">٧٨٪ مستخدم</div>
-    </div>
+    <p style="margin-top: 25px; color: #b0c7f0; max-width: 500px;">
+      تدريب نموذج تصنيف ثنائي باستخدام TensorFlow · معالجة البيانات · توحيد القياس · تقييم الدقة
+    </p>
   </div>
+
   <div class="footer">
-    <i class="fas fa-crown" style="color: #fbbf24; margin-left: 8px;"></i> © 2026 Pro Dashboard — تصميم احترافي بصور وأيقونات متناسقة 
+    <i class="fas fa-crown" style="color: #fbbf24; margin-left: 8px;"></i>
+    © 2026 Pro AI Dashboard — تصميم متكامل للشبكات العصبية 
     <i class="fas fa-rocket" style="margin-right: 10px; color: #3b82f6;"></i>
   </div>
 </div>
 
-<!-- ========== المودال: صفحة داخلية لعرض كود الشبكة العصبية ومحاكاة النتائج ========== -->
-<div class="modal-overlay" id="aiModal">
+<!-- ========== النافذة الداخلية: صفحة كاملة لتطبيق الشبكة العصبية ========== -->
+<div class="modal-overlay" id="neuralModal">
   <div class="modal-container">
     <div class="modal-header">
-      <h2><i class="fas fa-microchip" style="margin-left: 12px;"></i> تدريب شبكة عصبية · تحليل البيانات</h2>
+      <h2><i class="fas fa-project-diagram" style="margin-left: 15px;"></i> تدريب شبكة عصبية · معالجة البيانات</h2>
       <i class="fas fa-times" id="closeModalBtn"></i>
     </div>
     
-    <!-- عرض الكود البرمجي (نفس كود البايثون المطلوب) -->
+    <!-- عرض كود Python الكامل (نفس الأكواد المطلوبة) -->
     <div class="code-section">
-      <pre><code class="language-python" id="pythonCode">
+      <pre><code class="language-python" id="pythonCodeDisplay">
 # -*- coding: utf-8 -*-
-import numpy as np, pandas as pd, matplotlib.pyplot as plt
+"""
+كود متكامل لتطبيق خطوات معالجة البيانات وتدريب شبكة عصبية بسيطة
+(مستوحى من ملف العصبية1+2+3.pdf)
+"""
+
+# ==================== 1. تحميل المكتبات ====================
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 import tensorflow as tf
+from tensorflow import keras
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
-# تحميل البيانات وتنظيفها ...
-df = pd.read_csv("linear_student_pass.csv")
-# معالجة القيم المفقودة والغير منطقية
-for col in ['hours_studied','midterm_score','attendance_pct']:
+print("TensorFlow version:", tf.__version__)
+
+# ==================== 2. تحميل البيانات (أو إنشائها تجريبياً) ====================
+try:
+    df = pd.read_csv("linear_student_pass.csv")
+    print("تم تحميل الملف بنجاح.")
+except FileNotFoundError:
+    print("ملف linear_student_pass.csv غير موجود. سيتم إنشاء بيانات تجريبية.")
+    np.random.seed(42)
+    n_samples = 600
+    hours_studied = np.random.uniform(0, 25, n_samples)
+    midterm_score = np.random.uniform(0, 100, n_samples)
+    attendance_pct = np.random.uniform(0, 100, n_samples)
+    logits = (0.1 * hours_studied) + (0.05 * midterm_score) + (0.03 * attendance_pct) - 5
+    prob = 1 / (1 + np.exp(-logits))
+    pass_final = (prob > 0.5).astype(int)
+    df = pd.DataFrame({
+        'hours_studied': hours_studied,
+        'midterm_score': midterm_score,
+        'attendance_pct': attendance_pct,
+        'pass_final': pass_final
+    })
+
+# ==================== 3. تنظيف البيانات ====================
+for col in ['hours_studied', 'midterm_score', 'attendance_pct']:
     df[col] = df[col].fillna(df[col].median())
-df['midterm_score'] = df['midterm_score'].clip(0,100)
+df['midterm_score'] = df['midterm_score'].clip(0, 100)
+df = df.drop_duplicates()
 
-# تقسيم وتوحيد
-X = df[['hours_studied','midterm_score','attendance_pct']]
+# ==================== 4. تقسيم وتوحيد ====================
+X = df[['hours_studied', 'midterm_score', 'attendance_pct']]
 y = df['pass_final']
-X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.2)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 scaler = StandardScaler()
-X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
 
-# نموذج شبكة عصبية (طبقة واحدة)
-model = Sequential([Dense(1, activation='sigmoid', input_shape=(3,))])
+# ==================== 5. بناء وتدريب النموذج ====================
+model = Sequential([
+    Dense(1, activation='sigmoid', input_shape=(3,))
+])
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-history = model.fit(X_train, y_train, epochs=50, validation_split=0.2, verbose=0)
-test_loss, test_acc = model.evaluate(X_test, y_test)
+history = model.fit(X_train_scaled, y_train, epochs=50, batch_size=32, validation_split=0.2, verbose=1)
+
+# ==================== 6. تقييم ====================
+test_loss, test_acc = model.evaluate(X_test_scaled, y_test, verbose=0)
 print(f"Test Accuracy: {test_acc:.4f}")
+
+# رسم منحنيات الخسارة والدقة
+plt.plot(history.history['loss'], label='Training Loss')
+plt.plot(history.history['val_loss'], label='Validation Loss')
+plt.legend()
+plt.show()
       </code></pre>
     </div>
 
-    <!-- لوحة النتائج والإحصائيات -->
+    <!-- لوحة النتائج والإحصائيات والمحاكاة -->
     <div class="results-grid">
       <div class="stats-panel">
         <h3><i class="fas fa-chart-bar"></i> ملخص التدريب والتقييم</h3>
-        <div class="metric-row"><span class="metric-label">حجم البيانات الكلي</span><span class="metric-value" id="totalSamples">600</span></div>
+        <div class="metric-row"><span class="metric-label">إجمالي العينات</span><span class="metric-value" id="totalSamples">600</span></div>
         <div class="metric-row"><span class="metric-label">بيانات التدريب</span><span class="metric-value" id="trainSize">384</span></div>
         <div class="metric-row"><span class="metric-label">بيانات الاختبار</span><span class="metric-value" id="testSize">96</span></div>
         <div class="metric-row"><span class="metric-label">عدد الحقبات (epochs)</span><span class="metric-value">50</span></div>
-        <div class="metric-row"><span class="metric-label">دقة التدريب النهائية</span><span class="metric-value" id="trainAcc">0.932</span></div>
-        <div class="metric-row"><span class="metric-label">دقة الاختبار</span><span class="metric-value" id="testAcc">0.916</span></div>
-        <div class="metric-row"><span class="metric-label">الخسارة (Test Loss)</span><span class="metric-value" id="testLoss">0.274</span></div>
+        <div class="metric-row"><span class="metric-label">دقة التدريب النهائية</span><span class="metric-value" id="trainAcc">0.938</span></div>
+        <div class="metric-row"><span class="metric-label">دقة الاختبار</span><span class="metric-value" id="testAcc">0.922</span></div>
+        <div class="metric-row"><span class="metric-label">الخسارة (Test Loss)</span><span class="metric-value" id="testLoss">0.261</span></div>
         <div style="margin-top: 25px;">
-          <h4 style="color:#b0cdff; margin-bottom: 10px;"><i class="fas fa-table"></i> أول 5 صفوف من البيانات</h4>
+          <h4 style="color:#b0cdff; margin-bottom: 10px;"><i class="fas fa-table"></i> معاينة أول 5 صفوف</h4>
           <table class="data-table">
-            <thead><tr><th>ساعات</th><th>نصفي</th><th>حضور%</th><th>نجاح</th></tr></thead>
+            <thead><tr><th>ساعات الدراسة</th><th>درجة النصفي</th><th>نسبة الحضور</th><th>نجاح</th></tr></thead>
             <tbody id="dataPreview">
               <tr><td>12.4</td><td>78.2</td><td>86</td><td>1</td></tr>
               <tr><td>6.2</td><td>45.0</td><td>62</td><td>0</td></tr>
@@ -512,12 +523,12 @@ print(f"Test Accuracy: {test_acc:.4f}")
         <h3 style="margin-bottom: 15px; color:#b8d0ff"><i class="fas fa-chart-line"></i> منحنيات التدريب</h3>
         <canvas id="lossChart" width="400" height="200" style="max-height:200px; width:100%;"></canvas>
         <canvas id="accChart" width="400" height="200" style="max-height:200px; width:100%; margin-top:20px;"></canvas>
-        <p style="text-align:center; margin-top:12px; opacity:0.8;">📊 محاكاة مرئية لنتائج نموذج الشبكة العصبية</p>
+        <p style="text-align:center; margin-top:15px; opacity:0.8;">📈 محاكاة حية لنتائج النموذج (loss / accuracy)</p>
       </div>
     </div>
 
     <div class="action-bar">
-      <button class="btn" id="runSimulationBtn"><i class="fas fa-play"></i> محاكاة تشغيل الكود</button>
+      <button class="btn" id="runSimulationBtn"><i class="fas fa-play"></i> محاكاة تنفيذ الكود</button>
       <button class="btn" id="closeFooterBtn"><i class="fas fa-check"></i> إغلاق</button>
     </div>
   </div>
@@ -529,15 +540,14 @@ print(f"Test Accuracy: {test_acc:.4f}")
     hljs.highlightAll();
 
     // Modal Elements
-    const modal = document.getElementById('aiModal');
+    const modal = document.getElementById('neuralModal');
+    const openTrigger = document.getElementById('openNeuralModal');
     const closeBtn = document.getElementById('closeModalBtn');
     const closeFooter = document.getElementById('closeFooterBtn');
     
-    // فتح المودال عند الضغط على بطاقات محددة
-    document.querySelectorAll('[data-modal="aiModal"]').forEach(card => {
-      card.addEventListener('click', () => {
-        modal.style.display = 'flex';
-      });
+    // فتح المودال عند الضغط على القسم
+    openTrigger.addEventListener('click', () => {
+      modal.style.display = 'flex';
     });
 
     function closeModal() { modal.style.display = 'none'; }
@@ -545,7 +555,7 @@ print(f"Test Accuracy: {test_acc:.4f}")
     closeFooter.addEventListener('click', closeModal);
     modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 
-    // الرسوم البيانية
+    // إعداد الرسوم البيانية
     let lossChart, accChart;
     const ctxLoss = document.getElementById('lossChart').getContext('2d');
     const ctxAcc = document.getElementById('accChart').getContext('2d');
@@ -597,17 +607,17 @@ print(f"Test Accuracy: {test_acc:.4f}")
       });
     }
 
-    // تحديث الإحصائيات والجدول والرسوم (محاكاة)
+    // محاكاة تشغيل الكود (تحديث القيم والجداول والرسوم)
     function simulateRun() {
-      // تحديث مقاييس عشوائية لكن معقولة
-      const trainAcc = (0.91 + Math.random()*0.06).toFixed(3);
-      const testAcc = (0.90 + Math.random()*0.05).toFixed(3);
-      const testLoss = (0.20 + Math.random()*0.15).toFixed(3);
+      // تحديث الإحصائيات
+      const trainAcc = (0.91 + Math.random()*0.07).toFixed(3);
+      const testAcc = (0.90 + Math.random()*0.06).toFixed(3);
+      const testLoss = (0.18 + Math.random()*0.18).toFixed(3);
       document.getElementById('trainAcc').textContent = trainAcc;
       document.getElementById('testAcc').textContent = testAcc;
       document.getElementById('testLoss').textContent = testLoss;
       
-      // تحديث جدول المعاينة ببيانات عشوائية جديدة
+      // تحديث جدول المعاينة
       const tbody = document.getElementById('dataPreview');
       let html = '';
       for (let i=0; i<5; i++) {
@@ -619,7 +629,7 @@ print(f"Test Accuracy: {test_acc:.4f}")
       }
       tbody.innerHTML = html;
       
-      // إعادة رسم المنحنيات بمعاملات مختلفة قليلاً
+      // تجديد منحنيات الرسم
       const newBaseLoss = 0.65 + Math.random()*0.1;
       const newBaseAcc = 0.55 + Math.random()*0.1;
       const newData = generateEpochData(newBaseLoss, newBaseAcc);
@@ -630,7 +640,7 @@ print(f"Test Accuracy: {test_acc:.4f}")
       lossChart.update();
       accChart.update();
       
-      // تحديث أعداد البيانات (ثابتة نسبياً)
+      // تثبيت أعداد البيانات (محاكاة)
       document.getElementById('totalSamples').textContent = '600';
       document.getElementById('trainSize').textContent = '384';
       document.getElementById('testSize').textContent = '96';
@@ -638,25 +648,24 @@ print(f"Test Accuracy: {test_acc:.4f}")
 
     document.getElementById('runSimulationBtn').addEventListener('click', simulateRun);
     
-    // عند فتح المودال أول مرة يتم تهيئة الرسوم
+    // عند فتح المودال نضمن أن الرسوم جاهزة
     const observer = new MutationObserver((mutations, obs) => {
       if (modal.style.display === 'flex') {
-        if (!lossChart) initCharts(); else { lossChart.update(); accChart.update(); }
+        if (!lossChart) initCharts(); 
+        else { lossChart.update(); accChart.update(); }
       }
     });
     observer.observe(modal, { attributes: true, attributeFilter: ['style'] });
     
-    // تهيئة أولية عند تحميل الصفحة (حتى لا تكون فارغة)
+    // تهيئة أولية
     window.addEventListener('load', () => {
-      // نجهز الرسم مسبقاً
       initCharts();
     });
   })();
 </script>
-<!-- ضبط إضافي لأيقونة التقويم -->
+<!-- ضبط بسيط إضافي لأيقونات -->
 <style>
-  .card .image-wrapper { position: relative; }
-  .fa-moon { position: absolute; bottom: 12px; right: 18px; }
+  .fa-brain { filter: drop-shadow(0 0 10px #3b82f6); }
 </style>
 </body>
 </html>
