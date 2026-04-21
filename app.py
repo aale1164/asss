@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# تطبيق Dash - شاشة مقسمة (يسار: صورة الرابط، يمين: حاسبة انحناء الأرض)
+# تطبيق Dash - شاشة مقسمة (يسار: صورة ASdddd112.jpg، يمين: حاسبة انحناء الأرض)
 
 import dash
 from dash import html, dcc, Input, Output
@@ -31,7 +31,7 @@ app.layout = html.Div(
         'fontFamily': 'Arial, sans-serif'
     },
     children=[
-        # القسم الأيسر: الصورة من رابط مباشر
+        # القسم الأيسر: الصورة (باسم ASdddd112.jpg)
         html.Div(
             style={
                 'flex': '1',
@@ -43,9 +43,9 @@ app.layout = html.Div(
             },
             children=[
                 html.Img(
-                    src='https://d.top4top.io/p_37623tfg41.jpg',  # الرابط المباشر للصورة
+                    src='/ASdddd112.jpg',   # الصورة في جذر المشروع (أو استخدم /assets/ASdddd112.jpg إذا كانت داخل assets)
                     style={
-                        'width': '80%',           # 80% من عرض القسم الأيسر
+                        'width': '80%',
                         'height': 'auto',
                         'maxHeight': '90%',
                         'objectFit': 'contain',
