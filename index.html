@@ -3,166 +3,168 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aale Analytics</title>
+<title>Aale Analytics Pro</title>
 
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
 <style>
+
 body {
     margin: 0;
-    font-family: Arial;
-    background: #0b0f19;
+    font-family: 'Arial';
+    background: radial-gradient(circle at top, #111827, #0b0f19);
     color: white;
 }
 
-/* Top Bar */
+/* ================= TOP BAR ================= */
 .topbar {
-    width: 100%;
-    padding: 15px 25px;
-    background: #111827;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    padding: 18px 30px;
+    background: rgba(17, 24, 39, 0.7);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
 .brand {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: bold;
+    letter-spacing: 1px;
+    color: #60a5fa;
 }
 
 .status {
     color: #10b981;
+    font-weight: bold;
 }
 
-/* Layout */
+/* ================= LAYOUT ================= */
 .container {
     display: flex;
+    height: calc(100vh - 120px);
 }
 
-/* Control Panel */
+/* ================= CONTROL PANEL ================= */
 .control-panel {
     width: 25%;
     padding: 20px;
-    background: #1f2937;
-    height: calc(100vh - 120px);
+    background: rgba(31, 41, 55, 0.7);
+    backdrop-filter: blur(12px);
+    border-right: 1px solid rgba(255,255,255,0.1);
     overflow-y: auto;
 }
 
 .control-panel h3 {
     margin-top: 0;
+    color: #60a5fa;
 }
 
-.control-panel input {
-    width: 100%;
-    padding: 8px;
-    margin: 10px 0;
-    border: none;
-    border-radius: 5px;
-}
-
-/* Buttons */
-button {
+/* inputs */
+input {
     width: 100%;
     padding: 10px;
+    border-radius: 8px;
+    border: none;
+    margin: 10px 0;
+    background: #111827;
+    color: white;
+}
+
+/* buttons */
+button {
+    width: 100%;
+    padding: 12px;
     margin-top: 10px;
     border: none;
-    border-radius: 6px;
-    background: #3b82f6;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
     color: white;
+    font-weight: bold;
     cursor: pointer;
+    transition: 0.2s;
 }
 
 button:hover {
-    background: #2563eb;
+    transform: scale(1.03);
+    box-shadow: 0 10px 25px rgba(59,130,246,0.3);
 }
 
-/* Graph */
+/* ================= GRAPH ================= */
 .graph-panel {
     width: 75%;
     padding: 20px;
 }
 
-/* AI BOX */
-#insight {
-    margin-top: 15px;
-    padding: 15px;
-    background: #111827;
-    border-radius: 10px;
-    border: 1px solid #3b82f6;
-    font-size: 14px;
-    line-height: 1.6;
-}
-
-/* Footer */
+/* ================= FOOTER ================= */
 .footer {
-    width: 100%;
-    background: #111827;
-    text-align: center;
-    padding: 15px;
     position: fixed;
     bottom: 0;
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+    background: rgba(17,24,39,0.8);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255,255,255,0.1);
 }
 
 .footer a {
-    color: #3b82f6;
+    color: #60a5fa;
     text-decoration: none;
     font-weight: bold;
 }
+
+.footer a:hover {
+    color: #93c5fd;
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- Top Bar -->
+<!-- TOP -->
 <div class="topbar">
-    <div class="brand">Aale Analytics™</div>
-    <div class="status">● Online</div>
+    <div class="brand">Aale Analytics PRO</div>
+    <div class="status">● LIVE SYSTEM</div>
 </div>
 
-<!-- Main -->
+<!-- MAIN -->
 <div class="container">
 
-    <!-- Controls -->
+    <!-- CONTROL -->
     <div class="control-panel">
-        <h3>لوحة التحكم</h3>
+        <h3>Control Panel - لوحة التحكم</h3>
 
         <label>عدد النقاط</label>
         <input type="number" id="points" value="10">
 
         <button onclick="generateData()">تحديث البيانات</button>
-        <button onclick="resetChart()">إعادة تعيين</button>
-        <button onclick="exportImage()">تحميل صورة</button>
+        <button onclick="resetChart()">إعادة ضبط</button>
+        <button onclick="exportImage()">تحميل الصورة</button>
     </div>
 
-    <!-- Graph -->
+    <!-- GRAPH -->
     <div class="graph-panel">
         <div id="chart"></div>
-
-        <!-- AI INSIGHT -->
-        <div id="insight">
-            AI Insight: جاهز لتحليل البيانات...
-        </div>
     </div>
 
 </div>
 
-<!-- Footer -->
+<!-- FOOTER -->
 <div class="footer">
-    © 2026 Aale Analytics — Built by 
+    © 2026 Aale Analytics PRO — Built by 
     <a href="https://x.com/aale1164" target="_blank">@aale1164</a>
 </div>
 
 <script>
 
-/* Generate Chart + AI */
 function generateData() {
     let points = document.getElementById("points").value;
     let x = [];
     let y = [];
 
     for (let i = 0; i < points; i++) {
-        x.push(i + 1);
+        x.push(i);
         y.push(Math.floor(Math.random() * 100));
     }
 
@@ -170,52 +172,27 @@ function generateData() {
         x: x,
         y: y,
         type: 'scatter',
-        mode: 'lines+markers'
+        mode: 'lines+markers',
+        line: {color: '#3b82f6'}
     }];
 
     let layout = {
-        paper_bgcolor: "#0b0f19",
-        plot_bgcolor: "#0b0f19",
-        font: { color: "white" }
+        paper_bgcolor: "transparent",
+        plot_bgcolor: "transparent",
+        font: {color: "white"}
     };
 
     Plotly.newPlot('chart', data, layout);
-
-    // ===== AI INSIGHT =====
-    let sum = 0;
-    for (let i = 0; i < y.length; i++) {
-        sum += y[i];
-    }
-
-    let avg = sum / y.length;
-
-    let insightText = "";
-
-    if (avg > 70) {
-        insightText = "📈 اتجاه قوي جدًا (High Growth Trend)";
-    } else if (avg > 40) {
-        insightText = "📊 اتجاه مستقر بنمو متوسط";
-    } else {
-        insightText = "📉 بيانات منخفضة - تحتاج تحسين";
-    }
-
-    document.getElementById("insight").innerHTML =
-        "AI Insight: " + insightText;
 }
 
-/* Reset */
 function resetChart() {
     document.getElementById("chart").innerHTML = "";
-    document.getElementById("insight").innerHTML =
-        "AI Insight: جاهز لتحليل البيانات...";
 }
 
-/* Export */
 function exportImage() {
     Plotly.downloadImage('chart', {format: 'png'});
 }
 
-/* Load default */
 generateData();
 
 </script>
