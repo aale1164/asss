@@ -142,7 +142,7 @@ app.layout = html.Div(
             },
             children=[
 
-                html.H2("🎛️ لوحة التحكم"),
+                html.H2("🎛️ إختـر النمـوذج من الأسـقل"),
 
                 dcc.Dropdown(
                     id="model",
