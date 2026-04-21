@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import dash
-from dash import html, dcc, Input, Output, State
+from dash import html, dcc, Input, Output
 import plotly.graph_objects as go
 import numpy as np
 import math
@@ -46,6 +46,7 @@ def create_figure(model, obj_h, eye_h, dist, zoom, alt):
             name="Flat - مسطح"
         ))
         title = "Flat Model - نموذج مسطح"
+
     else:
         drop = curvature_drop_m(x)
         y = np.maximum(0, obj_h - drop)
@@ -72,22 +73,15 @@ app.layout = html.Div(
     style={"display": "flex", "height": "100vh"},
     children=[
 
-        dcc.Store(id="sidebar-state", data=True),
-
         # ===== SIDEBAR =====
         html.Div(
-            id="sidebar",
             style={
                 "width": "320px",
-                "transition": "0.3s",
                 "backgroundColor": "#f5f7fa",
                 "padding": "15px",
-                "overflowY": "auto",
-                "display": "block"
+                "overflowY": "auto"
             },
             children=[
-
-                html.Button("☰ Toggle - إظهار/إخفاء", id="toggle-btn"),
 
                 html.H3("Control Panel - لوحة التحكم"),
 
@@ -119,7 +113,7 @@ app.layout = html.Div(
             ]
         ),
 
-        # ===== CHART =====
+        # ===== GRAPH =====
         html.Div(
             style={"flex": 1, "padding": "10px"},
             children=[
@@ -128,41 +122,6 @@ app.layout = html.Div(
         )
     ]
 )
-
-
-# ================= TOGGLE FIX =================
-@app.callback(
-    Output("sidebar", "style"),
-    Output("sidebar-state", "data"),
-    Input("toggle-btn", "n_clicks"),
-    State("sidebar-state", "data"),
-    prevent_initial_call=True
-)
-def toggle_sidebar(n, state):
-    state = not state
-
-    full_style = {
-        "width": "320px",
-        "transition": "0.3s",
-        "backgroundColor": "#f5f7fa",
-        "padding": "15px",
-        "overflowY": "auto",
-        "display": "block"
-    }
-
-    collapsed_style = {
-        "width": "60px",
-        "transition": "0.3s",
-        "backgroundColor": "#f5f7fa",
-        "padding": "10px",
-        "overflow": "hidden",
-        "display": "block"
-    }
-
-    if state:
-        return full_style, state
-    else:
-        return collapsed_style, state
 
 
 # ================= UPDATE =================
