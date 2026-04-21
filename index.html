@@ -3,144 +3,110 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aale AI Command Center</title>
+<title>Aale AI Analytics PRO</title>
 
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
 <style>
 
-:root{
-    --bg:#070A12;
-    --panel:rgba(255,255,255,0.04);
-    --stroke:rgba(255,255,255,0.08);
-    --blue:#3b82f6;
-    --cyan:#22d3ee;
-}
-
 body{
     margin:0;
     font-family:Arial;
-    background:
-        radial-gradient(circle at 20% 20%, #0f172a, transparent 40%),
-        radial-gradient(circle at 80% 0%, #1e293b, transparent 35%),
-        var(--bg);
+    background:#0b0f19;
     color:white;
 }
 
-/* ================= TOP BAR ================= */
+/* TOP BAR */
 .topbar{
     display:flex;
     justify-content:space-between;
-    padding:16px 24px;
-    background:var(--panel);
-    border-bottom:1px solid var(--stroke);
-    backdrop-filter: blur(12px);
+    padding:15px 20px;
+    background:#111827;
+    border-bottom:1px solid #1f2937;
 }
 
 .brand{
     font-size:20px;
     font-weight:bold;
-    background:linear-gradient(90deg,var(--blue),var(--cyan));
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
+    color:#3b82f6;
 }
 
 .status{
     color:#22c55e;
-    font-weight:bold;
 }
 
-/* ================= LAYOUT ================= */
+/* LAYOUT */
 .container{
     display:flex;
     height:calc(100vh - 110px);
 }
 
-/* ================= CONTROL PANEL ================= */
+/* CONTROL PANEL */
 .control-panel{
-    width:22%;
-    padding:18px;
-    background:var(--panel);
-    border-right:1px solid var(--stroke);
-    backdrop-filter: blur(16px);
+    width:24%;
+    padding:15px;
+    background:#1f2937;
 }
 
-.card{
-    background:rgba(255,255,255,0.03);
-    border:1px solid var(--stroke);
-    padding:14px;
-    border-radius:14px;
-    margin-bottom:12px;
-}
-
-label{
-    font-size:12px;
-    opacity:0.8;
-}
-
-/* inputs */
 input{
     width:100%;
     padding:10px;
-    margin-top:6px;
-    border-radius:10px;
-    border:1px solid var(--stroke);
+    margin-top:10px;
+    border:none;
+    border-radius:6px;
     background:#0b1220;
     color:white;
 }
 
-/* buttons */
+/* BUTTONS */
 button{
     width:100%;
-    padding:12px;
+    padding:10px;
     margin-top:10px;
     border:none;
-    border-radius:12px;
-    background:linear-gradient(135deg,var(--blue),#1d4ed8);
+    border-radius:8px;
+    background:#3b82f6;
     color:white;
-    font-weight:bold;
     cursor:pointer;
-    transition:0.25s;
 }
 
 button:hover{
-    transform:translateY(-2px);
-    box-shadow:0 10px 30px rgba(59,130,246,0.3);
+    background:#2563eb;
 }
 
-/* ================= GRAPH ================= */
+/* GRAPH */
 .graph-panel{
-    width:78%;
-    padding:16px;
+    width:76%;
+    padding:15px;
 }
 
-/* graph container glow */
-#chart{
-    height:100%;
-    border-radius:16px;
-    border:1px solid var(--stroke);
-    box-shadow:0 0 40px rgba(59,130,246,0.08);
+/* AI BOX */
+.ai-box{
+    margin-top:15px;
+    padding:15px;
+    background:#0f172a;
+    border:1px solid #1f2937;
+    border-radius:10px;
 }
 
-/* ================= FOOTER ================= */
+.ai-title{
+    color:#22d3ee;
+    margin-bottom:10px;
+}
+
 .footer{
     position:fixed;
     bottom:0;
     width:100%;
-    padding:10px;
     text-align:center;
-    background:rgba(0,0,0,0.3);
-    backdrop-filter: blur(10px);
-    border-top:1px solid var(--stroke);
+    padding:10px;
+    background:#111827;
+    border-top:1px solid #1f2937;
 }
 
 .footer a{
-    color:var(--cyan);
+    color:#3b82f6;
     text-decoration:none;
-}
-
-.footer a:hover{
-    text-shadow:0 0 10px var(--cyan);
 }
 
 </style>
@@ -149,8 +115,8 @@ button:hover{
 <body>
 
 <div class="topbar">
-    <div class="brand">Aale AI Command Center</div>
-    <div class="status">● SYSTEM ONLINE</div>
+    <div class="brand">Aale AI PRO</div>
+    <div class="status">● LIVE AI SYSTEM</div>
 </div>
 
 <div class="container">
@@ -158,67 +124,94 @@ button:hover{
     <!-- CONTROL -->
     <div class="control-panel">
 
-        <div class="card">
-            <label>DATA POINTS</label>
-            <input type="number" id="points" value="15">
-            <button onclick="generateData()">RUN ANALYSIS</button>
-        </div>
+        <label>عدد النقاط</label>
+        <input type="number" id="points" value="20">
 
-        <div class="card">
-            <label>CONTROL MODE</label>
-            <button onclick="resetChart()">RESET GRID</button>
-            <button onclick="exportImage()">EXPORT SNAPSHOT</button>
-        </div>
-
+        <button onclick="generateData()">تشغيل التحليل</button>
+        <button onclick="resetChart()">إعادة ضبط</button>
     </div>
 
     <!-- GRAPH -->
     <div class="graph-panel">
+
         <div id="chart"></div>
+
+        <!-- AI OUTPUT -->
+        <div class="ai-box">
+            <div class="ai-title">AI Insight Engine</div>
+            <div id="ai-text">في انتظار البيانات...</div>
+        </div>
+
     </div>
 
 </div>
 
 <div class="footer">
-    © 2026 Aale AI Command Center — Built by 
+    © 2026 Aale AI PRO — Built by 
     <a href="https://x.com/aale1164" target="_blank">@aale1164</a>
 </div>
 
 <script>
 
 function generateData(){
+
     let points=document.getElementById("points").value;
     let x=[],y=[];
 
     for(let i=0;i<points;i++){
         x.push(i);
-        y.push(Math.sin(i/2)*50 + Math.random()*10);
+        y.push(Math.random()*100);
     }
 
     let data=[{
         x:x,
         y:y,
         type:'scatter',
-        mode:'lines',
+        mode:'lines+markers',
         line:{color:'#3b82f6',width:3}
     }];
 
     let layout={
-        paper_bgcolor:"rgba(0,0,0,0)",
-        plot_bgcolor:"rgba(0,0,0,0)",
-        font:{color:"white"},
-        margin:{l:30,r:10,t:10,b:30}
+        paper_bgcolor:"transparent",
+        plot_bgcolor:"transparent",
+        font:{color:"white"}
     };
 
     Plotly.newPlot("chart",data,layout,{displayModeBar:false});
+
+    // ================= AI ENGINE =================
+    let avg = y.reduce((a,b)=>a+b)/y.length;
+    let first = y[0];
+    let last = y[y.length-1];
+
+    let trend = last > first ? "📈 صاعد" : "📉 نازل";
+    let strength = Math.abs(last - first);
+
+    let volatility = 0;
+    for(let i=1;i<y.length;i++){
+        volatility += Math.abs(y[i]-y[i-1]);
+    }
+
+    volatility = (volatility / y.length).toFixed(2);
+
+    let confidence = Math.min(100, (strength + avg/2)).toFixed(1);
+
+    let msg = `
+        📊 الاتجاه: <b>${trend}</b><br>
+        📌 المتوسط: ${avg.toFixed(2)}<br>
+        ⚡ قوة الحركة: ${strength.toFixed(2)}<br>
+        📉 التذبذب: ${volatility}<br>
+        🎯 ثقة AI: ${confidence}%
+        <br><br>
+        🤖 النظام يقوم بتحليل الأنماط وتقييم السلوك الرياضي للبيانات بشكل لحظي
+    `;
+
+    document.getElementById("ai-text").innerHTML = msg;
 }
 
 function resetChart(){
     document.getElementById("chart").innerHTML="";
-}
-
-function exportImage(){
-    Plotly.downloadImage("chart",{format:"png"});
+    document.getElementById("ai-text").innerHTML="تم إعادة الضبط";
 }
 
 generateData();
