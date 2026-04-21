@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# تطبيق Dash - خريطة غليسون في الجهة اليمنى فقط، مكبرة، بدون أي خطوط أو شبكات
+# تطبيق Dash - خريطة غليسون فقط، بدون أي خطوط طول أو عرض أو شبكات أو عناصر إضافية
 
 import dash
 from dash import html, dcc
@@ -9,26 +9,18 @@ app = dash.Dash(__name__)
 server = app.server
 
 # ============================================
-# إعداد خريطة غليسون (الإسقاط السمتي متساوي المسافات)
-# بدون خطوط الطول والعرض، بدون شبكات، مع تكبير مناسب
+# إنشاء خريطة غليسون (الإسقاط السمتي متساوي المسافات)
+# مع إخفاء كل شيء ما عدا الصورة
 # ============================================
-
 fig = go.Figure()
 
-# نقطة وهمية مخفية بالكامل (لإرضاء Plotly)
-fig.add_trace(go.Scattergeo(
-    lon=[0], lat=[0],
-    mode='markers',
-    marker=dict(size=0.01, opacity=0),
-    showlegend=False,
-    hoverinfo='none'
-))
+# لا نضيف أي traces (لا نقاط وهمية ولا شيء)
+# نكتفي بتعيين الإسقاط الجغرافي مع إخفاء جميع الخطوط والعناصر
 
-# إعدادات الإسقاط الجغرافي - إزالة كل شيء ما عدا الصورة
 fig.update_geos(
     projection_type="azimuthal equidistant",
     projection_rotation=dict(lon=0, lat=90, roll=0),
-    # إخفاء جميع العناصر الجغرافية
+    # إخفاء كل العناصر الجغرافية
     showcoastlines=False,
     showland=False,
     showocean=False,
@@ -36,7 +28,7 @@ fig.update_geos(
     showlakes=False,
     showrivers=False,
     showframe=False,
-    # إخفاء خطوط الطول والعرض (الشبكة البيضاء)
+    # إخفاء خطوط الطول والعرض بشكل مطلق
     lataxis_showgrid=False,
     lonaxis_showgrid=False,
     lataxis_showline=False,
@@ -45,9 +37,11 @@ fig.update_geos(
     lonaxis_tickvals=[],
     lataxis_visible=False,
     lonaxis_visible=False,
-    # تحديد نطاق للخريطة بحيث تظهر مكبرة (بدون قص مفرط)
-    lataxis_range=[-70, 90],     # يظهر من خط عرض -70 إلى القطب الشمالي
-    lonaxis_range=[-150, 150],   # يظهر خطوط الطول من -150 إلى 150
+    # إخفاء أي تسميات أو أرقام
+    showlakes=False,
+    # تحديد نطاق الخريطة لتبدو واضحة (ليست صغيرة ولا مقطوعة)
+    lataxis_range=[-85, 90],
+    lonaxis_range=[-175, 175],
     bgcolor='black'
 )
 
@@ -67,7 +61,7 @@ fig.add_layout_image(
     )
 )
 
-# تنسيق المخطط العام: إزالة الهوامش وجعل الخلفية سوداء فقط حول الخريطة
+# تنسيق المخطط: إزالة الهوامش والعناوين
 fig.update_layout(
     title='',
     geo=dict(bgcolor='black'),
@@ -76,11 +70,12 @@ fig.update_layout(
     height=700,
     width=None,
     xaxis=dict(visible=False),
-    yaxis=dict(visible=False)
+    yaxis=dict(visible=False),
+    plot_bgcolor='black'
 )
 
 # ============================================
-# واجهة التطبيق: خريطة غليسون في النصف الأيمن فقط
+# تصميم الواجهة: خريطة غليسون في الجهة اليمنى فقط
 # ============================================
 app.layout = html.Div(
     style={
@@ -94,7 +89,14 @@ app.layout = html.Div(
         'overflow': 'hidden'
     },
     children=[
-        # الجهة اليسرى (فارغة تماماً)
+        # الجهة اليسرى (فارغة تمامًا)
+        html.Div(
+            style={
+                'flex': '1',
+                'backgroundColor': 'black'
+            }
+        ),
+        # الجهة اليمنى: الخريطة فقط
         html.Div(
             style={
                 'flex': '1',
@@ -104,27 +106,10 @@ app.layout = html.Div(
                 'justifyContent': 'center'
             },
             children=[
-                html.Div(
-                    "",  # فارغ
-                    style={'color': '#333', 'fontSize': '16px'}
-                )
-            ]
-        ),
-        # الجهة اليمنى: خريطة غليسون مكبرة
-        html.Div(
-            style={
-                'flex': '1',
-                'backgroundColor': 'black',
-                'display': 'flex',
-                'alignItems': 'center',
-                'justifyContent': 'center',
-                'padding': '0'
-            },
-            children=[
                 dcc.Graph(
                     figure=fig,
                     config={'displayModeBar': True, 'responsive': True},
-                    style={'width': '100%', 'height': '100%', 'border': 'none'}
+                    style={'width': '100%', 'height': '100%'}
                 )
             ]
         )
