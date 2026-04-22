@@ -10,7 +10,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
   <style>
-    /* جميع الأنماط كما هي دون تغيير */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Tajawal', sans-serif;
@@ -77,16 +76,8 @@
       text-align: center; padding: 17px 0 7px; opacity: 0.75; font-size: 0.7rem;
       color: #b0c7e9; border-top: 1px dashed rgba(100,150,220,0.2); margin-top: 18px;
     }
-    .footer a {
-      color: #a0c8ff;
-      text-decoration: none;
-      font-weight: 600;
-      transition: 0.2s;
-    }
-    .footer a:hover {
-      color: #3b82f6;
-      text-shadow: 0 0 8px #3b82f6;
-    }
+    .footer a { color: #a0c8ff; text-decoration: none; font-weight: 600; transition: 0.2s; }
+    .footer a:hover { color: #3b82f6; text-shadow: 0 0 8px #3b82f6; }
     .modal-overlay {
       position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.8);
       backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center;
@@ -188,7 +179,6 @@
     <div class="card"><div class="image-wrapper"><i class="fas fa-coins"></i></div><div class="card-title">مالية</div><div class="card-stat">$١٢.٤ مليار</div></div>
     <div class="card"><div class="image-wrapper"><i class="fas fa-database"></i></div><div class="card-title">تخزين</div><div class="card-stat">٧٨٪ مستخدم</div></div>
   </div>
-  <!-- تم تعديل الفوتر هنا -->
   <div class="footer">
     <span style="font-weight: 800; background: linear-gradient(135deg, #a0c8ff, #3b82f6); -webkit-background-clip: text; background-clip: text; color: transparent;">آفاق</span> · 
     © 2026 — تصميم <span style="color: #fbbf24;">عـدنـانـي</span> · 
@@ -198,10 +188,222 @@
   </div>
 </div>
 
-<!-- باقي المودالات والجافاسكريبت كما هي تماماً دون تغيير -->
-<!-- ... -->
+<!-- مودال السيرة الذاتية -->
+<div class="modal-overlay" id="atsModal">
+  <div class="modal-container" style="max-width:700px;">
+    <div class="modal-header"><h3><i class="fas fa-file-alt"></i> منشئ السيرة الذاتية</h3><i class="fas fa-times" id="closeAtsModalBtn"></i></div>
+    <div class="form-group"><label>الاسم الكامل</label><input type="text" id="fullName" placeholder="أحمد محمد علي"></div>
+    <div class="form-row">
+      <div class="form-group" style="flex:1;"><label>البريد الإلكتروني</label><input type="email" id="email" placeholder="example@domain.com"></div>
+      <div class="form-group" style="flex:1;"><label>رقم الهاتف</label><input type="tel" id="phone" placeholder="+966xxxxxxxxx"></div>
+    </div>
+    <div class="form-group"><label>تاريخ الميلاد</label><input type="text" id="birthDate" placeholder="1990-01-01"></div>
+    <div class="form-group"><label>النبذة التعريفية</label><textarea id="summary" rows="3"></textarea></div>
+    <div class="form-group"><label>المؤهل الدراسي</label><select id="educationSelect"><option value="ثانوي">ثانوي</option><option value="دبلوم سنة">دبلوم سنة</option><option value="دبلوم متوسط">دبلوم متوسط</option><option value="جامعي">جامعي</option><option value="دراسات عليا">دراسات عليا</option></select></div>
+    <div class="form-group"><label>الخبرات العملية</label><textarea id="experience" rows="3"></textarea></div>
+    <div class="form-group"><label>المهارات التقنية</label><input type="text" id="skills" placeholder="Python, SQL..."></div>
+    <div class="form-group"><label>لغة السيرة الذاتية</label><select id="languageSelect"><option value="ar">العربية</option><option value="en">English</option></select></div>
+    <div class="action-buttons"><button class="btn" id="generateResumeBtn"><i class="fas fa-file-pdf"></i> إنشاء PDF</button></div>
+    <p class="warning-text">* خط رومان | العناوين 16pt عريض | النصوص 14pt</p>
+  </div>
+</div>
+
+<!-- مودال تعديل الصور -->
+<div class="modal-overlay" id="photoModal">
+  <div class="modal-container">
+    <div class="modal-header"><h3><i class="fas fa-id-card"></i> معالج صور الأحوال</h3><i class="fas fa-times" id="closePhotoModalBtn"></i></div>
+    <div class="upload-area" id="photoUploadArea"><i class="fas fa-cloud-upload-alt"></i><p>ارفع صورة الوجه</p><input type="file" id="photoFileInput" accept="image/*" style="display:none;"></div>
+    <div id="photoPreviewContainer" style="display:none; text-align:center;"><img id="photoPreviewImg" class="preview-image" src=""><p id="photoFileName" style="color:#ccc;"></p></div>
+    <div class="requirements-box"><h4>الاشتراطات</h4><div id="photoReqList"><div class="req-item"><i class="fas fa-info-circle"></i> ارفع صورة</div></div></div>
+    <div class="action-buttons"><button class="btn" id="processPhotoBtn" disabled><i class="fas fa-magic"></i> تحسين إلى 4×6</button><button class="btn btn-outline" id="downloadPhotoBtn" disabled><i class="fas fa-download"></i> تحميل</button></div>
+  </div>
+</div>
+
+<!-- مودال تحويل PDF -->
+<div class="modal-overlay" id="pdfModal">
+  <div class="modal-container">
+    <div class="modal-header"><h3><i class="fas fa-file-pdf"></i> تحويل الصور إلى PDF</h3><i class="fas fa-times" id="closePdfModalBtn"></i></div>
+    <div class="upload-area" id="pdfUploadArea"><i class="fas fa-cloud-upload-alt"></i><p>اختر صوراً</p><input type="file" id="pdfFileInput" accept="image/*" multiple style="display:none;"></div>
+    <div style="display:flex; justify-content:space-between;"><span><i class="fas fa-images"></i> <span id="imageCount">0</span> صور</span><button class="btn-outline btn" id="clearAllPdfBtn" style="padding:6px 16px;"><i class="fas fa-trash-alt"></i> مسح الكل</button></div>
+    <div class="image-list" id="imageListContainer"><p style="text-align:center;">لم تضف صوراً بعد</p></div>
+    <div class="action-buttons"><button class="btn-outline btn" id="addMorePdfBtn"><i class="fas fa-plus"></i> إضافة</button><button class="btn" id="generatePdfBtn" disabled><i class="fas fa-file-pdf"></i> إنشاء PDF</button></div>
+  </div>
+</div>
+
 <script>
-  /* ... الكود الكامل للوظائف السابقة ... */
+  (function(){
+    // دوال مساعدة
+    function fileToDataURL(file) {
+      return new Promise(r => { const reader = new FileReader(); reader.onload = () => r(reader.result); reader.readAsDataURL(file); });
+    }
+    function createImage(src) {
+      return new Promise(r => { const img = new Image(); img.onload = () => r(img); img.src = src; });
+    }
+
+    // 1. السيرة الذاتية (خط رومان)
+    const atsModal = document.getElementById('atsModal');
+    document.getElementById('openAtsModalBtn').addEventListener('click', ()=> atsModal.style.display='flex');
+    document.getElementById('closeAtsModalBtn').addEventListener('click', ()=> atsModal.style.display='none');
+    atsModal.addEventListener('click', e=> { if(e.target===atsModal) atsModal.style.display='none'; });
+    document.getElementById('generateResumeBtn').addEventListener('click', async function() {
+      const fullName = document.getElementById('fullName').value.trim() || 'الاسم الكامل';
+      const email = document.getElementById('email').value.trim() || 'email@example.com';
+      const phone = document.getElementById('phone').value.trim() || '+966xxxxxxxxx';
+      const birth = document.getElementById('birthDate').value.trim() || '';
+      const summary = document.getElementById('summary').value.trim() || 'ملخص احترافي.';
+      const education = document.getElementById('educationSelect').value;
+      const experience = document.getElementById('experience').value.trim();
+      const skills = document.getElementById('skills').value.trim();
+      const lang = document.getElementById('languageSelect').value;
+      const isRtl = lang === 'ar';
+      
+      const resumeDiv = document.createElement('div');
+      resumeDiv.style.direction = isRtl ? 'rtl' : 'ltr';
+      resumeDiv.style.fontFamily = "'Times New Roman', Times, serif, Arial, sans-serif";
+      resumeDiv.style.padding = '40px'; resumeDiv.style.backgroundColor = 'white'; resumeDiv.style.color = '#2c3e50'; resumeDiv.style.width = '800px'; resumeDiv.style.margin = '0 auto';
+      
+      resumeDiv.innerHTML = `
+        <div style="text-align: center; border-bottom: 3px solid #1a5f7a; padding-bottom: 15px; margin-bottom: 25px;">
+          <div style="font-size: 26pt; font-weight: bold; color: #1a5f7a;">${fullName}</div>
+          <div style="font-size: 12pt; color: #555; margin-top: 5px;">${[phone, email, birth].filter(Boolean).join(' | ')}</div>
+        </div>
+        <div style="margin-bottom: 20px;">
+          <div style="font-size: 16pt; font-weight: bold; background-color: #f4f7f9; padding: 5px 10px; color: #1a5f7a; border-${isRtl ? 'right' : 'left'}: 5px solid #1a5f7a;">${isRtl ? 'النبذة التعريفية' : 'Professional Summary'}</div>
+          <div style="font-size: 14pt; margin: 10px 15px; text-align: justify; white-space: pre-wrap;">${summary}</div>
+        </div>
+        <div style="margin-bottom: 20px;">
+          <div style="font-size: 16pt; font-weight: bold; background-color: #f4f7f9; padding: 5px 10px; color: #1a5f7a; border-${isRtl ? 'right' : 'left'}: 5px solid #1a5f7a;">${isRtl ? 'المؤهلات العلمية' : 'Education'}</div>
+          <div style="font-size: 14pt; margin: 10px 15px;">${education}</div>
+        </div>
+        ${experience ? `<div style="margin-bottom: 20px;"><div style="font-size: 16pt; font-weight: bold; background-color: #f4f7f9; padding: 5px 10px; color: #1a5f7a; border-${isRtl ? 'right' : 'left'}: 5px solid #1a5f7a;">${isRtl ? 'الخبرات العملية' : 'Work Experience'}</div><div style="font-size: 14pt; margin: 10px 15px; white-space: pre-wrap;">${experience}</div></div>` : ''}
+        ${skills ? `<div style="margin-bottom: 20px;"><div style="font-size: 16pt; font-weight: bold; background-color: #f4f7f9; padding: 5px 10px; color: #1a5f7a; border-${isRtl ? 'right' : 'left'}: 5px solid #1a5f7a;">${isRtl ? 'المهارات التقنية' : 'Technical Skills'}</div><div style="font-size: 14pt; margin: 10px 15px;">${skills}</div></div>` : ''}
+        <div style="text-align: center; font-size: 10pt; color: #aaa; margin-top: 50px;">Generated by Pro Dashboard - ATS Friendly</div>
+      `;
+      document.body.appendChild(resumeDiv);
+      try {
+        const canvas = await html2canvas(resumeDiv, { scale: 2, backgroundColor: '#ffffff' });
+        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        pdf.addImage(imgData, 'JPEG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
+        pdf.save(`Resume_${fullName.replace(/\s+/g, '_')}.pdf`);
+      } catch(e) { alert('خطأ: '+e.message); } finally { document.body.removeChild(resumeDiv); }
+    });
+
+    // 2. تعديل الصور
+    const photoModal = document.getElementById('photoModal');
+    const openPhotoBtn = document.getElementById('openPhotoModalBtn');
+    const closePhotoBtn = document.getElementById('closePhotoModalBtn');
+    const photoUploadArea = document.getElementById('photoUploadArea');
+    const photoFileInput = document.getElementById('photoFileInput');
+    const photoPreviewContainer = document.getElementById('photoPreviewContainer');
+    const photoPreviewImg = document.getElementById('photoPreviewImg');
+    const photoFileName = document.getElementById('photoFileName');
+    const processPhotoBtn = document.getElementById('processPhotoBtn');
+    const downloadPhotoBtn = document.getElementById('downloadPhotoBtn');
+    const photoReqList = document.getElementById('photoReqList');
+    let originalPhotoImage = null, originalPhotoFile = null, processedPhotoBlob = null;
+
+    openPhotoBtn.addEventListener('click', ()=> { resetPhotoModal(); photoModal.style.display='flex'; });
+    closePhotoBtn.addEventListener('click', ()=> photoModal.style.display='none');
+    photoModal.addEventListener('click', e=> { if(e.target===photoModal) photoModal.style.display='none'; });
+    photoUploadArea.addEventListener('click', ()=> photoFileInput.click());
+    photoUploadArea.addEventListener('dragover', e=> { e.preventDefault(); photoUploadArea.style.background='rgba(59,130,246,0.2)'; });
+    photoUploadArea.addEventListener('dragleave', ()=> photoUploadArea.style.background='');
+    photoUploadArea.addEventListener('drop', e=> { e.preventDefault(); photoUploadArea.style.background=''; const file = e.dataTransfer.files[0]; if(file&&file.type.startsWith('image/')) handlePhotoFile(file); });
+    photoFileInput.addEventListener('change', e=> { if(e.target.files[0]) handlePhotoFile(e.target.files[0]); });
+
+    function handlePhotoFile(file) {
+      originalPhotoFile = file; photoFileName.textContent = file.name;
+      const reader = new FileReader();
+      reader.onload = e => {
+        photoPreviewImg.src = e.target.result; photoPreviewContainer.style.display='block';
+        const img = new Image();
+        img.onload = function() {
+          originalPhotoImage = img;
+          photoReqList.innerHTML = `<div class="req-item"><i class="fas fa-check-circle" style="color:#10b981;"></i> الأبعاد: ${img.width}×${img.height}</div>`;
+          processPhotoBtn.disabled = false; downloadPhotoBtn.disabled = true;
+        }; img.src = e.target.result;
+      }; reader.readAsDataURL(file);
+    }
+
+    processPhotoBtn.addEventListener('click', function() {
+      if(!originalPhotoImage) return;
+      const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+      const outW = 800, outH = 1200; canvas.width = outW; canvas.height = outH;
+      ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, outW, outH);
+      const imgAspect = originalPhotoImage.width / originalPhotoImage.height;
+      const targetAspect = outW / outH; const safeScale = 1.10;
+      let drawW, drawH, offX = 0, offY = 0;
+      if(imgAspect > targetAspect) { drawH = outH * safeScale; drawW = drawH * imgAspect; offX = -(drawW - outW)/2; offY = -(drawH - outH)/2; }
+      else { drawW = outW * safeScale; drawH = drawW / imgAspect; offX = -(drawW - outW)/2; offY = -(drawH - outH)/2; }
+      ctx.drawImage(originalPhotoImage, offX, offY, drawW, drawH);
+      canvas.toBlob(blob => {
+        processedPhotoBlob = blob; photoPreviewImg.src = URL.createObjectURL(blob);
+        photoReqList.innerHTML = `<div class="req-item"><i class="fas fa-check-circle" style="color:#10b981;"></i> تم التحسين مع هامش 10%</div>`;
+        downloadPhotoBtn.disabled = false; photoFileName.textContent = originalPhotoFile.name.replace(/\.[^.]+$/, "") + "_4x6_آمن.jpg";
+      }, 'image/jpeg', 0.95);
+    });
+
+    downloadPhotoBtn.addEventListener('click', function() {
+      if(!processedPhotoBlob) return; const a = document.createElement('a');
+      a.href = URL.createObjectURL(processedPhotoBlob); a.download = 'صورة_الاحوال_4x6_آمنة.jpg'; a.click();
+    });
+
+    function resetPhotoModal() {
+      photoPreviewContainer.style.display='none'; processPhotoBtn.disabled = true; downloadPhotoBtn.disabled = true;
+      photoReqList.innerHTML = '<div class="req-item"><i class="fas fa-info-circle"></i> ارفع صورة</div>';
+      originalPhotoImage = null; processedPhotoBlob = null;
+    }
+
+    // 3. تحويل PDF
+    const pdfModal = document.getElementById('pdfModal');
+    const openPdfBtn = document.getElementById('openPdfModalBtn');
+    const closePdfBtn = document.getElementById('closePdfModalBtn');
+    const pdfUploadArea = document.getElementById('pdfUploadArea');
+    const pdfFileInput = document.getElementById('pdfFileInput');
+    const imageListDiv = document.getElementById('imageListContainer');
+    const imageCountSpan = document.getElementById('imageCount');
+    const generatePdfBtn = document.getElementById('generatePdfBtn');
+    const clearAllPdfBtn = document.getElementById('clearAllPdfBtn');
+    const addMorePdfBtn = document.getElementById('addMorePdfBtn');
+    let pdfImageFiles = [], sortableInstance = null;
+
+    openPdfBtn.addEventListener('click', ()=> { pdfModal.style.display='flex'; });
+    closePdfBtn.addEventListener('click', ()=> pdfModal.style.display='none');
+    pdfModal.addEventListener('click', e=> { if(e.target===pdfModal) pdfModal.style.display='none'; });
+    pdfUploadArea.addEventListener('click', ()=> pdfFileInput.click());
+    addMorePdfBtn.addEventListener('click', ()=> pdfFileInput.click());
+    pdfUploadArea.addEventListener('dragover', e=> { e.preventDefault(); pdfUploadArea.style.background='rgba(59,130,246,0.2)'; });
+    pdfUploadArea.addEventListener('dragleave', ()=> pdfUploadArea.style.background='');
+    pdfUploadArea.addEventListener('drop', e=> { e.preventDefault(); pdfUploadArea.style.background=''; const files = Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')); addPdfFiles(files); });
+    pdfFileInput.addEventListener('change', e=> { const files = Array.from(e.target.files).filter(f=>f.type.startsWith('image/')); addPdfFiles(files); pdfFileInput.value = ''; });
+
+    function addPdfFiles(files) { files.forEach(f => { if(!pdfImageFiles.some(ex=>ex.name===f.name&&ex.size===f.size)) pdfImageFiles.push(f); }); renderPdfList(); }
+    function renderPdfList() {
+      if(pdfImageFiles.length === 0) { imageListDiv.innerHTML = '<p style="text-align:center;">لم تضف صوراً</p>'; imageCountSpan.textContent = '0'; generatePdfBtn.disabled = true; return; }
+      let html = ''; pdfImageFiles.forEach((f, i) => { const url = URL.createObjectURL(f); html += `<div class="image-item" data-index="${i}"><img src="${url}"><div class="info"><div>${f.name}</div><small>${(f.size/1024).toFixed(1)} ك.ب</small></div><div class="actions"><i class="fas fa-times" onclick="removePdfImage(${i})"></i></div></div>`; });
+      imageListDiv.innerHTML = html; imageCountSpan.textContent = pdfImageFiles.length; generatePdfBtn.disabled = false;
+      if(sortableInstance) sortableInstance.destroy();
+      sortableInstance = new Sortable(imageListDiv, { animation: 150, ghostClass: 'sortable-ghost', onEnd: function() { const items = Array.from(imageListDiv.children); const newOrder = items.map(it => parseInt(it.dataset.index)); pdfImageFiles = newOrder.map(idx => pdfImageFiles[idx]); } });
+    }
+    window.removePdfImage = function(index) { pdfImageFiles.splice(index, 1); renderPdfList(); };
+    clearAllPdfBtn.addEventListener('click', ()=> { pdfImageFiles = []; renderPdfList(); });
+    generatePdfBtn.addEventListener('click', async function() {
+      if(!pdfImageFiles.length) return; generatePdfBtn.disabled = true; generatePdfBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> جاري...';
+      try {
+        const { jsPDF } = window.jspdf; const pdf = new jsPDF();
+        for(let i=0; i<pdfImageFiles.length; i++) {
+          const file = pdfImageFiles[i]; const dataUrl = await fileToDataURL(file); const img = await createImage(dataUrl);
+          if(i>0) pdf.addPage(); const pdfW = pdf.internal.pageSize.getWidth(), pdfH = pdf.internal.pageSize.getHeight();
+          const ratio = Math.min(pdfW/img.width, pdfH/img.height); const w = img.width * ratio, h = img.height * ratio;
+          pdf.addImage(dataUrl, 'JPEG', (pdfW-w)/2, (pdfH-h)/2, w, h);
+        }
+        pdf.save('images_converted.pdf');
+      } catch(err) { alert('خطأ: '+err.message); }
+      finally { generatePdfBtn.disabled = false; generatePdfBtn.innerHTML = '<i class="fas fa-file-pdf"></i> إنشاء PDF'; }
+    });
+  })();
 </script>
 </body>
 </html>
