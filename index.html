@@ -1,56 +1,306 @@
-async function generateCV() {
-  const { jsPDF } = window.jspdf;
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  const name = document.getElementById('cv_name').value || "بدون اسم";
-  const phone = document.getElementById('cv_phone').value || "-";
-  const email = document.getElementById('cv_email').value || "-";
-  const summary = document.getElementById('cv_summary').value || "-";
-  const details = document.getElementById('cv_details').value || "-";
-  const lang = document.getElementById('cv_lang').value;
+<title>منصة آفاق | Pro</title>
 
-  const tempDiv = document.createElement('div');
-  tempDiv.style.width = '700px';
-  tempDiv.style.padding = '40px';
-  tempDiv.style.background = 'white';
-  tempDiv.style.color = 'black';
-  tempDiv.style.direction = lang === 'ar' ? 'rtl' : 'ltr';
-  tempDiv.style.fontFamily = "Tajawal";
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-  tempDiv.innerHTML = `
-    <div style="text-align:center; margin-bottom:15px;">
-      <h1 style="font-size:24px; margin-bottom:5px;">${name}</h1>
-      <p style="font-size:14px;">${phone} | ${email}</p>
-    </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
-    <hr style="margin:10px 0;">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
 
-    <div style="margin-top:15px;">
-      <h3 style="font-size:16px; margin-bottom:5px;">
-        ${lang === 'ar' ? 'النبذة التعريفية' : 'Professional Summary'}
-      </h3>
-      <p style="font-size:14px; line-height:1.8;">
-        ${summary}
-      </p>
-    </div>
-
-    <div style="margin-top:20px;">
-      <h3 style="font-size:16px; margin-bottom:5px;">
-        ${lang === 'ar' ? 'المؤهلات والخبرات' : 'Experience & Education'}
-      </h3>
-      <p style="font-size:14px; line-height:1.8; white-space: pre-wrap;">
-        ${details}
-      </p>
-    </div>
-  `;
-
-  document.body.appendChild(tempDiv);
-
-  const canvas = await html2canvas(tempDiv, { scale: 2 });
-  const imgData = canvas.toDataURL('image/png');
-
-  const pdf = new jsPDF();
-  pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);
-  pdf.save('CV_Professional.pdf');
-
-  document.body.removeChild(tempDiv);
+body{
+font-family:'Tajawal',sans-serif;
+background:#0b1424;
+color:#fff;
+padding:20px;
 }
+
+.grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:15px;
+margin-top:20px;
+}
+
+.card{
+background:#111c2e;
+padding:20px;
+border-radius:15px;
+cursor:pointer;
+text-align:center;
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-5px);
+background:#1e3a5f;
+}
+
+.modal-overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.8);
+display:none;
+align-items:center;
+justify-content:center;
+}
+
+.modal{
+background:#08121e;
+padding:20px;
+border-radius:20px;
+width:90%;
+max-width:600px;
+}
+
+input,textarea,select{
+width:100%;
+padding:10px;
+margin-top:5px;
+margin-bottom:10px;
+background:#0f1a2b;
+border:none;
+border-radius:10px;
+color:white;
+}
+
+button{
+background:#3b82f6;
+border:none;
+padding:10px;
+border-radius:20px;
+color:white;
+cursor:pointer;
+width:100%;
+}
+
+.image-item{
+background:#16263d;
+padding:8px;
+margin:5px 0;
+border-radius:10px;
+cursor:move;
+}
+</style>
+</head>
+
+<body>
+
+<h2>🚀 منصة آفاق</h2>
+
+<div class="grid">
+
+<div class="card" onclick="openModal('cvModal')">
+📄 إنشاء CV
+</div>
+
+<div class="card" onclick="openModal('photoModal')">
+📷 صورة 4×6
+</div>
+
+<div class="card" onclick="openModal('pdfModal')">
+📑 صور إلى PDF
+</div>
+
+</div>
+
+<!-- CV -->
+<div class="modal-overlay" id="cvModal">
+<div class="modal">
+
+<h3>السيرة الذاتية</h3>
+
+<input id="cv_name" placeholder="الاسم">
+<input id="cv_phone" placeholder="الجوال">
+<input id="cv_email" placeholder="الإيميل">
+
+<textarea id="cv_summary" placeholder="نبذة"></textarea>
+<textarea id="cv_details" placeholder="خبرات"></textarea>
+
+<select id="cv_lang">
+<option value="ar">عربي</option>
+<option value="en">English</option>
+</select>
+
+<button onclick="generateCV()">تحميل PDF</button>
+
+</div>
+</div>
+
+<!-- PHOTO -->
+<div class="modal-overlay" id="photoModal">
+<div class="modal">
+
+<input type="file" id="photoInput" onchange="previewPhoto(this)">
+<img id="targetPhoto" style="max-width:100%;margin-top:10px;display:none;">
+
+<button onclick="processPhoto()">تحميل</button>
+
+</div>
+</div>
+
+<!-- PDF -->
+<div class="modal-overlay" id="pdfModal">
+<div class="modal">
+
+<input type="file" multiple id="pdfInput" onchange="handlePdf(this)">
+<div id="pdfList"></div>
+
+<button onclick="buildPDF()">إنشاء PDF</button>
+
+</div>
+</div>
+
+<script>
+
+/* مودال */
+function openModal(id){
+document.getElementById(id).style.display='flex';
+}
+
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+m.onclick=(e)=>{if(e.target===m)m.style.display='none'}
+});
+
+/* CV */
+async function generateCV(){
+
+const { jsPDF } = window.jspdf;
+
+let name=document.getElementById('cv_name').value||"بدون اسم";
+let phone=document.getElementById('cv_phone').value||"-";
+let email=document.getElementById('cv_email').value||"-";
+let summary=document.getElementById('cv_summary').value||"-";
+let details=document.getElementById('cv_details').value||"-";
+
+let div=document.createElement('div');
+
+div.style.width='700px';
+div.style.padding='40px';
+div.style.background='white';
+div.style.color='black';
+div.style.fontFamily='Tajawal';
+
+div.innerHTML=`
+<h1 style="font-size:24px;text-align:center">${name}</h1>
+<p style="font-size:14px;text-align:center">${phone} | ${email}</p>
+<hr>
+
+<h3 style="font-size:16px">نبذة</h3>
+<p style="font-size:14px;line-height:1.8">${summary}</p>
+
+<h3 style="font-size:16px">الخبرات</h3>
+<p style="font-size:14px;line-height:1.8;white-space:pre-wrap">${details}</p>
+`;
+
+document.body.appendChild(div);
+
+let canvas=await html2canvas(div,{scale:2});
+let img=canvas.toDataURL();
+
+let pdf=new jsPDF();
+pdf.addImage(img,'PNG',0,0,210,297);
+pdf.save("cv.pdf");
+
+document.body.removeChild(div);
+
+}
+
+/* PHOTO */
+function previewPhoto(input){
+let reader=new FileReader();
+reader.onload=e=>{
+let img=document.getElementById('targetPhoto');
+img.src=e.target.result;
+img.style.display='block';
+};
+reader.readAsDataURL(input.files[0]);
+}
+
+function processPhoto(){
+let img=document.getElementById('targetPhoto');
+
+let c=document.createElement('canvas');
+let ctx=c.getContext('2d');
+
+c.width=600;
+c.height=900;
+
+ctx.fillStyle="#fff";
+ctx.fillRect(0,0,600,900);
+
+let scale=Math.max(600/img.naturalWidth,900/img.naturalHeight);
+
+let x=(600-img.naturalWidth*scale)/2;
+let y=(900-img.naturalHeight*scale)/2;
+
+ctx.drawImage(img,x,y,img.naturalWidth*scale,img.naturalHeight*scale);
+
+let a=document.createElement('a');
+a.href=c.toDataURL();
+a.download="photo.jpg";
+a.click();
+}
+
+/* PDF */
+let files=[];
+
+function handlePdf(input){
+files=Array.from(input.files);
+
+let list=document.getElementById('pdfList');
+list.innerHTML='';
+
+files.forEach((f,i)=>{
+let div=document.createElement('div');
+div.className='image-item';
+div.dataset.index=i;
+div.innerText=f.name;
+list.appendChild(div);
+});
+
+new Sortable(list,{
+animation:150,
+onEnd:()=>{
+let newArr=[];
+document.querySelectorAll('.image-item').forEach(el=>{
+newArr.push(files[el.dataset.index]);
+});
+files=newArr;
+}
+});
+}
+
+async function buildPDF(){
+
+const { jsPDF } = window.jspdf;
+let pdf=new jsPDF();
+
+for(let i=0;i<files.length;i++){
+
+let img=await new Promise(res=>{
+let r=new FileReader();
+r.onload=e=>res(e.target.result);
+r.readAsDataURL(files[i]);
+});
+
+if(i>0)pdf.addPage();
+
+pdf.addImage(img,'JPEG',0,0,210,297);
+}
+
+pdf.save("merged.pdf");
+}
+
+</script>
+
+</body>
+</html>
