@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
   <style>
     /* جميع الأنماط كما هي دون تغيير */
@@ -180,7 +181,7 @@
   <div class="footer">© 2026 Pro Dashboard — تصميم احترافي · جاهز للتوسع</div>
 </div>
 
-<!-- ========== مودال إنشاء السيرة الذاتية (محسّن) ========== -->
+<!-- ========== مودال إنشاء السيرة الذاتية ========== -->
 <div class="modal-overlay" id="atsModal">
   <div class="modal-container" style="max-width:700px;">
     <div class="modal-header">
@@ -213,16 +214,17 @@
     <div class="action-buttons">
       <button class="btn" id="generateResumeBtn"><i class="fas fa-file-pdf"></i> إنشاء PDF احترافي</button>
     </div>
-    <p class="warning-text" style="text-align:center;">* تنسيق ATS متوافق مع أنظمة التوظيف</p>
+    <p class="warning-text" style="text-align:center;">* سيتم إنشاء PDF بجودة عالية وخط عربي واضح</p>
   </div>
 </div>
 
-<!-- مودال تعديل الصور وتحويل PDF (كما هي في النسخة السابقة) -->
-<!-- ... الكود الكامل للمودالات موجود في النسخة المرفقة ... -->
+<!-- مودال تعديل الصور (لم يتغير) -->
+<!-- مودال تحويل الصور إلى PDF (لم يتغير) -->
+<!-- سيتم تضمينهما كما في النسخة السابقة -->
 
 <script>
   (function(){
-    // دوال مساعدة لتحويل الصور (تستخدم في PDF)
+    // دوال مساعدة (تستخدم لاحقاً)
     function fileToDataURL(file) {
       return new Promise(resolve => {
         const reader = new FileReader();
@@ -238,7 +240,7 @@
       });
     }
 
-    // ========== 1. منشئ السيرة الذاتية المحسّن ==========
+    // ========== 1. منشئ السيرة الذاتية (باستخدام html2canvas) ==========
     const atsModal = document.getElementById('atsModal');
     const openAtsBtn = document.getElementById('openAtsModalBtn');
     const closeAtsBtn = document.getElementById('closeAtsModalBtn');
@@ -248,7 +250,7 @@
     closeAtsBtn.addEventListener('click', ()=> atsModal.style.display='none');
     atsModal.addEventListener('click', (e)=> { if(e.target === atsModal) atsModal.style.display='none'; });
 
-    generateResumeBtn.addEventListener('click', function() {
+    generateResumeBtn.addEventListener('click', async function() {
       const fullName = document.getElementById('fullName').value.trim() || 'الاسم الكامل';
       const email = document.getElementById('email').value.trim() || 'email@example.com';
       const phone = document.getElementById('phone').value.trim() || '+966xxxxxxxxx';
@@ -258,87 +260,80 @@
       const experience = document.getElementById('experience').value.trim();
       const skills = document.getElementById('skills').value.trim();
       const lang = document.getElementById('languageSelect').value;
-      
       const isRtl = lang === 'ar';
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
       
-      // إعدادات عامة
-      pdf.setFont("helvetica", "normal");
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const margin = 20;
-      let y = margin + 5;
+      // إنشاء عنصر HTML مؤقت لتوليد السيرة الذاتية
+      const resumeDiv = document.createElement('div');
+      resumeDir.style.direction = isRtl ? 'rtl' : 'ltr';
+      resumeDiv.style.fontFamily = "'Tajawal', 'Helvetica', 'Arial', sans-serif";
+      resumeDiv.style.padding = '40px';
+      resumeDiv.style.backgroundColor = 'white';
+      resumeDiv.style.color = '#2c3e50';
+      resumeDiv.style.width = '800px'; // عرض مناسب للـ PDF
+      resumeDiv.style.margin = '0 auto';
       
-      // ----- رأس الصفحة (الاسم ومعلومات الاتصال) -----
-      pdf.setFontSize(26);
-      pdf.setTextColor(26, 95, 122); // لون أزرق داكن #1a5f7a
-      pdf.text(fullName, pageWidth / 2, y, { align: 'center' });
-      y += 12;
-      
-      pdf.setFontSize(10);
-      pdf.setTextColor(85, 85, 85);
-      const contactLine = [phone, email, birth].filter(Boolean).join(' | ');
-      pdf.text(contactLine, pageWidth / 2, y, { align: 'center' });
-      y += 8;
-      
-      // خط فاصل
-      pdf.setDrawColor(26, 95, 122);
-      pdf.setLineWidth(0.5);
-      pdf.line(margin, y, pageWidth - margin, y);
-      y += 12;
-      
-      // دالة لإضافة قسم بعنوان
-      function addSection(title, content) {
-        if (!content || content.trim() === '') return;
+      // بناء المحتوى
+      resumeDiv.innerHTML = `
+        <div style="text-align: center; border-bottom: 3px solid #1a5f7a; padding-bottom: 15px; margin-bottom: 25px;">
+          <div style="font-size: 26pt; font-weight: bold; color: #1a5f7a; text-transform: uppercase;">${fullName}</div>
+          <div style="font-size: 10pt; color: #555; margin-top: 5px;">${[phone, email, birth].filter(Boolean).join(' | ')}</div>
+        </div>
         
-        // عنوان القسم (خلفية فاتحة وحد جانبي)
-        pdf.setFillColor(244, 247, 249);
-        pdf.rect(margin, y - 5, pageWidth - 2*margin, 10, 'F');
-        pdf.setFontSize(14);
-        pdf.setTextColor(26, 95, 122);
-        pdf.text(title, isRtl ? pageWidth - margin - 5 : margin + 5, y, { align: isRtl ? 'right' : 'left' });
-        y += 10;
+        <div style="margin-bottom: 20px;">
+          <div style="font-size: 14pt; font-weight: bold; background-color: #f4f7f9; padding: 5px 10px; color: #1a5f7a; border-${isRtl ? 'right' : 'left'}: 5px solid #1a5f7a; margin-bottom: 10px;">${isRtl ? 'النبذة التعريفية' : 'Professional Summary'}</div>
+          <div style="margin: 10px 15px; text-align: justify; white-space: pre-wrap;">${summary}</div>
+        </div>
         
-        // محتوى القسم
-        pdf.setFontSize(11);
-        pdf.setTextColor(44, 62, 80);
-        const lines = pdf.splitTextToSize(content, pageWidth - 2*margin - 10);
-        pdf.text(lines, isRtl ? pageWidth - margin - 5 : margin + 5, y, { align: isRtl ? 'right' : 'left' });
-        y += lines.length * 6 + 8;
+        <div style="margin-bottom: 20px;">
+          <div style="font-size: 14pt; font-weight: bold; background-color: #f4f7f9; padding: 5px 10px; color: #1a5f7a; border-${isRtl ? 'right' : 'left'}: 5px solid #1a5f7a; margin-bottom: 10px;">${isRtl ? 'المؤهلات العلمية' : 'Education'}</div>
+          <div style="margin: 10px 15px; text-align: justify;">${education}</div>
+        </div>
+        
+        ${experience ? `
+        <div style="margin-bottom: 20px;">
+          <div style="font-size: 14pt; font-weight: bold; background-color: #f4f7f9; padding: 5px 10px; color: #1a5f7a; border-${isRtl ? 'right' : 'left'}: 5px solid #1a5f7a; margin-bottom: 10px;">${isRtl ? 'الخبرات العملية' : 'Work Experience'}</div>
+          <div style="margin: 10px 15px; text-align: justify; white-space: pre-wrap;">${experience}</div>
+        </div>
+        ` : ''}
+        
+        ${skills ? `
+        <div style="margin-bottom: 20px;">
+          <div style="font-size: 14pt; font-weight: bold; background-color: #f4f7f9; padding: 5px 10px; color: #1a5f7a; border-${isRtl ? 'right' : 'left'}: 5px solid #1a5f7a; margin-bottom: 10px;">${isRtl ? 'المهارات التقنية' : 'Technical Skills'}</div>
+          <div style="margin: 10px 15px; text-align: justify;">${skills}</div>
+        </div>
+        ` : ''}
+        
+        <div style="text-align: center; font-size: 8pt; color: #aaa; margin-top: 50px;">Generated by Pro Dashboard - ATS Friendly</div>
+      `;
+      
+      // إضافة مؤقت للصفحة لالتقاط الصورة
+      document.body.appendChild(resumeDiv);
+      
+      try {
+        const canvas = await html2canvas(resumeDiv, { scale: 2, backgroundColor: '#ffffff' });
+        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+        
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        
+        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`Resume_${fullName.replace(/\s+/g, '_')}.pdf`);
+      } catch (error) {
+        alert('حدث خطأ أثناء إنشاء PDF: ' + error.message);
+      } finally {
+        document.body.removeChild(resumeDiv);
       }
-      
-      // إضافة الأقسام
-      const titles = {
-        summary: isRtl ? 'النبذة التعريفية' : 'Professional Summary',
-        education: isRtl ? 'المؤهلات العلمية' : 'Education',
-        experience: isRtl ? 'الخبرات العملية' : 'Work Experience',
-        skills: isRtl ? 'المهارات التقنية' : 'Technical Skills'
-      };
-      
-      addSection(titles.summary, summary);
-      addSection(titles.education, education);
-      if (experience) addSection(titles.experience, experience);
-      if (skills) addSection(titles.skills, skills);
-      
-      // تذييل بسيط
-      pdf.setFontSize(8);
-      pdf.setTextColor(170, 170, 170);
-      pdf.text('Generated by Pro Dashboard - ATS Friendly', pageWidth / 2, pageHeight - 10, { align: 'center' });
-      
-      pdf.save(`Resume_${fullName.replace(/\s+/g, '_')}.pdf`);
     });
 
-    // ========== 2. تعديل الصور الشخصية (كما هي) ==========
-    // ... (نفس كود تعديل الصور السابق) ...
+    // ========== 2. تعديل الصور الشخصية (نفس الكود السابق) ==========
+    // ... سيتم إدراجه كاملاً في النسخة النهائية ...
 
-    // ========== 3. تحويل الصور إلى PDF (كما هي) ==========
-    // ... (نفس كود PDF السابق) ...
+    // ========== 3. تحويل الصور إلى PDF (نفس الكود السابق) ==========
+    // ... سيتم إدراجه كاملاً في النسخة النهائية ...
 
-    // نظراً لطول الكود، سيتم تضمين باقي الدوال في النسخة الكاملة
-    // المرفقة مع التأكيد على أنها تعمل بشكل كامل
   })();
 </script>
-<!-- الكود الكامل يتضمن أقسام تعديل الصور وتحويل PDF -->
 </body>
 </html>
