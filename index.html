@@ -2,36 +2,45 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>الشبكات العصبية الالتفافية | CNN Lab</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>منصة الاحترافية | Pro Dashboard</title>
+  <!-- خط عصري للعربية -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <!-- أيقونات احترافية (Font Awesome) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Tajawal', sans-serif;
       background: radial-gradient(circle at 20% 10%, #0b1424, #03070e);
-      color: #fff;
+      color: #ffffff;
       min-height: 100vh;
       padding: 0 16px 32px;
       direction: rtl;
     }
+
+    /* شريط علوي زجاجي */
     .topbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 18px 28px;
-      margin: 20px 0 30px;
+      margin: 20px 0 10px;
       background: rgba(18, 28, 46, 0.6);
       backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border: 1px solid rgba(74, 144, 226, 0.2);
       border-radius: 60px;
-      box-shadow: 0 15px 35px -10px rgba(0,0,0,0.5);
+      box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5);
     }
+
     .brand {
       font-size: 1.8rem;
       font-weight: 800;
@@ -39,366 +48,367 @@
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
+      letter-spacing: -0.5px;
     }
-    .badge {
+
+    .live-badge {
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(59,130,246,0.2);
+      background: rgba(59, 130, 246, 0.2);
       padding: 8px 18px;
       border-radius: 40px;
-      border: 1px solid rgba(59,130,246,0.4);
+      border: 1px solid rgba(59, 130, 246, 0.4);
       font-weight: 600;
+      font-size: 0.95rem;
       color: #bdd3ff;
     }
-    .badge i { color: #3b82f6; animation: pulse 1.8s infinite; }
+
+    .live-badge i {
+      color: #3b82f6;
+      font-size: 0.8rem;
+      animation: pulse 1.8s infinite;
+    }
+
     @keyframes pulse {
       0% { opacity: 0.6; transform: scale(1); }
       50% { opacity: 1; transform: scale(1.2); text-shadow: 0 0 8px #3b82f6; }
       100% { opacity: 0.6; transform: scale(1); }
     }
+
+    /* الحاوية الرئيسية */
     .container {
-      max-width: 900px;
+      max-width: 1400px;
       margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
     }
-    .main-card {
-      width: 100%;
-      background: rgba(12, 22, 38, 0.75);
-      backdrop-filter: blur(10px);
-      border: 1.5px solid rgba(59, 130, 246, 0.4);
-      border-radius: 48px;
-      padding: 40px 30px;
-      margin: 20px 0 40px;
+
+    /* الشبكة الاحترافية */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 22px;
+      margin: 30px 0 20px;
+    }
+
+    /* بطاقة بتصميم صور وأيقونات متناسقة */
+    .card {
+      background: rgba(12, 22, 38, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 28px;
+      padding: 24px 12px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
       cursor: pointer;
-      transition: all 0.4s;
-      box-shadow: 0 20px 40px -8px #000000b3;
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5);
     }
-    .main-card:hover {
-      transform: translateY(-10px);
-      background: rgba(20, 40, 65, 0.85);
+
+    /* تأثير ضوئي عند التحويم */
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 20%, rgba(59, 130, 246, 0.25), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s;
+      pointer-events: none;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      background: rgba(20, 40, 65, 0.8);
+      border-color: rgba(59, 130, 246, 0.5);
+      box-shadow: 0 25px 30px -8px rgba(0, 20, 60, 0.6);
+    }
+
+    .card:hover::after {
+      opacity: 1;
+    }
+
+    /* حاوية الصورة / الأيقونة بمقاس متناسق */
+    .image-wrapper {
+      width: 90px;
+      height: 90px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      background: linear-gradient(145deg, rgba(59, 130, 246, 0.2), rgba(16, 30, 54, 0.7));
+      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+      transition: 0.2s;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .card:hover .image-wrapper {
+      background: linear-gradient(145deg, #1e3a6b, #0f1e32);
+      box-shadow: 0 0 18px #3b82f6, inset 0 0 8px rgba(255, 255, 255, 0.1);
       border-color: #3b82f6;
-      box-shadow: 0 30px 50px -10px #1e3a8a, 0 0 30px #3b82f633;
     }
-    .icon {
-      width: 140px; height: 140px;
-      display: flex; align-items: center; justify-content: center;
-      border-radius: 35% 65% 70% 30% / 40% 35% 65% 60%;
-      background: linear-gradient(145deg, #1e3a6b, #0a1422);
-      box-shadow: 0 15px 25px -5px #00000080, inset 0 0 0 2px #3b82f64d;
-      margin-bottom: 20px;
+
+    /* الصور الداخلية (أيقونات فونت أوسوم أو صور SVG) بمقاس ثابت */
+    .image-wrapper i {
+      font-size: 46px;
+      color: #e0edff;
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+      transition: 0.2s;
     }
-    .main-card:hover .icon {
-      background: linear-gradient(145deg, #2b5797, #13223b);
-      box-shadow: 0 0 35px #3b82f6, inset 0 0 15px #7ab0ff;
+
+    .card:hover .image-wrapper i {
+      color: white;
+      transform: scale(1.05);
+      filter: drop-shadow(0 0 12px #90c0ff);
     }
-    .icon i { font-size: 75px; color: #e0edff; }
-    .title {
-      font-size: 2.8rem; font-weight: 800;
-      background: linear-gradient(135deg, #fff, #b0d0ff);
-      -webkit-background-clip: text; background-clip: text; color: transparent;
+
+    /* بالنسبة للبطاقات التي نستخدم فيها صور SVG مخصصة (صور متناسقة) */
+    .image-wrapper img {
+      width: 56px;
+      height: 56px;
+      object-fit: contain;
+      filter: brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+      transition: 0.2s;
     }
-    .sub {
-      font-size: 1.3rem; color: #b8cef0; margin-bottom: 20px;
+
+    .card:hover .image-wrapper img {
+      transform: scale(1.06);
+      filter: brightness(0) invert(1) drop-shadow(0 0 10px #7ab0ff);
     }
-    .btn-badge {
-      background: #3b82f6; padding: 12px 36px; border-radius: 50px;
-      font-weight: bold; box-shadow: 0 5px 15px #1e3a8a;
-      font-size: 1.2rem;
+
+    /* عنوان البطاقة */
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin: 8px 0 6px;
+      color: #f0f6ff;
+      letter-spacing: -0.3px;
     }
+
+    /* وصف صغير / قيمة إحصائية */
+    .card-stat {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #9bb9f0;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 4px 14px;
+      border-radius: 30px;
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.05);
+      margin-top: 5px;
+    }
+
+    /* تذييل الصفحة */
     .footer {
-      text-align: center; padding: 24px 0; opacity: 0.8;
-      border-top: 1px dashed #6496dc33; margin-top: 30px; width: 100%;
+      text-align: center;
+      padding: 24px 0 10px;
+      opacity: 0.75;
+      font-size: 1rem;
+      font-weight: 400;
+      color: #b0c7e9;
+      border-top: 1px dashed rgba(100, 150, 220, 0.2);
+      margin-top: 25px;
     }
-    .modal {
-      position: fixed; top:0; left:0; right:0; bottom:0;
-      background: rgba(0,0,0,0.8); backdrop-filter: blur(12px);
-      display: none; align-items: center; justify-content: center;
-      z-index: 1000; padding: 20px;
+
+    /* تجاوب مع الشاشات المتوسطة */
+    @media (max-width: 1100px) {
+      .grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+      }
+      .brand { font-size: 1.5rem; }
     }
-    .modal-content {
-      background: rgba(6, 15, 28, 0.98); backdrop-filter: blur(20px);
-      border: 1.5px solid #3b82f680; border-radius: 40px;
-      width: 95%; max-width: 1400px; max-height: 92vh;
-      overflow-y: auto; padding: 24px 22px;
-      box-shadow: 0 30px 60px #000000e6, 0 0 0 1px #3b82f6;
-      scrollbar-width: thin; scrollbar-color: #3b82f6 #0f1a2b;
+
+    @media (max-width: 700px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+      .topbar {
+        padding: 14px 18px;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+      }
+      .image-wrapper {
+        width: 75px;
+        height: 75px;
+      }
+      .image-wrapper i {
+        font-size: 38px;
+      }
     }
-    .modal-header {
-      display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 1px solid #2a3c58; padding-bottom: 18px; margin-bottom: 20px;
+
+    @media (max-width: 480px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      body { padding: 0 10px 20px; }
     }
-    .modal-header h2 {
-      font-size: 2rem; font-weight: 700;
-      background: linear-gradient(135deg, #c6ddff, #60a5fa);
-      -webkit-background-clip: text; background-clip: text; color: transparent;
+
+    /* تنسيق إضافي للبطاقات: حدود متوهجة */
+    .card:nth-child(1) .image-wrapper { background: linear-gradient(145deg, #1e4b8f, #0c1a2b); }
+    .card:nth-child(2) .image-wrapper { background: linear-gradient(145deg, #3a2c6b, #140e2b); }
+    .card:nth-child(3) .image-wrapper { background: linear-gradient(145deg, #2d6e5a, #0e2620); }
+    .card:nth-child(4) .image-wrapper { background: linear-gradient(145deg, #9e5f2b, #301e0e); }
+    .card:nth-child(5) .image-wrapper { background: linear-gradient(145deg, #3f3f6b, #14142b); }
+    .card:nth-child(6) .image-wrapper { background: linear-gradient(145deg, #2b506e, #0e1f2e); }
+    .card:nth-child(7) .image-wrapper { background: linear-gradient(145deg, #4f3f7a, #1e1735); }
+    .card:nth-child(8) .image-wrapper { background: linear-gradient(145deg, #2f786a, #0f2e28); }
+    .card:nth-child(9) .image-wrapper { background: linear-gradient(145deg, #b47a3a, #3b2812); }
+    .card:nth-child(10) .image-wrapper { background: linear-gradient(145deg, #436b8c, #142433); }
+
+    /* نص توضيحي للقسم */
+    .section-hint {
+      margin: 5px 0 0;
+      font-size: 0.9rem;
+      color: #aac3e0;
     }
-    .modal-header i { font-size: 28px; color: #60a5fa; cursor: pointer; }
-    .modal-header i:hover { color: #ff7b7b; }
-    .tabs {
-      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px;
-      border-bottom: 1px solid #2e4a6b; padding-bottom: 12px;
-    }
-    .tab {
-      background: transparent; border: 1px solid #3b82f680;
-      color: #ccdeff; padding: 8px 16px; border-radius: 30px;
-      font-weight: 600; font-size: 0.9rem; cursor: pointer;
-      transition: 0.2s; backdrop-filter: blur(5px);
-    }
-    .tab i { margin-left: 6px; }
-    .tab:hover { background: #1e3a6b; border-color: #3b82f6; }
-    .tab.active {
-      background: #3b82f6; color: white; border-color: #90c0ff;
-      box-shadow: 0 0 15px #3b82f6;
-    }
-    .code-box {
-      background: #0a121f; border-radius: 24px; padding: 18px;
-      border: 1px solid #2e4a6b; direction: ltr; text-align: left;
-      margin-bottom: 20px;
-    }
-    .code-box pre {
-      margin: 0; border-radius: 16px; font-size: 15px;
-      max-height: 300px; overflow: auto;
-    }
-    .desc {
-      color: #b8cef0; margin-bottom: 12px; font-size: 1.1rem;
-      display: flex; align-items: center; gap: 10px;
-    }
-    .theory {
-      background: rgba(10, 20, 35, 0.7); border-radius: 28px;
-      padding: 25px 30px; border: 1px solid #3b82f6;
-      backdrop-filter: blur(8px); max-height: 65vh; overflow-y: auto;
-    }
-    .theory h3 { color: #a0c8ff; margin: 25px 0 15px; font-size: 1.8rem; border-right: 5px solid #3b82f6; padding-right: 15px; }
-    .theory h4 { color: #b8d0ff; margin: 20px 0 10px; font-size: 1.3rem; }
-    .theory p, .theory li { color: #d0e0ff; line-height: 1.8; font-size: 1.05rem; }
-    .results-grid {
-      display: grid; grid-template-columns: 1.3fr 0.9fr; gap: 20px;
-      margin: 20px 0;
-    }
-    .stats, .chart-box {
-      background: rgba(20,35,55,0.6); border-radius: 28px;
-      padding: 22px; border: 1px solid #2e4c70; backdrop-filter: blur(5px);
-    }
-    .metric {
-      display: flex; justify-content: space-between; padding: 10px 5px;
-      border-bottom: 1px dashed #3a5670;
-    }
-    .btn {
-      background: #3b82f626; border: 1.5px solid #3b82f6; color: white;
-      padding: 10px 24px; border-radius: 40px; font-weight: 600;
-      cursor: pointer; transition: 0.2s;
-    }
-    .btn:hover { background: #3b82f6; box-shadow: 0 0 20px #3b82f6; }
   </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><i class="fas fa-microchip" style="margin-left: 12px;"></i> مختبر CNN | الرؤية الحاسوبية</div>
-  <div class="badge"><i class="fas fa-circle"></i> نظام تدريب · LIVE <i class="fas fa-shield-alt" style="margin-right: 8px;"></i></div>
+  <div class="brand">
+    <i class="fas fa-cube" style="margin-left: 10px; color: #3b82f6;"></i> 
+    منصة آفاق | Pro
+  </div>
+  <div class="live-badge">
+    <i class="fas fa-circle"></i> 
+    <span>نظام مباشر · LIVE</span>
+    <i class="fas fa-shield-alt" style="margin-right: 8px; opacity: 0.9;"></i>
+  </div>
 </div>
 
 <div class="container">
-  <div class="main-card" id="openModal">
-    <div class="icon"><i class="fas fa-eye"></i></div>
-    <div class="title">الشبكات العصبية الالتفافية</div>
-    <div class="sub">Convolutional Neural Networks</div>
-    <div class="btn-badge"><i class="fas fa-book-open" style="margin-left: 8px;"></i> نظرية + 20 كود تطبيقي</div>
-    <p style="margin-top: 25px; color: #b0c7f0;">تحميل البيانات · معالجة الصور · تدريب وتقييم</p>
-  </div>
-  <div class="footer">© 2026 CNN Lab — منصة تعليمية متكاملة للشبكات الالتفافية</div>
-</div>
-
-<!-- المودال -->
-<div class="modal" id="mainModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2><i class="fas fa-camera"></i> الشبكات العصبية الالتفافية (CNN) - المحتوى الكامل</h2>
-      <i class="fas fa-times" id="closeModal"></i>
+  <!-- الشبكة الرئيسية: 10 أقسام بصور وأيقونات متناسقة -->
+  <div class="grid">
+    
+    <!-- 1. تحليل بيانات -->
+    <div class="card">
+      <div class="image-wrapper">
+        <!-- صورة احترافية: أيقونة بيانية مع رسم بياني -->
+        <i class="fas fa-chart-pie"></i>
+      </div>
+      <div class="card-title">تحليل بيانات</div>
+      <div class="card-stat">+٢٤ تقرير</div>
+      <div class="section-hint">ذكاء الأعمال</div>
     </div>
-    <!-- تبويبات -->
-    <div class="tabs" id="tabContainer">
-      <button class="tab active" data-tab="theory"><i class="fas fa-book"></i> النظرية</button>
-      <button class="tab" data-tab="code1">1. MNIST</button>
-      <button class="tab" data-tab="code2">2. سطوع/تباين</button>
-      <button class="tab" data-tab="code3">3. تصنيف جودة</button>
-      <button class="tab" data-tab="code4">4. حفظ manifest</button>
-      <button class="tab" data-tab="code5">5. تغيير حجم</button>
-      <button class="tab" data-tab="code6">6. RGB</button>
-      <button class="tab" data-tab="code7">7. Grayscale</button>
-      <button class="tab" data-tab="code8">8. فك ضغط</button>
-      <button class="tab" data-tab="code9">9. تحميل Kaggle</button>
-      <button class="tab" data-tab="code10">10. ترميز تلقائي</button>
-      <button class="tab" data-tab="code11">11. صور تالفة</button>
-      <button class="tab" data-tab="code12">12. عد الفئات</button>
-      <button class="tab" data-tab="code13">13. أحجام الصور</button>
-      <button class="tab" data-tab="code14">14. عرض عينات</button>
-      <button class="tab" data-tab="code15">15. BBox → YOLO</button>
-      <button class="tab" data-tab="code16">16. CSV Masks</button>
-      <button class="tab" data-tab="code17">17. سلامة الصورة</button>
-      <button class="tab" data-tab="code18">18. نسب شاذة</button>
-      <button class="tab" data-tab="code19">19. تصحيح ترميز</button>
-      <button class="tab" data-tab="code20">20. حذف صور</button>
-      <button class="tab" data-tab="results"><i class="fas fa-chart-bar"></i> النتائج</button>
+    
+    <!-- 2. ذكاء اصطناعي -->
+    <div class="card">
+      <div class="image-wrapper">
+        <i class="fas fa-brain"></i>
+      </div>
+      <div class="card-title">ذكاء اصطناعي</div>
+      <div class="card-stat">نموذج GPT-6</div>
+      <div class="section-hint">تعلّم عميق</div>
     </div>
-    <!-- محتوى متغير -->
-    <div id="contentArea"></div>
-    <div id="resultsPanel" style="display:none;">
-      <div class="results-grid">
-        <div class="stats">
-          <h3>📊 ملخص التدريب (MNIST)</h3>
-          <div class="metric"><span>حجم التدريب</span><span>60,000</span></div>
-          <div class="metric"><span>حجم الاختبار</span><span>10,000</span></div>
-          <div class="metric"><span>عدد الحقبات</span><span>5</span></div>
-          <div class="metric"><span>الدقة</span><span id="accVal">92.4%</span></div>
-          <div class="metric"><span>الخسارة</span><span id="lossVal">0.21</span></div>
-          <button class="btn" id="simulateBtn" style="margin-top:20px;"><i class="fas fa-play"></i> محاكاة</button>
-        </div>
-        <div class="chart-box">
-          <canvas id="accChart" height="200"></canvas>
+    
+    <!-- 3. تقويم هجري (صورة متناسقة: أيقونة تقويم + هلال) -->
+    <div class="card">
+      <div class="image-wrapper">
+        <!-- استخدام أيقونتين متراكبتين لإيحاء بالتقويم الهجري -->
+        <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+          <i class="fas fa-calendar-alt" style="font-size: 44px;"></i>
+          <i class="fas fa-moon" style="position: absolute; font-size: 22px; bottom: -6px; right: -10px; color: #ffe484; filter: drop-shadow(0 0 5px #fbbf24);"></i>
         </div>
       </div>
+      <div class="card-title">تقويم هجري</div>
+      <div class="card-stat">١٤٤٨ هـ</div>
+      <div class="section-hint">مواقيت الصلاة</div>
     </div>
-    <div style="display:flex; justify-content:flex-end; margin-top:20px;"><button class="btn" id="closeFooter">إغلاق</button></div>
+    
+    <!-- 4. إحصائيات -->
+    <div class="card">
+      <div class="image-wrapper">
+        <i class="fas fa-chart-line"></i>
+      </div>
+      <div class="card-title">إحصائيات</div>
+      <div class="card-stat">+١٨.٥٪ نمو</div>
+      <div class="section-hint">مؤشرات الأداء</div>
+    </div>
+    
+    <!-- 5. إعدادات -->
+    <div class="card">
+      <div class="image-wrapper">
+        <i class="fas fa-sliders-h"></i>
+      </div>
+      <div class="card-title">إعدادات</div>
+      <div class="card-stat">تحكم متقدم</div>
+      <div class="section-hint">تخصيص النظام</div>
+    </div>
+    
+    <!-- 6. حماية -->
+    <div class="card">
+      <div class="image-wrapper">
+        <i class="fas fa-shield-virus"></i>
+      </div>
+      <div class="card-title">حماية</div>
+      <div class="card-stat">جدار ناري نشط</div>
+      <div class="section-hint">مصادقة ثنائية</div>
+    </div>
+    
+    <!-- 7. شبكة -->
+    <div class="card">
+      <div class="image-wrapper">
+        <i class="fas fa-network-wired"></i>
+      </div>
+      <div class="card-title">شبكة</div>
+      <div class="card-stat">٥.٢ جيجابت/ث</div>
+      <div class="section-hint">نطاق ترددي</div>
+    </div>
+    
+    <!-- 8. بيانات مباشرة -->
+    <div class="card">
+      <div class="image-wrapper">
+        <i class="fas fa-satellite-dish"></i>
+      </div>
+      <div class="card-title">بيانات مباشرة</div>
+      <div class="card-stat">تحديث كل ٣ ثوان</div>
+      <div class="section-hint">تدفق حي</div>
+    </div>
+    
+    <!-- 9. مالية -->
+    <div class="card">
+      <div class="image-wrapper">
+        <i class="fas fa-coins"></i>
+      </div>
+      <div class="card-title">مالية</div>
+      <div class="card-stat">$١٢.٤ مليار</div>
+      <div class="section-hint">محفظة استثمارية</div>
+    </div>
+    
+    <!-- 10. تخزين -->
+    <div class="card">
+      <div class="image-wrapper">
+        <i class="fas fa-database"></i>
+      </div>
+      <div class="card-title">تخزين</div>
+      <div class="card-stat">٧٨٪ مستخدم</div>
+      <div class="section-hint">سحابة هجينة</div>
+    </div>
+  </div>
+
+  <!-- تذييل احترافي -->
+  <div class="footer">
+    <i class="fas fa-crown" style="color: #fbbf24; margin-left: 8px;"></i>
+    © 2026 Pro Dashboard — تصميم احترافي بصور وأيقونات متناسقة 
+    <i class="fas fa-rocket" style="margin-right: 10px; color: #3b82f6;"></i>
+    <br>
+    <span style="font-size: 0.9rem; opacity: 0.7;">جاهز للتوسع · واجهة عصرية بمقاسات موحدة</span>
   </div>
 </div>
 
+<!-- إضافة تأثيرات بسيطة إضافية (اختياري) -->
 <script>
-  (function(){
-    hljs.highlightAll();
-    const modal = document.getElementById('mainModal');
-    document.getElementById('openModal').addEventListener('click', ()=> modal.style.display='flex');
-    function closeModal() { modal.style.display = 'none'; }
-    document.getElementById('closeModal').addEventListener('click', closeModal);
-    document.getElementById('closeFooter').addEventListener('click', closeModal);
-    modal.addEventListener('click', e => { if(e.target === modal) closeModal(); });
-
-    // المحتوى النظري – تم إزالة أي ذكر لشبكات أخرى (RNN, ANN, GANs)
-    const theoryHTML = `
-      <div class="theory">
-        <h3>📘 مقدمة في التعلم العميق والشبكات الالتفافية (CNN)</h3>
-        <h4>الذكاء الاصطناعي والتعلم العميق</h4>
-        <p>الذكاء الاصطناعي (AI) يهدف إلى محاكاة التفكير البشري. التعلم العميق (Deep Learning) هو فرع متقدم يستخدم شبكات عصبية متعددة الطبقات لاستخلاص الأنماط تلقائياً من البيانات الخام. تُعد الشبكات العصبية الالتفافية (CNN) النوع الأمثل لمعالجة الصور والفيديو بفضل قدرتها على فهم البنية المكانية.</p>
-        <h4>لماذا CNN للصور؟</h4>
-        <ul><li>تحافظ على الترتيب المكاني للبيكسلات.</li><li>تستخدم عمليات الالتفاف (Convolution) لاستخراج السمات البصرية.</li><li>مشاركة الأوزان (Parameter Sharing) تقلل عدد المعاملات بشكل كبير.</li><li>تتعلم أنماطاً هرمية: من الحواف البسيطة إلى الأشكال المعقدة.</li></ul>
-        <h4>المكونات الأساسية للـ CNN</h4>
-        <ul>
-          <li><strong>طبقة الالتفاف (Convolution):</strong> تطبيق فلاتر لاستخراج خرائط الميزات.</li>
-          <li><strong>دالة التنشيط (ReLU):</strong> إضافة اللاخطية.</li>
-          <li><strong>طبقة التجميع (Pooling):</strong> تقليل الأبعاد المكانية (Max/Average).</li>
-          <li><strong>الطبقات كاملة الاتصال (Fully Connected):</strong> تصنيف الصورة بناءً على الميزات المستخلصة.</li>
-        </ul>
-        <h4>مثال: قاعدة بيانات MNIST</h4>
-        <p>تحتوي على 60,000 صورة تدريب و10,000 صورة اختبار لأرقام مكتوبة بخط اليد (28×28 بكسل، تدرج رمادي). تُستخدم كمعيار لاختبار نماذج تصنيف الصور.</p>
-        
-        <h3>📊 هندسة الخصائص والمعالجة المسبقة للصور</h3>
-        <h4>الفرق بين المعالجة المسبقة وهندسة الخصائص</h4>
-        <p><strong>المعالجة المسبقة (Preprocessing):</strong> تجهيز الصور لتكون صالحة للإدخال إلى النموذج (توحيد الحجم، تطبيع القيم، تحويل إلى RGB أو Grayscale). لا تغير المحتوى.</p>
-        <p><strong>هندسة الخصائص (Feature Engineering):</strong> تهدف إلى تحسين تعلم النموذج عن طريق زيادة تنوع البيانات (Data Augmentation) مثل التدوير، القص، تغيير السطوع. تزيد من حجم dataset الفعّال وتقلل overfitting.</p>
-        <h4>مقاييس جودة الصورة</h4>
-        <ul><li>السطوع (Brightness): متوسط قيم البيكسلات.</li><li>التباين (Contrast): الانحراف المعياري لقيم البيكسلات.</li><li>الوضوح (Blur): يمكن قياسه باستخدام تحويل فورييه أو تباين لابلاسيان.</li></ul>
-        
-        <h3>🔁 خط أنابيب التعلم (ML Pipeline) للـ CNN</h3>
-        <ol>
-          <li><strong>جمع البيانات:</strong> من datasets جاهزة (MNIST, CIFAR, ImageNet) أو كاميرات أو Web Scraping.</li>
-          <li><strong>الترميز (Labeling):</strong> ربط كل صورة بفئتها (تصنيف) أو بإحداثيات الكائن (كشف).</li>
-          <li><strong>فحص البيانات:</strong> التأكد من عدد الصور لكل فئة، اكتشاف الصور التالفة أو ذات الأبعاد الشاذة.</li>
-          <li><strong>تنظيف البيانات:</strong> إزالة الصور التالفة/المكررة/غير الواضحة، وتصحيح أخطاء الترميز.</li>
-          <li><strong>تقسيم البيانات:</strong> تدريب / تحقق / اختبار.</li>
-          <li><strong>المعالجة المسبقة وهندسة الخصائص.</strong></li>
-          <li><strong>بناء وتدريب نموذج CNN.</strong></li>
-          <li><strong>تقييم ونشر.</strong></li>
-        </ol>
-        <p>الأكواد التطبيقية التالية تغطي جميع هذه المراحل عملياً.</p>
-      </div>
-    `;
-
-    // الأكواد المنفصلة (20 كود)
-    const codes = {
-      code1: `# تحميل MNIST وتدريب نموذج بسيط\nimport tensorflow as tf\n(x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()\nx_train = x_train.astype('float32') / 255.0\nx_test = x_test.astype('float32') / 255.0\nmodel = tf.keras.Sequential([tf.keras.layers.Flatten(input_shape=(28,28)), tf.keras.layers.Dense(10, activation='softmax')])\nmodel.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])\nmodel.fit(x_train, y_train, epochs=5)`,
-      code2: `# حساب السطوع والتباين\nimport cv2, numpy as np\ndef brightness_contrast(path):\n    img = cv2.imread(str(path))\n    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)\n    return np.mean(gray), np.std(gray)`,
-      code3: `# تصنيف الصور حسب الجودة\nBLUR_MIN, CONTRAST_MIN, BRIGHT_MIN, BRIGHT_MAX = 100, 30, 40, 220\ndf['flag_blurry'] = df['blur_score'] < BLUR_MIN\ndf['flag_low_contrast'] = df['contrast'] < CONTRAST_MIN`,
-      code4: `# حفظ manifest\nout_dir = Path("artifacts")\nout_dir.mkdir(exist_ok=True)\ndf.to_csv(out_dir / "feature_engineering_manifest.csv", index=False)`,
-      code5: `# تغيير حجم الصور\nfrom PIL import Image\ndef resize_images(paths, size=(224,224)):\n    for p in paths:\n        img = Image.open(p).convert("RGB")\n        img.resize(size).save(p)`,
-      code6: `# تحويل إلى RGB\ndef force_rgb(paths):\n    for p in paths:\n        Image.open(p).convert("RGB").save(p)`,
-      code7: `# تحويل إلى Grayscale\ndef force_grayscale(paths):\n    for p in paths:\n        Image.open(p).convert("L").save(p)`,
-      code8: `# فك ضغط ملف zip\nimport zipfile\nwith zipfile.ZipFile("dataset.zip", 'r') as z:\n    z.extractall("data/")`,
-      code9: `# تحميل من Kaggle\nimport os\nos.system('kaggle datasets download -d username/dataset -p data/ --unzip')`,
-      code10: `# ترميز تلقائي من المجلدات\nclass_to_label = {"cats":0, "dogs":1}\nfor class_name, label in class_to_label.items():\n    for img in (DATA_DIR/class_name).glob("*.*"):\n        paths.append(img); labels.append(label)`,
-      code11: `# اكتشاف الصور التالفة\nfrom PIL import Image\ndef find_bad(paths):\n    bad = []\n    for p in paths:\n        try: Image.open(p).verify()\n        except: bad.append(p)\n    return bad`,
-      code12: `# عد الصور لكل فئة\nfrom collections import Counter\ncounts = Counter(labels)`,
-      code13: `# فحص أحجام الصور\ndef get_sizes(paths, n=300):\n    sizes = [Image.open(p).size for p in paths[:n]]\n    return Counter(sizes).most_common()`,
-      code14: `# عرض عينات عشوائية\nimport random, matplotlib.pyplot as plt\nidxs = random.sample(range(len(paths)), 6)\nfor i,idx in enumerate(idxs):\n    plt.subplot(2,3,i+1)\n    plt.imshow(Image.open(paths[idx]))`,
-      code15: `# تحويل BBox CSV إلى YOLO txt\nfor img, g in df.groupby("image"):\n    lines = [f"{int(r.class_id)} {r.xmin} {r.ymin} {r.xmax} {r.ymax}" for _,r in g.iterrows()]\n    Path(f"{img}.txt").write_text("\\n".join(lines))`,
-      code16: `# ربط الصور بالـ Masks\nrows = [{"image": str(p), "mask": str(MASK_DIR/(p.stem+".png"))} for p in IMG_DIR.glob("*.jpg")]\npd.DataFrame(rows).to_csv("seg_map.csv")`,
-      code17: `# دالة التحقق من سلامة الصورة\ndef is_valid(path):\n    try: Image.open(path).verify(); return True\n    except: return False`,
-      code18: `# استبعاد النسب الشاذة\ndef remove_outliers(paths, min_r=0.25, max_r=4.0):\n    for p in paths:\n        w,h = Image.open(p).size\n        if not (min_r < w/h < max_r): Path(p).unlink()`,
-      code19: `# تصحيح ترميز خاطئ\nimport shutil\nshutil.move("cats/wrong.jpg", "dogs/wrong.jpg")`,
-      code20: `# حذف مجموعة صور\nimport pathlib\nfor p in bad_paths: pathlib.Path(p).unlink(missing_ok=True)`
-    };
-
-    const tabs = document.querySelectorAll('.tab');
-    const contentArea = document.getElementById('contentArea');
-    const resultsPanel = document.getElementById('resultsPanel');
-
-    function switchTab(tabId) {
-      tabs.forEach(t => t.classList.remove('active'));
-      document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
-      if (tabId === 'results') {
-        contentArea.style.display = 'none';
-        resultsPanel.style.display = 'block';
-        if (!window.accChart) initChart();
-      } else {
-        contentArea.style.display = 'block';
-        resultsPanel.style.display = 'none';
-        if (tabId === 'theory') {
-          contentArea.innerHTML = theoryHTML;
-        } else {
-          const code = codes[tabId] || '# الكود قيد الإضافة';
-          contentArea.innerHTML = `<div class="desc"><i class="fas fa-code"></i> ${tabId}</div><div class="code-box"><pre><code class="language-python">${code}</code></pre></div>`;
-          hljs.highlightAll();
-        }
-      }
-    }
-
-    tabs.forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
-    switchTab('theory');
-
-    function initChart() {
-      const ctx = document.getElementById('accChart').getContext('2d');
-      if (window.accChart) window.accChart.destroy();
-      window.accChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: [1,2,3,4,5],
-          datasets: [{
-            label: 'دقة التدريب', data: [0.82, 0.88, 0.91, 0.93, 0.94],
-            borderColor: '#3b82f6', tension: 0.2
-          }]
-        }
-      });
-    }
-
-    document.getElementById('simulateBtn').addEventListener('click', ()=>{
-      const acc = (90 + Math.random()*6).toFixed(1);
-      const loss = (0.15 + Math.random()*0.15).toFixed(2);
-      document.getElementById('accVal').textContent = acc + '%';
-      document.getElementById('lossVal').textContent = loss;
-      window.accChart.data.datasets[0].data = [0.8, 0.86, 0.90, 0.92, 0.92+Math.random()*0.04];
-      window.accChart.update();
-    });
-
-    const obs = new MutationObserver(() => {
-      if (modal.style.display === 'flex' && resultsPanel.style.display === 'block') initChart();
-    });
-    obs.observe(modal, {attributes: true});
+  (function() {
+    // مجرد لمسة: تغيير بسيط في شارة البث المباشر
+    console.log('✨ Pro Dashboard | تصميم بصور متناسقة مع الواجهة');
   })();
 </script>
 </body>
