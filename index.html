@@ -181,7 +181,7 @@
   <div class="footer">© 2026 Pro Dashboard — تصميم احترافي · جاهز للتوسع</div>
 </div>
 
-<!-- ========== مودال إنشاء السيرة الذاتية (خط رومان) ========== -->
+<!-- ========== مودال إنشاء السيرة الذاتية ========== -->
 <div class="modal-overlay" id="atsModal">
   <div class="modal-container" style="max-width:700px;">
     <div class="modal-header">
@@ -214,17 +214,66 @@
     <div class="action-buttons">
       <button class="btn" id="generateResumeBtn"><i class="fas fa-file-pdf"></i> إنشاء PDF احترافي</button>
     </div>
-    <p class="warning-text" style="text-align:center;">* خط رومان (Times New Roman) | العناوين 16pt عريض | النصوص 14pt</p>
+    <p class="warning-text" style="text-align:center;">* خط رومان | العناوين 16pt عريض | النصوص 14pt</p>
   </div>
 </div>
 
-<!-- مودال تعديل الصور (كما هو) -->
-<!-- مودال تحويل PDF (كما هو) -->
-<!-- ... -->
+<!-- ========== مودال تعديل الصور ========== -->
+<div class="modal-overlay" id="photoModal">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3><i class="fas fa-id-card"></i> معالج صور الأحوال (4×6 آمن)</h3>
+      <i class="fas fa-times" id="closePhotoModalBtn"></i>
+    </div>
+    <div class="upload-area" id="photoUploadArea">
+      <i class="fas fa-cloud-upload-alt"></i>
+      <p>ارفع صورة الوجه (JPG, PNG)</p>
+      <input type="file" id="photoFileInput" accept="image/*" style="display:none;">
+    </div>
+    <div id="photoPreviewContainer" style="display:none; text-align:center;">
+      <img id="photoPreviewImg" class="preview-image" src="" alt="معاينة">
+      <p id="photoFileName" style="color:#ccc;"></p>
+    </div>
+    <div class="requirements-box">
+      <h4>الاشتراطات (معالجة تلقائية)</h4>
+      <div id="photoReqList"><div class="req-item"><i class="fas fa-info-circle"></i> ارفع صورة للبدء</div></div>
+    </div>
+    <div class="action-buttons">
+      <button class="btn" id="processPhotoBtn" disabled><i class="fas fa-magic"></i> تحسين إلى 4×6</button>
+      <button class="btn btn-outline" id="downloadPhotoBtn" disabled><i class="fas fa-download"></i> تحميل</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== مودال تحويل الصور إلى PDF ========== -->
+<div class="modal-overlay" id="pdfModal">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3><i class="fas fa-file-pdf"></i> تحويل الصور إلى PDF</h3>
+      <i class="fas fa-times" id="closePdfModalBtn"></i>
+    </div>
+    <div class="upload-area" id="pdfUploadArea">
+      <i class="fas fa-cloud-upload-alt"></i>
+      <p>اختر صورة أو أكثر (JPG, PNG)</p>
+      <input type="file" id="pdfFileInput" accept="image/*" multiple style="display:none;">
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <span><i class="fas fa-images"></i> <span id="imageCount">0</span> صور</span>
+      <button class="btn-outline btn" id="clearAllPdfBtn" style="padding:6px 16px;"><i class="fas fa-trash-alt"></i> مسح الكل</button>
+    </div>
+    <div class="image-list" id="imageListContainer">
+      <p style="text-align:center; color:#9bb9f0;">لم تضف أي صور بعد</p>
+    </div>
+    <div class="action-buttons">
+      <button class="btn-outline btn" id="addMorePdfBtn"><i class="fas fa-plus"></i> إضافة</button>
+      <button class="btn" id="generatePdfBtn" disabled><i class="fas fa-file-pdf"></i> إنشاء PDF</button>
+    </div>
+  </div>
+</div>
 
 <script>
   (function(){
-    // دوال مساعدة
+    // دوال مساعدة عامة
     function fileToDataURL(file) {
       return new Promise(resolve => {
         const reader = new FileReader();
@@ -240,7 +289,7 @@
       });
     }
 
-    // ========== منشئ السيرة الذاتية (خط رومان + أحجام جديدة) ==========
+    // ========== 1. منشئ السيرة الذاتية (خط رومان + أحجام جديدة) ==========
     const atsModal = document.getElementById('atsModal');
     const openAtsBtn = document.getElementById('openAtsModalBtn');
     const closeAtsBtn = document.getElementById('closeAtsModalBtn');
@@ -263,8 +312,7 @@
       const isRtl = lang === 'ar';
       
       const resumeDiv = document.createElement('div');
-      resumeDir.style.direction = isRtl ? 'rtl' : 'ltr';
-      // الخط الأساسي Times New Roman مع Arial احتياطي للعربية
+      resumeDiv.style.direction = isRtl ? 'rtl' : 'ltr';
       resumeDiv.style.fontFamily = "'Times New Roman', Times, serif, Arial, sans-serif";
       resumeDiv.style.padding = '40px';
       resumeDiv.style.backgroundColor = 'white';
@@ -325,10 +373,214 @@
       }
     });
 
-    // ... باقي الأكواد (تعديل الصور وتحويل PDF) كما هي تماماً دون تغيير ...
-    // سيتم تضمينها كاملة في الملف النهائي
+    // ========== 2. تعديل الصور الشخصية ==========
+    const photoModal = document.getElementById('photoModal');
+    const openPhotoBtn = document.getElementById('openPhotoModalBtn');
+    const closePhotoBtn = document.getElementById('closePhotoModalBtn');
+    const photoUploadArea = document.getElementById('photoUploadArea');
+    const photoFileInput = document.getElementById('photoFileInput');
+    const photoPreviewContainer = document.getElementById('photoPreviewContainer');
+    const photoPreviewImg = document.getElementById('photoPreviewImg');
+    const photoFileName = document.getElementById('photoFileName');
+    const processPhotoBtn = document.getElementById('processPhotoBtn');
+    const downloadPhotoBtn = document.getElementById('downloadPhotoBtn');
+    const photoReqList = document.getElementById('photoReqList');
+    
+    let originalPhotoImage = null, originalPhotoFile = null, processedPhotoBlob = null;
+
+    openPhotoBtn.addEventListener('click', ()=> { resetPhotoModal(); photoModal.style.display='flex'; });
+    closePhotoBtn.addEventListener('click', ()=> photoModal.style.display='none');
+    photoModal.addEventListener('click', (e)=> { if(e.target === photoModal) photoModal.style.display='none'; });
+    
+    photoUploadArea.addEventListener('click', ()=> photoFileInput.click());
+    photoUploadArea.addEventListener('dragover', e=>{ e.preventDefault(); photoUploadArea.style.background='rgba(59,130,246,0.2)'; });
+    photoUploadArea.addEventListener('dragleave', ()=> photoUploadArea.style.background='');
+    photoUploadArea.addEventListener('drop', e=>{
+      e.preventDefault();
+      photoUploadArea.style.background='';
+      const file = e.dataTransfer.files[0];
+      if(file && file.type.startsWith('image/')) handlePhotoFile(file);
+    });
+    photoFileInput.addEventListener('change', e=>{ if(e.target.files[0]) handlePhotoFile(e.target.files[0]); });
+
+    function handlePhotoFile(file) {
+      originalPhotoFile = file;
+      photoFileName.textContent = file.name;
+      const reader = new FileReader();
+      reader.onload = e => {
+        photoPreviewImg.src = e.target.result;
+        photoPreviewContainer.style.display = 'block';
+        const img = new Image();
+        img.onload = function() {
+          originalPhotoImage = img;
+          photoReqList.innerHTML = `<div class="req-item"><i class="fas fa-check-circle" style="color:#10b981;"></i> الأبعاد: ${img.width}×${img.height} (سيتم تحسينها مع هامش 10%)</div>`;
+          processPhotoBtn.disabled = false;
+          downloadPhotoBtn.disabled = true;
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    processPhotoBtn.addEventListener('click', function() {
+      if(!originalPhotoImage) return;
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const outW = 800, outH = 1200;
+      canvas.width = outW; canvas.height = outH;
+      ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, outW, outH);
+      
+      const imgAspect = originalPhotoImage.width / originalPhotoImage.height;
+      const targetAspect = outW / outH;
+      const safeScale = 1.10;
+      
+      let drawW, drawH, offX = 0, offY = 0;
+      if(imgAspect > targetAspect) {
+        drawH = outH * safeScale;
+        drawW = drawH * imgAspect;
+        offX = -(drawW - outW) / 2;
+        offY = -(drawH - outH) / 2;
+      } else {
+        drawW = outW * safeScale;
+        drawH = drawW / imgAspect;
+        offX = -(drawW - outW) / 2;
+        offY = -(drawH - outH) / 2;
+      }
+      ctx.drawImage(originalPhotoImage, offX, offY, drawW, drawH);
+      
+      canvas.toBlob(blob => {
+        processedPhotoBlob = blob;
+        photoPreviewImg.src = URL.createObjectURL(blob);
+        photoReqList.innerHTML = `<div class="req-item"><i class="fas fa-check-circle" style="color:#10b981;"></i> تم التحسين إلى 4×6 مع هامش آمن 10%</div>`;
+        downloadPhotoBtn.disabled = false;
+        photoFileName.textContent = originalPhotoFile.name.replace(/\.[^.]+$/, "") + "_4x6_آمن.jpg";
+      }, 'image/jpeg', 0.95);
+    });
+
+    downloadPhotoBtn.addEventListener('click', function() {
+      if(!processedPhotoBlob) return;
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(processedPhotoBlob);
+      a.download = 'صورة_الاحوال_4x6_آمنة.jpg';
+      a.click();
+    });
+
+    function resetPhotoModal() {
+      photoPreviewContainer.style.display = 'none';
+      processPhotoBtn.disabled = true;
+      downloadPhotoBtn.disabled = true;
+      photoReqList.innerHTML = '<div class="req-item"><i class="fas fa-info-circle"></i> ارفع صورة للبدء</div>';
+      originalPhotoImage = null;
+      processedPhotoBlob = null;
+    }
+
+    // ========== 3. تحويل الصور إلى PDF ==========
+    const pdfModal = document.getElementById('pdfModal');
+    const openPdfBtn = document.getElementById('openPdfModalBtn');
+    const closePdfBtn = document.getElementById('closePdfModalBtn');
+    const pdfUploadArea = document.getElementById('pdfUploadArea');
+    const pdfFileInput = document.getElementById('pdfFileInput');
+    const imageListDiv = document.getElementById('imageListContainer');
+    const imageCountSpan = document.getElementById('imageCount');
+    const generatePdfBtn = document.getElementById('generatePdfBtn');
+    const clearAllPdfBtn = document.getElementById('clearAllPdfBtn');
+    const addMorePdfBtn = document.getElementById('addMorePdfBtn');
+    
+    let pdfImageFiles = [];
+    let sortableInstance = null;
+
+    openPdfBtn.addEventListener('click', ()=> { pdfModal.style.display='flex'; });
+    closePdfBtn.addEventListener('click', ()=> pdfModal.style.display='none');
+    pdfModal.addEventListener('click', e=> { if(e.target === pdfModal) pdfModal.style.display='none'; });
+
+    pdfUploadArea.addEventListener('click', ()=> pdfFileInput.click());
+    addMorePdfBtn.addEventListener('click', ()=> pdfFileInput.click());
+    pdfUploadArea.addEventListener('dragover', e=>{ e.preventDefault(); pdfUploadArea.style.background='rgba(59,130,246,0.2)'; });
+    pdfUploadArea.addEventListener('dragleave', ()=> pdfUploadArea.style.background='');
+    pdfUploadArea.addEventListener('drop', e=>{
+      e.preventDefault();
+      pdfUploadArea.style.background='';
+      const files = Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/'));
+      addPdfFiles(files);
+    });
+    pdfFileInput.addEventListener('change', e=>{
+      const files = Array.from(e.target.files).filter(f=>f.type.startsWith('image/'));
+      addPdfFiles(files);
+      pdfFileInput.value = '';
+    });
+
+    function addPdfFiles(files) {
+      files.forEach(f => { if(!pdfImageFiles.some(ex=>ex.name===f.name&&ex.size===f.size)) pdfImageFiles.push(f); });
+      renderPdfList();
+    }
+
+    function renderPdfList() {
+      if(pdfImageFiles.length === 0) {
+        imageListDiv.innerHTML = '<p style="text-align:center; color:#9bb9f0;">لم تضف أي صور بعد</p>';
+        imageCountSpan.textContent = '0';
+        generatePdfBtn.disabled = true;
+        return;
+      }
+      let html = '';
+      pdfImageFiles.forEach((f, i) => {
+        const url = URL.createObjectURL(f);
+        html += `<div class="image-item" data-index="${i}"><img src="${url}"><div class="info"><div>${f.name}</div><small>${(f.size/1024).toFixed(1)} ك.ب</small></div><div class="actions"><i class="fas fa-times" onclick="removePdfImage(${i})"></i></div></div>`;
+      });
+      imageListDiv.innerHTML = html;
+      imageCountSpan.textContent = pdfImageFiles.length;
+      generatePdfBtn.disabled = false;
+      
+      if(sortableInstance) sortableInstance.destroy();
+      sortableInstance = new Sortable(imageListDiv, {
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        onEnd: function() {
+          const items = Array.from(imageListDiv.children);
+          const newOrder = items.map(it => parseInt(it.dataset.index));
+          pdfImageFiles = newOrder.map(idx => pdfImageFiles[idx]);
+        }
+      });
+    }
+
+    window.removePdfImage = function(index) {
+      pdfImageFiles.splice(index, 1);
+      renderPdfList();
+    };
+
+    clearAllPdfBtn.addEventListener('click', ()=> {
+      pdfImageFiles = [];
+      renderPdfList();
+    });
+
+    generatePdfBtn.addEventListener('click', async function() {
+      if(!pdfImageFiles.length) return;
+      generatePdfBtn.disabled = true;
+      generatePdfBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> جاري الإنشاء...';
+      try {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF();
+        for(let i=0; i<pdfImageFiles.length; i++) {
+          const file = pdfImageFiles[i];
+          const dataUrl = await fileToDataURL(file);
+          const img = await createImage(dataUrl);
+          if(i>0) pdf.addPage();
+          const pdfW = pdf.internal.pageSize.getWidth();
+          const pdfH = pdf.internal.pageSize.getHeight();
+          const ratio = Math.min(pdfW/img.width, pdfH/img.height);
+          const w = img.width * ratio, h = img.height * ratio;
+          const x = (pdfW - w)/2, y = (pdfH - h)/2;
+          pdf.addImage(dataUrl, 'JPEG', x, y, w, h);
+        }
+        pdf.save('images_converted.pdf');
+      } catch(err) {
+        alert('خطأ: ' + err.message);
+      } finally {
+        generatePdfBtn.disabled = false;
+        generatePdfBtn.innerHTML = '<i class="fas fa-file-pdf"></i> إنشاء PDF';
+      }
+    });
+
   })();
 </script>
-<!-- باقي المودالات والأكواد الكاملة موجودة في النسخة المرفقة -->
 </body>
 </html>
