@@ -4,15 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>الشبكات العصبية الالتفافية | CNN Lab</title>
-  <!-- خط عربي -->
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <!-- أيقونات -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <!-- highlight.js -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -68,7 +64,6 @@
       flex-direction: column;
       align-items: center;
     }
-    /* البطاقة الرئيسية */
     .main-card {
       width: 100%;
       background: rgba(12, 22, 38, 0.75);
@@ -121,7 +116,6 @@
       text-align: center; padding: 24px 0; opacity: 0.8;
       border-top: 1px dashed #6496dc33; margin-top: 30px; width: 100%;
     }
-    /* Modal */
     .modal {
       position: fixed; top:0; left:0; right:0; bottom:0;
       background: rgba(0,0,0,0.8); backdrop-filter: blur(12px);
@@ -286,24 +280,43 @@
     document.getElementById('closeFooter').addEventListener('click', closeModal);
     modal.addEventListener('click', e => { if(e.target === modal) closeModal(); });
 
-    // المحتوى النظري
+    // المحتوى النظري – تم إزالة أي ذكر لشبكات أخرى (RNN, ANN, GANs)
     const theoryHTML = `
       <div class="theory">
-        <h3>📘 CNN 1+2+3: مقدمة في التعلم العميق والشبكات الالتفافية</h3>
+        <h3>📘 مقدمة في التعلم العميق والشبكات الالتفافية (CNN)</h3>
         <h4>الذكاء الاصطناعي والتعلم العميق</h4>
-        <p>الذكاء الاصطناعي (AI) يهدف إلى محاكاة التفكير البشري. التعلم العميق (DL) هو فرع يستخدم شبكات متعددة الطبقات لاستخلاص الأنماط تلقائياً من البيانات الخام. CNN هي النوع الأمثل لمعالجة الصور.</p>
-        <h4>أنواع الشبكات العصبية</h4>
-        <ul><li>ANN: تصنيف بسيط</li><li>CNN: معالجة الصور والفيديو</li><li>RNN: البيانات المتسلسلة</li><li>GANs: توليد المحتوى</li><li>Transformers: معالجة اللغة</li></ul>
-        <h4>مكونات CNN الأساسية</h4>
-        <ul><li>Convolution: استخراج السمات</li><li>ReLU: تفعيل غير خطي</li><li>Pooling: تقليل الأبعاد</li><li>Fully Connected: التصنيف</li></ul>
+        <p>الذكاء الاصطناعي (AI) يهدف إلى محاكاة التفكير البشري. التعلم العميق (Deep Learning) هو فرع متقدم يستخدم شبكات عصبية متعددة الطبقات لاستخلاص الأنماط تلقائياً من البيانات الخام. تُعد الشبكات العصبية الالتفافية (CNN) النوع الأمثل لمعالجة الصور والفيديو بفضل قدرتها على فهم البنية المكانية.</p>
+        <h4>لماذا CNN للصور؟</h4>
+        <ul><li>تحافظ على الترتيب المكاني للبيكسلات.</li><li>تستخدم عمليات الالتفاف (Convolution) لاستخراج السمات البصرية.</li><li>مشاركة الأوزان (Parameter Sharing) تقلل عدد المعاملات بشكل كبير.</li><li>تتعلم أنماطاً هرمية: من الحواف البسيطة إلى الأشكال المعقدة.</li></ul>
+        <h4>المكونات الأساسية للـ CNN</h4>
+        <ul>
+          <li><strong>طبقة الالتفاف (Convolution):</strong> تطبيق فلاتر لاستخراج خرائط الميزات.</li>
+          <li><strong>دالة التنشيط (ReLU):</strong> إضافة اللاخطية.</li>
+          <li><strong>طبقة التجميع (Pooling):</strong> تقليل الأبعاد المكانية (Max/Average).</li>
+          <li><strong>الطبقات كاملة الاتصال (Fully Connected):</strong> تصنيف الصورة بناءً على الميزات المستخلصة.</li>
+        </ul>
         <h4>مثال: قاعدة بيانات MNIST</h4>
-        <p>60,000 صورة تدريب و10,000 اختبار بحجم 28×28 Grayscale.</p>
-        <h3>📊 CNN66: هندسة الخصائص</h3>
-        <p>الفرق بين المعالجة المسبقة (Preprocessing) وهندسة الخصائص (Feature Engineering). تتضمن حساب السطوع والتباين، تغيير الحجم، تحويل RGB/Grayscale.</p>
-        <h3>🔁 CNN44: تجميع البيانات وخط الأنابيب</h3>
-        <p>مراحل الـ ML Pipeline: جمع البيانات ← تنظيف ← هندسة خصائص ← تدريب ← تقييم ← نشر. طرق الترميز (Labeling) للتصنيف والكشف.</p>
-        <h3>🧹 CNN55: فحص وتنظيف البيانات</h3>
-        <p>الفحص تشخيصي لا يحذف بيانات، أما التنظيف فيتضمن إزالة الصور التالفة/المكررة وتصحيح أخطاء الترميز.</p>
+        <p>تحتوي على 60,000 صورة تدريب و10,000 صورة اختبار لأرقام مكتوبة بخط اليد (28×28 بكسل، تدرج رمادي). تُستخدم كمعيار لاختبار نماذج تصنيف الصور.</p>
+        
+        <h3>📊 هندسة الخصائص والمعالجة المسبقة للصور</h3>
+        <h4>الفرق بين المعالجة المسبقة وهندسة الخصائص</h4>
+        <p><strong>المعالجة المسبقة (Preprocessing):</strong> تجهيز الصور لتكون صالحة للإدخال إلى النموذج (توحيد الحجم، تطبيع القيم، تحويل إلى RGB أو Grayscale). لا تغير المحتوى.</p>
+        <p><strong>هندسة الخصائص (Feature Engineering):</strong> تهدف إلى تحسين تعلم النموذج عن طريق زيادة تنوع البيانات (Data Augmentation) مثل التدوير، القص، تغيير السطوع. تزيد من حجم dataset الفعّال وتقلل overfitting.</p>
+        <h4>مقاييس جودة الصورة</h4>
+        <ul><li>السطوع (Brightness): متوسط قيم البيكسلات.</li><li>التباين (Contrast): الانحراف المعياري لقيم البيكسلات.</li><li>الوضوح (Blur): يمكن قياسه باستخدام تحويل فورييه أو تباين لابلاسيان.</li></ul>
+        
+        <h3>🔁 خط أنابيب التعلم (ML Pipeline) للـ CNN</h3>
+        <ol>
+          <li><strong>جمع البيانات:</strong> من datasets جاهزة (MNIST, CIFAR, ImageNet) أو كاميرات أو Web Scraping.</li>
+          <li><strong>الترميز (Labeling):</strong> ربط كل صورة بفئتها (تصنيف) أو بإحداثيات الكائن (كشف).</li>
+          <li><strong>فحص البيانات:</strong> التأكد من عدد الصور لكل فئة، اكتشاف الصور التالفة أو ذات الأبعاد الشاذة.</li>
+          <li><strong>تنظيف البيانات:</strong> إزالة الصور التالفة/المكررة/غير الواضحة، وتصحيح أخطاء الترميز.</li>
+          <li><strong>تقسيم البيانات:</strong> تدريب / تحقق / اختبار.</li>
+          <li><strong>المعالجة المسبقة وهندسة الخصائص.</strong></li>
+          <li><strong>بناء وتدريب نموذج CNN.</strong></li>
+          <li><strong>تقييم ونشر.</strong></li>
+        </ol>
+        <p>الأكواد التطبيقية التالية تغطي جميع هذه المراحل عملياً.</p>
       </div>
     `;
 
@@ -358,7 +371,6 @@
     tabs.forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
     switchTab('theory');
 
-    // الرسم البياني
     function initChart() {
       const ctx = document.getElementById('accChart').getContext('2d');
       if (window.accChart) window.accChart.destroy();
@@ -383,7 +395,6 @@
       window.accChart.update();
     });
 
-    // تهيئة الرسم عند فتح التبويب
     const obs = new MutationObserver(() => {
       if (modal.style.display === 'flex' && resultsPanel.style.display === 'block') initChart();
     });
