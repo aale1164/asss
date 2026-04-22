@@ -1,278 +1,56 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>منصة آفاق | Pro Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-  
-  <style>
-    /* تم الإبقاء على تصميمك الرائع مع إصلاحات بسيطة للمرونة */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Tajawal', sans-serif;
-      background: radial-gradient(circle at 20% 10%, #0b1424, #03070e);
-      color: #fff; min-height: 100vh; padding: 0 11px 22px; direction: rtl;
-    }
-    .topbar {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 13px 20px; margin: 14px 0 7px;
-      background: rgba(18, 28, 46, 0.6); backdrop-filter: blur(12px);
-      border: 1px solid rgba(74, 144, 226, 0.2); border-radius: 42px;
-    }
-    .brand { font-size: 1.25rem; font-weight: 800; color: #3b82f6; }
-    .container { max-width: 1400px; margin: 0 auto; }
-    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 21px 0 14px; }
-    .card {
-      background: rgba(12, 22, 38, 0.7); border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 20px; padding: 20px; text-align: center; cursor: pointer; transition: 0.3s;
-    }
-    .card:hover { transform: translateY(-5px); border-color: #3b82f6; background: rgba(59,130,246,0.1); }
-    .image-wrapper { width: 60px; height: 60px; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; background: #1e3a5f; border-radius: 15px; font-size: 25px; }
-    
-    /* الستايل الخاص بالمودال */
-    .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-      display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px;
-    }
-    .modal-container {
-      background: #08121e; border: 1px solid #3b82f6; border-radius: 25px;
-      width: 100%; max-width: 750px; max-height: 90vh; overflow-y: auto; padding: 25px;
-    }
-    .modal-header { display: flex; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid #1e3a5f; padding-bottom: 10px; }
-    
-    /* التنسيق البرمجي للحقول */
-    .form-group { margin-bottom: 15px; text-align: right; }
-    .form-group label { display: block; margin-bottom: 5px; color: #a0c8ff; font-size: 0.9rem; }
-    .form-group input, .form-group textarea, .form-group select {
-      width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #2e4a6b; background: #0f1a2b; color: white; font-family: 'Tajawal';
-    }
-    .btn { background: #3b82f6; color: white; padding: 12px 25px; border-radius: 30px; border: none; cursor: pointer; font-weight: bold; width: 100%; }
-    .btn:hover { background: #2563eb; }
-    
-    /* قائمة الصور في PDF */
-    .image-item { display: flex; align-items: center; background: #16263d; padding: 10px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #2e4a6b; }
-    .image-item img { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; margin-left: 15px; }
-    .preview-box { text-align: center; margin: 15px 0; }
-    .preview-box img { max-width: 200px; border: 2px solid #3b82f6; border-radius: 10px; }
-  </style>
-</head>
-<body>
+async function generateCV() {
+  const { jsPDF } = window.jspdf;
 
-<div class="topbar">
-  <div class="brand"><i class="fas fa-cube"></i> منصة آفاق | Pro</div>
-  <div style="font-size: 0.8rem; color: #a0c8ff;">نظام معالجة الوثائق الذكي v2.0</div>
-</div>
+  const name = document.getElementById('cv_name').value || "بدون اسم";
+  const phone = document.getElementById('cv_phone').value || "-";
+  const email = document.getElementById('cv_email').value || "-";
+  const summary = document.getElementById('cv_summary').value || "-";
+  const details = document.getElementById('cv_details').value || "-";
+  const lang = document.getElementById('cv_lang').value;
 
-<div class="container">
-  <div class="grid">
-    <div class="card" onclick="openModal('atsModal')">
-      <div class="image-wrapper"><i class="fas fa-file-alt"></i></div>
-      <div style="font-weight: bold;">إنشاء سيرة ذاتية</div>
-      <div style="font-size: 0.7rem; color: #9bb9f0;">ATS متوافق</div>
-    </div>
-    
-    <div class="card" onclick="openModal('photoModal')">
-      <div class="image-wrapper"><i class="fas fa-id-card"></i></div>
-      <div style="font-weight: bold;">صور الأحوال</div>
-      <div style="font-size: 0.7rem; color: #9bb9f0;">مقاس 4×6 رسمي</div>
-    </div>
-    
-    <div class="card" onclick="openModal('pdfModal')">
-      <div class="image-wrapper"><i class="fas fa-file-pdf"></i></div>
-      <div style="font-weight: bold;">الصور إلى PDF</div>
-      <div style="font-size: 0.7rem; color: #9bb9f0;">دمج وحفظ</div>
+  const tempDiv = document.createElement('div');
+  tempDiv.style.width = '700px';
+  tempDiv.style.padding = '40px';
+  tempDiv.style.background = 'white';
+  tempDiv.style.color = 'black';
+  tempDiv.style.direction = lang === 'ar' ? 'rtl' : 'ltr';
+  tempDiv.style.fontFamily = "Tajawal";
+
+  tempDiv.innerHTML = `
+    <div style="text-align:center; margin-bottom:15px;">
+      <h1 style="font-size:24px; margin-bottom:5px;">${name}</h1>
+      <p style="font-size:14px;">${phone} | ${email}</p>
     </div>
 
-    <div class="card">
-        <div class="image-wrapper"><i class="fas fa-shield-halved"></i></div>
-        <div style="font-weight: bold;">تشفير الملفات</div>
-        <div style="font-size: 0.7rem; color: #9bb9f0;">خصوصية تامة</div>
+    <hr style="margin:10px 0;">
+
+    <div style="margin-top:15px;">
+      <h3 style="font-size:16px; margin-bottom:5px;">
+        ${lang === 'ar' ? 'النبذة التعريفية' : 'Professional Summary'}
+      </h3>
+      <p style="font-size:14px; line-height:1.8;">
+        ${summary}
+      </p>
     </div>
-  </div>
-</div>
 
-<div class="modal-overlay" id="atsModal">
-  <div class="modal-container">
-    <div class="modal-header"><h3>منشئ السيرة الذاتية</h3><i class="fas fa-times" onclick="closeModal('atsModal')"></i></div>
-    <div class="form-group"><label>الاسم الرباعي</label><input type="text" id="cv_name" placeholder="نايف محمد الرويلي"></div>
-    <div style="display: flex; gap: 10px;">
-        <div class="form-group" style="flex:1;"><label>الجوال</label><input type="text" id="cv_phone"></div>
-        <div class="form-group" style="flex:1;"><label>الايميل</label><input type="text" id="cv_email"></div>
+    <div style="margin-top:20px;">
+      <h3 style="font-size:16px; margin-bottom:5px;">
+        ${lang === 'ar' ? 'المؤهلات والخبرات' : 'Experience & Education'}
+      </h3>
+      <p style="font-size:14px; line-height:1.8; white-space: pre-wrap;">
+        ${details}
+      </p>
     </div>
-    <div class="form-group"><label>النبذة التعريفية</label><textarea id="cv_summary" rows="3"></textarea></div>
-    <div class="form-group"><label>المؤهلات والخبرات</label><textarea id="cv_details" rows="4" placeholder="اذكر مؤهلاتك وخبراتك هنا..."></textarea></div>
-    <div class="form-group">
-        <label>اللغة</label>
-        <select id="cv_lang"><option value="ar">العربية</option><option value="en">English</option></select>
-    </div>
-    <button class="btn" onclick="generateCV()">استخراج PDF</button>
-  </div>
-</div>
+  `;
 
-<div class="modal-overlay" id="photoModal">
-    <div class="modal-container">
-      <div class="modal-header"><h3>معالج صور الأحوال 4×6</h3><i class="fas fa-times" onclick="closeModal('photoModal')"></i></div>
-      <div class="form-group">
-          <label>اختر الصورة الشخصية</label>
-          <input type="file" id="photoInput" accept="image/*" onchange="previewPhoto(this)">
-      </div>
-      <div class="preview-box" id="photoPreviewBox" style="display:none;">
-          <img id="targetPhoto" src="">
-          <p style="font-size: 0.8rem; color: #facc15; margin-top: 10px;">سيتم القص ليتناسب مع معايير الأحوال تلقائياً</p>
-      </div>
-      <button class="btn" id="savePhotoBtn" style="display:none;" onclick="processAndDownloadPhoto()">معالجة وتحميل</button>
-    </div>
-</div>
+  document.body.appendChild(tempDiv);
 
-<div class="modal-overlay" id="pdfModal">
-    <div class="modal-container">
-      <div class="modal-header"><h3>دمج الصور في PDF</h3><i class="fas fa-times" onclick="closeModal('pdfModal')"></i></div>
-      <div class="form-group">
-          <label>اختر مجموعة صور</label>
-          <input type="file" id="pdfImagesInput" accept="image/*" multiple onchange="handlePdfFiles(this)">
-      </div>
-      <div id="pdfList" style="margin-bottom: 15px;"></div>
-      <button class="btn" id="generatePdfBtn" style="display:none;" onclick="buildFinalPdf()">إنشاء ملف PDF</button>
-    </div>
-</div>
+  const canvas = await html2canvas(tempDiv, { scale: 2 });
+  const imgData = canvas.toDataURL('image/png');
 
-<script>
-    // التحكم في المودالات
-    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+  const pdf = new jsPDF();
+  pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);
+  pdf.save('CV_Professional.pdf');
 
-    // 1. منطق السيرة الذاتية (ATS Friendly)
-    async function generateCV() {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        
-        const data = {
-            name: document.getElementById('cv_name').value,
-            phone: document.getElementById('cv_phone').value,
-            email: document.getElementById('cv_email').value,
-            summary: document.getElementById('cv_summary').value,
-            details: document.getElementById('cv_details').value,
-            lang: document.getElementById('cv_lang').value
-        };
-
-        // إنشاء محتوى HTML مؤقت للتحويل (لضمان جودة الخط العربي)
-        const tempDiv = document.createElement('div');
-        tempDiv.style.width = '700px';
-        tempDiv.style.padding = '40px';
-        tempDiv.style.background = 'white';
-        tempDiv.style.color = 'black';
-        tempDiv.style.direction = data.lang === 'ar' ? 'rtl' : 'ltr';
-        tempDiv.style.fontFamily = "'Tajawal', sans-serif";
-
-        tempDiv.innerHTML = `
-            <div style="text-align:center; border-bottom: 2px solid #3b82f6; padding-bottom: 10px;">
-                <h1 style="font-size: 28px; margin-bottom: 5px;">${data.name}</h1>
-                <p>${data.phone} | ${data.email}</p>
-            </div>
-            <div style="margin-top: 20px;">
-                <h3 style="background:#f0f7ff; padding:5px;">${data.lang === 'ar' ? 'النبذة التعريفية' : 'Professional Summary'}</h3>
-                <p style="margin-top:10px;">${data.summary}</p>
-            </div>
-            <div style="margin-top: 20px;">
-                <h3 style="background:#f0f7ff; padding:5px;">${data.lang === 'ar' ? 'المؤهلات والخبرات' : 'Experience & Education'}</h3>
-                <p style="margin-top:10px; white-space: pre-wrap;">${data.details}</p>
-            </div>
-        `;
-
-        document.body.appendChild(tempDiv);
-        const canvas = await html2canvas(tempDiv, { scale: 2 });
-        const imgData = canvas.toDataURL('image/png');
-        
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);
-        pdf.save('CV_Professional.pdf');
-        document.body.removeChild(tempDiv);
-    }
-
-    // 2. معالجة صور الأحوال (4x6)
-    function previewPhoto(input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('targetPhoto').src = e.target.result;
-                document.getElementById('photoPreviewBox').style.display = 'block';
-                document.getElementById('savePhotoBtn').style.display = 'block';
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-
-    function processAndDownloadPhoto() {
-        const img = document.getElementById('targetPhoto');
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-
-        // أبعاد 4x6 بكسل (بنسبة ثابتة)
-        canvas.width = 600;
-        canvas.height = 900;
-
-        // خلفية بيضاء
-        ctx.fillStyle = "#FFFFFF";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // حساب القص ليكون الوجه في المنتصف (Center Crop)
-        const scale = Math.max(canvas.width / img.naturalWidth, canvas.height / img.naturalHeight);
-        const x = (canvas.width / 2) - (img.naturalWidth / 2) * scale;
-        const y = (canvas.height / 2) - (img.naturalHeight / 2) * scale;
-
-        ctx.drawImage(img, x, y, img.naturalWidth * scale, img.naturalHeight * scale);
-
-        const link = document.createElement('a');
-        link.download = 'Saudi_ID_Photo_4x6.jpg';
-        link.href = canvas.toDataURL('image/jpeg', 0.9);
-        link.click();
-    }
-
-    // 3. تحويل الصور إلى PDF
-    let selectedPdfFiles = [];
-    function handlePdfFiles(input) {
-        selectedPdfFiles = Array.from(input.files);
-        const list = document.getElementById('pdfList');
-        list.innerHTML = '';
-        selectedPdfFiles.forEach((file, index) => {
-            list.innerHTML += `<div class="image-item"><i class="fas fa-image"></i> <span>${file.name}</span></div>`;
-        });
-        if (selectedPdfFiles.length > 0) document.getElementById('generatePdfBtn').style.display = 'block';
-        
-        // تفعيل خاصية السحب والترتيب
-        new Sortable(list, { animation: 150 });
-    }
-
-    async function buildFinalPdf() {
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF();
-        
-        for (let i = 0; i < selectedPdfFiles.length; i++) {
-            const file = selectedPdfFiles[i];
-            const imgData = await new Promise(resolve => {
-                const reader = new FileReader();
-                reader.onload = (e) => resolve(e.target.result);
-                reader.readAsDataURL(file);
-            });
-
-            if (i > 0) pdf.addPage();
-            
-            // ضبط الصورة لتملأ الصفحة A4 مع الحفاظ على التناسب
-            const imgProps = pdf.getImageProperties(imgData);
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-            
-            pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
-        }
-        
-        pdf.save('Documents_Combined.pdf');
-    }
-</script>
-
-</body>
-</html>
+  document.body.removeChild(tempDiv);
+}
