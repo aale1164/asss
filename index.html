@@ -22,57 +22,57 @@
       background: radial-gradient(circle at 20% 10%, #0b1424, #03070e);
       color: #ffffff;
       min-height: 100vh;
-      padding: 0 16px 32px;
+      padding: 0 11px 22px; /* قللنا padding الأفقي والعمودي */
       direction: rtl;
     }
 
-    /* شريط علوي زجاجي */
+    /* شريط علوي زجاجي - أصغر بنسبة 30% */
     .topbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 18px 28px;
-      margin: 20px 0 10px;
+      padding: 13px 20px; /* كان 18px 28px */
+      margin: 14px 0 7px;  /* كان 20px 0 10px */
       background: rgba(18, 28, 46, 0.6);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid rgba(74, 144, 226, 0.2);
-      border-radius: 60px;
-      box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5);
+      border-radius: 42px;   /* كان 60px */
+      box-shadow: 0 10px 24px -7px rgba(0, 0, 0, 0.5);
     }
 
     .brand {
-      font-size: 1.8rem;
+      font-size: 1.25rem;    /* كان 1.8rem */
       font-weight: 800;
       background: linear-gradient(135deg, #a0c8ff, #3b82f6);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      letter-spacing: -0.5px;
+      letter-spacing: -0.3px;
     }
 
     .live-badge {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       background: rgba(59, 130, 246, 0.2);
-      padding: 8px 18px;
-      border-radius: 40px;
+      padding: 6px 13px;      /* كان 8px 18px */
+      border-radius: 28px;
       border: 1px solid rgba(59, 130, 246, 0.4);
       font-weight: 600;
-      font-size: 0.95rem;
+      font-size: 0.7rem;      /* كان 0.95rem */
       color: #bdd3ff;
     }
 
     .live-badge i {
       color: #3b82f6;
-      font-size: 0.8rem;
+      font-size: 0.6rem;
       animation: pulse 1.8s infinite;
     }
 
     @keyframes pulse {
       0% { opacity: 0.6; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.2); text-shadow: 0 0 8px #3b82f6; }
+      50% { opacity: 1; transform: scale(1.15); text-shadow: 0 0 6px #3b82f6; }
       100% { opacity: 0.6; transform: scale(1); }
     }
 
@@ -82,22 +82,22 @@
       margin: 0 auto;
     }
 
-    /* الشبكة الاحترافية */
+    /* الشبكة الاحترافية - فجوات أصغر */
     .grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 22px;
-      margin: 30px 0 20px;
+      gap: 16px;               /* كان 22px */
+      margin: 21px 0 14px;      /* كان 30px 0 20px */
     }
 
-    /* بطاقة بتصميم صور وأيقونات متناسقة */
+    /* بطاقة - padding وحواف أصغر */
     .card {
       background: rgba(12, 22, 38, 0.7);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 28px;
-      padding: 24px 12px 20px;
+      border-radius: 20px;      /* كان 28px */
+      padding: 17px 8px 14px;   /* كان 24px 12px 20px */
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -106,10 +106,9 @@
       transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1);
       position: relative;
       overflow: hidden;
-      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 7px 14px -3px rgba(0, 0, 0, 0.5);
     }
 
-    /* تأثير ضوئي عند التحويم */
     .card::after {
       content: "";
       position: absolute;
@@ -121,125 +120,126 @@
     }
 
     .card:hover {
-      transform: translateY(-8px);
+      transform: translateY(-6px); /* كان -8px */
       background: rgba(20, 40, 65, 0.8);
       border-color: rgba(59, 130, 246, 0.5);
-      box-shadow: 0 25px 30px -8px rgba(0, 20, 60, 0.6);
+      box-shadow: 0 18px 22px -6px rgba(0, 20, 60, 0.6);
     }
 
     .card:hover::after {
       opacity: 1;
     }
 
-    /* حاوية الصورة / الأيقونة بمقاس متناسق */
+    /* حاوية الأيقونة - أصغر */
     .image-wrapper {
-      width: 90px;
-      height: 90px;
-      margin-bottom: 16px;
+      width: 63px;              /* كان 90px */
+      height: 63px;
+      margin-bottom: 11px;      /* كان 16px */
       display: flex;
       align-items: center;
       justify-content: center;
       border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
       background: linear-gradient(145deg, rgba(59, 130, 246, 0.2), rgba(16, 30, 54, 0.7));
-      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+      box-shadow: 0 7px 14px -3px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
       transition: 0.2s;
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .card:hover .image-wrapper {
       background: linear-gradient(145deg, #1e3a6b, #0f1e32);
-      box-shadow: 0 0 18px #3b82f6, inset 0 0 8px rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 13px #3b82f6, inset 0 0 6px rgba(255, 255, 255, 0.1);
       border-color: #3b82f6;
     }
 
-    /* الصور الداخلية (أيقونات فونت أوسوم أو صور SVG) بمقاس ثابت */
     .image-wrapper i {
-      font-size: 46px;
+      font-size: 32px;          /* كان 46px */
       color: #e0edff;
-      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+      filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.3));
       transition: 0.2s;
     }
 
     .card:hover .image-wrapper i {
       color: white;
-      transform: scale(1.05);
-      filter: drop-shadow(0 0 12px #90c0ff);
+      transform: scale(1.04);
+      filter: drop-shadow(0 0 9px #90c0ff);
     }
 
-    /* بالنسبة للبطاقات التي نستخدم فيها صور SVG مخصصة (صور متناسقة) */
     .image-wrapper img {
-      width: 56px;
-      height: 56px;
+      width: 39px;              /* كان 56px */
+      height: 39px;
       object-fit: contain;
-      filter: brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+      filter: brightness(0) invert(1) drop-shadow(0 1px 3px rgba(0,0,0,0.3));
       transition: 0.2s;
     }
 
     .card:hover .image-wrapper img {
-      transform: scale(1.06);
-      filter: brightness(0) invert(1) drop-shadow(0 0 10px #7ab0ff);
+      transform: scale(1.05);
+      filter: brightness(0) invert(1) drop-shadow(0 0 7px #7ab0ff);
     }
 
-    /* عنوان البطاقة */
+    /* عنوان البطاقة - خط أصغر */
     .card-title {
-      font-size: 1.3rem;
+      font-size: 0.9rem;        /* كان 1.3rem */
       font-weight: 700;
-      margin: 8px 0 6px;
+      margin: 6px 0 4px;
       color: #f0f6ff;
-      letter-spacing: -0.3px;
+      letter-spacing: -0.2px;
     }
 
-    /* وصف صغير / قيمة إحصائية */
+    /* قيمة إحصائية */
     .card-stat {
-      font-size: 1rem;
+      font-size: 0.7rem;        /* كان 1rem */
       font-weight: 500;
       color: #9bb9f0;
       background: rgba(0, 0, 0, 0.2);
-      padding: 4px 14px;
-      border-radius: 30px;
+      padding: 3px 10px;        /* كان 4px 14px */
+      border-radius: 21px;
       backdrop-filter: blur(4px);
       border: 1px solid rgba(255,255,255,0.05);
-      margin-top: 5px;
+      margin-top: 4px;
     }
 
     /* تذييل الصفحة */
     .footer {
       text-align: center;
-      padding: 24px 0 10px;
+      padding: 17px 0 7px;      /* كان 24px 0 10px */
       opacity: 0.75;
-      font-size: 1rem;
+      font-size: 0.7rem;        /* كان 1rem */
       font-weight: 400;
       color: #b0c7e9;
       border-top: 1px dashed rgba(100, 150, 220, 0.2);
-      margin-top: 25px;
+      margin-top: 18px;
     }
 
-    /* تجاوب مع الشاشات المتوسطة */
+    .section-hint {
+      margin: 4px 0 0;
+      font-size: 0.65rem;       /* كان 0.9rem */
+      color: #aac3e0;
+    }
+
+    /* تجاوب مع الشاشات المتوسطة - تعديل النسب */
     @media (max-width: 1100px) {
       .grid {
         grid-template-columns: repeat(3, 1fr);
-        gap: 18px;
+        gap: 13px;
       }
-      .brand { font-size: 1.5rem; }
+      .brand { font-size: 1.1rem; }
     }
 
     @media (max-width: 700px) {
       .grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
+        gap: 11px;
       }
       .topbar {
-        padding: 14px 18px;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 10px;
+        padding: 10px 13px;
       }
       .image-wrapper {
-        width: 75px;
-        height: 75px;
+        width: 53px;
+        height: 53px;
       }
       .image-wrapper i {
-        font-size: 38px;
+        font-size: 28px;
       }
     }
 
@@ -247,10 +247,10 @@
       .grid {
         grid-template-columns: 1fr;
       }
-      body { padding: 0 10px 20px; }
+      body { padding: 0 7px 14px; }
     }
 
-    /* تنسيق إضافي للبطاقات: حدود متوهجة */
+    /* تنسيق ألوان متدرجة للبطاقات (بنفس الروح) */
     .card:nth-child(1) .image-wrapper { background: linear-gradient(145deg, #1e4b8f, #0c1a2b); }
     .card:nth-child(2) .image-wrapper { background: linear-gradient(145deg, #3a2c6b, #140e2b); }
     .card:nth-child(3) .image-wrapper { background: linear-gradient(145deg, #2d6e5a, #0e2620); }
@@ -261,37 +261,29 @@
     .card:nth-child(8) .image-wrapper { background: linear-gradient(145deg, #2f786a, #0f2e28); }
     .card:nth-child(9) .image-wrapper { background: linear-gradient(145deg, #b47a3a, #3b2812); }
     .card:nth-child(10) .image-wrapper { background: linear-gradient(145deg, #436b8c, #142433); }
-
-    /* نص توضيحي للقسم */
-    .section-hint {
-      margin: 5px 0 0;
-      font-size: 0.9rem;
-      color: #aac3e0;
-    }
   </style>
 </head>
 <body>
 
 <div class="topbar">
   <div class="brand">
-    <i class="fas fa-cube" style="margin-left: 10px; color: #3b82f6;"></i> 
+    <i class="fas fa-cube" style="margin-left: 7px; color: #3b82f6;"></i> 
     منصة آفاق | Pro
   </div>
   <div class="live-badge">
     <i class="fas fa-circle"></i> 
     <span>نظام مباشر · LIVE</span>
-    <i class="fas fa-shield-alt" style="margin-right: 8px; opacity: 0.9;"></i>
+    <i class="fas fa-shield-alt" style="margin-right: 6px; opacity: 0.9;"></i>
   </div>
 </div>
 
 <div class="container">
-  <!-- الشبكة الرئيسية: 10 أقسام بصور وأيقونات متناسقة -->
+  <!-- الشبكة الرئيسية: 10 أقسام -->
   <div class="grid">
     
     <!-- 1. تحليل بيانات -->
     <div class="card">
       <div class="image-wrapper">
-        <!-- صورة احترافية: أيقونة بيانية مع رسم بياني -->
         <i class="fas fa-chart-pie"></i>
       </div>
       <div class="card-title">تحليل بيانات</div>
@@ -309,13 +301,12 @@
       <div class="section-hint">تعلّم عميق</div>
     </div>
     
-    <!-- 3. تقويم هجري (صورة متناسقة: أيقونة تقويم + هلال) -->
+    <!-- 3. تقويم هجري -->
     <div class="card">
       <div class="image-wrapper">
-        <!-- استخدام أيقونتين متراكبتين لإيحاء بالتقويم الهجري -->
         <div style="position: relative; display: flex; align-items: center; justify-content: center;">
-          <i class="fas fa-calendar-alt" style="font-size: 44px;"></i>
-          <i class="fas fa-moon" style="position: absolute; font-size: 22px; bottom: -6px; right: -10px; color: #ffe484; filter: drop-shadow(0 0 5px #fbbf24);"></i>
+          <i class="fas fa-calendar-alt" style="font-size: 31px;"></i> <!-- كان 44px -->
+          <i class="fas fa-moon" style="position: absolute; font-size: 15px; bottom: -4px; right: -7px; color: #ffe484; filter: drop-shadow(0 0 3px #fbbf24);"></i>
         </div>
       </div>
       <div class="card-title">تقويم هجري</div>
@@ -396,19 +387,17 @@
 
   <!-- تذييل احترافي -->
   <div class="footer">
-    <i class="fas fa-crown" style="color: #fbbf24; margin-left: 8px;"></i>
-    © 2026 Pro Dashboard — تصميم احترافي بصور وأيقونات متناسقة 
-    <i class="fas fa-rocket" style="margin-right: 10px; color: #3b82f6;"></i>
+    <i class="fas fa-crown" style="color: #fbbf24; margin-left: 6px; font-size:0.8rem;"></i>
+    © 2026 Pro Dashboard — تصميم احترافي 
+    <i class="fas fa-rocket" style="margin-right: 7px; color: #3b82f6; font-size:0.8rem;"></i>
     <br>
-    <span style="font-size: 0.9rem; opacity: 0.7;">جاهز للتوسع · واجهة عصرية بمقاسات موحدة</span>
+    <span style="font-size: 0.65rem; opacity: 0.7;">جاهز للتوسع · واجهة عصرية بمقاسات موحدة</span>
   </div>
 </div>
 
-<!-- إضافة تأثيرات بسيطة إضافية (اختياري) -->
 <script>
   (function() {
-    // مجرد لمسة: تغيير بسيط في شارة البث المباشر
-    console.log('✨ Pro Dashboard | تصميم بصور متناسقة مع الواجهة');
+    console.log('✨ Pro Dashboard | مقاسات مصغرة بنسبة 30%');
   })();
 </script>
 </body>
