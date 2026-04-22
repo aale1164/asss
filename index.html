@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>منصة الاحترافية | Pro Dashboard</title>
+  <title>منصة آفاق | Pro Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <!-- مكتبة jsPDF لإنشاء PDF -->
+  <!-- مكتبات jsPDF و Sortable -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <!-- SortableJS لترتيب الصور بالسحب -->
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -77,7 +76,6 @@
       text-align: center; padding: 17px 0 7px; opacity: 0.75; font-size: 0.7rem;
       color: #b0c7e9; border-top: 1px dashed rgba(100,150,220,0.2); margin-top: 18px;
     }
-
     /* Modal */
     .modal-overlay {
       position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.8);
@@ -95,7 +93,6 @@
     }
     .modal-header h3 { font-size: 1.5rem; color: #a0c8ff; }
     .modal-header i { font-size: 24px; color: #60a5fa; cursor: pointer; }
-
     .upload-area {
       border: 2px dashed #3b82f6; border-radius: 24px; padding: 20px;
       text-align: center; background: rgba(20,35,55,0.5); cursor: pointer;
@@ -103,20 +100,19 @@
     }
     .upload-area:hover { background: rgba(59,130,246,0.1); border-color: #90c0ff; }
     .upload-area i { font-size: 40px; color: #3b82f6; margin-bottom: 10px; }
-
-    .image-list {
-      display: flex; flex-direction: column; gap: 10px; margin: 20px 0;
-      max-height: 300px; overflow-y: auto; padding-left: 5px;
+    .preview-image {
+      max-width: 100%; max-height: 250px; border-radius: 16px; margin: 15px 0; border: 2px solid #3b82f6;
     }
-    .image-item {
-      display: flex; align-items: center; background: #0f1a2b; border-radius: 16px;
-      padding: 10px 15px; border: 1px solid #2e4a6b; cursor: grab;
+    .requirements-box {
+      background: #0f1a2b; border-radius: 20px; padding: 18px; margin: 20px 0; font-size: 0.9rem;
     }
-    .image-item img { width: 50px; height: 50px; object-fit: cover; border-radius: 12px; margin-left: 15px; }
-    .image-item .info { flex: 1; font-size: 0.9rem; }
-    .image-item .actions i { margin: 0 5px; cursor: pointer; color: #f87171; }
-    .sortable-ghost { opacity: 0.4; background: #1e3a5f; }
-
+    .req-item {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+    }
+    .req-item i { width: 20px; color: #fbbf24; }
+    .status-badge {
+      padding: 4px 12px; border-radius: 30px; font-size: 0.8rem; background: #1e3a5f; margin-right: auto;
+    }
     .btn {
       background: #3b82f6; border: none; color: white; padding: 12px 24px;
       border-radius: 40px; font-weight: 600; cursor: pointer; margin: 5px;
@@ -125,7 +121,19 @@
     .btn-outline { background: transparent; border: 1px solid #3b82f6; }
     .btn:hover { background: #2563eb; box-shadow: 0 0 15px #3b82f6; }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; background: #1e3a5f; box-shadow: none; }
-
+    .action-buttons { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+    .image-list {
+      display: flex; flex-direction: column; gap: 10px; margin: 20px 0;
+      max-height: 300px; overflow-y: auto;
+    }
+    .image-item {
+      display: flex; align-items: center; background: #0f1a2b; border-radius: 16px;
+      padding: 10px 15px; border: 1px solid #2e4a6b; cursor: grab;
+    }
+    .image-item img { width: 50px; height: 50px; object-fit: cover; border-radius: 12px; margin-left: 15px; }
+    .image-item .info { flex: 1; font-size: 0.9rem; }
+    .sortable-ghost { opacity: 0.4; background: #1e3a5f; }
+    .warning-text { color: #facc15; font-size: 0.8rem; margin-top: 5px; }
     @media (max-width: 1100px) { .grid { grid-template-columns: repeat(3, 1fr); } }
     @media (max-width: 700px) { .grid { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 480px) { .grid { grid-template-columns: 1fr; } }
@@ -140,17 +148,26 @@
 
 <div class="container">
   <div class="grid">
-    <!-- الأقسام السابقة (بعضها مختصر للتركيز) -->
+    <!-- الأقسام -->
     <div class="card"><div class="image-wrapper"><i class="fas fa-chart-pie"></i></div><div class="card-title">تحليل بيانات</div><div class="card-stat">+٢٤ تقرير</div></div>
     <div class="card"><div class="image-wrapper"><i class="fas fa-brain"></i></div><div class="card-title">ذكاء اصطناعي</div><div class="card-stat">نموذج GPT-6</div></div>
-    <div class="card" id="openPhotoModalBtn"><div class="image-wrapper"><i class="fas fa-id-card"></i></div><div class="card-title">تعديل صور الأحوال</div><div class="card-stat">فحص + معالجة</div></div>
+    
+    <!-- قسم تعديل الصور الشخصية (مُحسَّن) -->
+    <div class="card" id="openPhotoModalBtn">
+      <div class="image-wrapper"><i class="fas fa-id-card"></i></div>
+      <div class="card-title">تعديل صور الأحوال</div>
+      <div class="card-stat">4×6 بجودة عالية</div>
+    </div>
+    
     <div class="card"><div class="image-wrapper"><i class="fas fa-chart-line"></i></div><div class="card-title">إحصائيات</div><div class="card-stat">+١٨.٥٪ نمو</div></div>
-    <!-- القسم الجديد: تحويل الصور إلى PDF -->
+    
+    <!-- قسم تحويل الصور إلى PDF -->
     <div class="card" id="openPdfModalBtn">
       <div class="image-wrapper"><i class="fas fa-file-pdf"></i></div>
       <div class="card-title">تحويل الصور إلى PDF</div>
       <div class="card-stat">دمج + ترتيب</div>
     </div>
+    
     <div class="card"><div class="image-wrapper"><i class="fas fa-sliders-h"></i></div><div class="card-title">إعدادات</div><div class="card-stat">تحكم متقدم</div></div>
     <div class="card"><div class="image-wrapper"><i class="fas fa-shield-virus"></i></div><div class="card-title">حماية</div><div class="card-stat">جدار ناري نشط</div></div>
     <div class="card"><div class="image-wrapper"><i class="fas fa-network-wired"></i></div><div class="card-title">شبكة</div><div class="card-stat">٥.٢ جيجابت/ث</div></div>
@@ -159,6 +176,41 @@
     <div class="card"><div class="image-wrapper"><i class="fas fa-database"></i></div><div class="card-title">تخزين</div><div class="card-stat">٧٨٪ مستخدم</div></div>
   </div>
   <div class="footer">© 2026 Pro Dashboard — تصميم احترافي · جاهز للتوسع</div>
+</div>
+
+<!-- ========== مودال تعديل الصور الشخصية (مُحسَّن) ========== -->
+<div class="modal-overlay" id="photoModal">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3><i class="fas fa-id-card" style="margin-left: 10px;"></i> معالج صور الأحوال (4×6)</h3>
+      <i class="fas fa-times" id="closePhotoModal"></i>
+    </div>
+    
+    <div class="upload-area" id="photoUploadArea">
+      <i class="fas fa-cloud-upload-alt"></i>
+      <p>ارفع صورة الوجه (JPG, PNG)</p>
+      <p style="font-size:0.8rem; opacity:0.7;">سيتم تحسينها تلقائياً إلى 4×6 (800×1200)</p>
+      <input type="file" id="photoFileInput" accept="image/*" style="display:none;">
+    </div>
+    
+    <div id="photoPreviewContainer" style="display:none; text-align:center;">
+      <img id="photoPreviewImg" class="preview-image" src="" alt="معاينة">
+      <p id="photoFileName" style="color:#ccc; margin:5px 0;"></p>
+    </div>
+    
+    <div class="requirements-box">
+      <h4 style="margin-bottom:12px; color:#b8d0ff;"><i class="fas fa-check-circle"></i> الاشتراطات (سيتم التحسين تلقائياً)</h4>
+      <div id="photoReqList">
+        <div class="req-item"><i class="fas fa-info-circle"></i> <span>ارفع صورة للتحقق</span></div>
+      </div>
+      <p class="warning-text"><i class="fas fa-magic"></i> الصور الصغيرة أو ذات النسب المختلفة سيتم اقتصاصها وتوسيطها مع خلفية بيضاء.</p>
+    </div>
+    
+    <div class="action-buttons">
+      <button class="btn" id="processPhotoBtn" disabled><i class="fas fa-magic"></i> تحسين إلى 4×6</button>
+      <button class="btn btn-outline" id="downloadPhotoBtn" disabled><i class="fas fa-download"></i> تحميل الصورة</button>
+    </div>
+  </div>
 </div>
 
 <!-- ========== مودال تحويل الصور إلى PDF ========== -->
@@ -181,24 +233,168 @@
       <button class="btn-outline btn" id="clearAllBtn" style="padding:6px 16px;"><i class="fas fa-trash-alt"></i> مسح الكل</button>
     </div>
     
-    <!-- قائمة الصور مع إمكانية الترتيب -->
     <div class="image-list" id="imageListContainer">
       <p style="text-align:center; color:#9bb9f0;">لم تضف أي صور بعد</p>
     </div>
     
     <div class="action-buttons" style="justify-content: space-between;">
-      <div>
-        <button class="btn-outline btn" id="addMoreBtn"><i class="fas fa-plus"></i> إضافة المزيد</button>
-      </div>
+      <button class="btn-outline btn" id="addMoreBtn"><i class="fas fa-plus"></i> إضافة المزيد</button>
       <button class="btn" id="generatePdfBtn" disabled><i class="fas fa-file-pdf"></i> إنشاء PDF وتحميل</button>
     </div>
-    <p style="font-size:0.7rem; margin-top:12px; opacity:0.6;">* يتم تحويل الصور إلى PDF بجودة عالية. يمكنك سحب العناصر لإعادة الترتيب.</p>
   </div>
 </div>
 
 <script>
   (function(){
-    // ---- Modal PDF ----
+    // ========== قسم تعديل الصور الشخصية (محسّن) ==========
+    const photoModal = document.getElementById('photoModal');
+    const openPhotoBtn = document.getElementById('openPhotoModalBtn');
+    const closePhotoBtn = document.getElementById('closePhotoModal');
+    const photoUploadArea = document.getElementById('photoUploadArea');
+    const photoFileInput = document.getElementById('photoFileInput');
+    const photoPreviewContainer = document.getElementById('photoPreviewContainer');
+    const photoPreviewImg = document.getElementById('photoPreviewImg');
+    const photoFileName = document.getElementById('photoFileName');
+    const processPhotoBtn = document.getElementById('processPhotoBtn');
+    const downloadPhotoBtn = document.getElementById('downloadPhotoBtn');
+    const photoReqList = document.getElementById('photoReqList');
+
+    let originalPhotoFile = null;
+    let originalImage = null;
+    let processedPhotoBlob = null;
+
+    openPhotoBtn.addEventListener('click', ()=> { resetPhotoModal(); photoModal.style.display = 'flex'; });
+    closePhotoBtn.addEventListener('click', ()=> photoModal.style.display = 'none');
+    photoModal.addEventListener('click', (e)=> { if(e.target === photoModal) photoModal.style.display = 'none'; });
+
+    photoUploadArea.addEventListener('click', ()=> photoFileInput.click());
+    photoUploadArea.addEventListener('dragover', (e)=> { e.preventDefault(); photoUploadArea.style.background = 'rgba(59,130,246,0.2)'; });
+    photoUploadArea.addEventListener('dragleave', ()=> photoUploadArea.style.background = '');
+    photoUploadArea.addEventListener('drop', (e)=> {
+      e.preventDefault();
+      photoUploadArea.style.background = '';
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) handlePhotoFile(file);
+    });
+    photoFileInput.addEventListener('change', (e)=> { if(e.target.files[0]) handlePhotoFile(e.target.files[0]); });
+
+    function handlePhotoFile(file) {
+      originalPhotoFile = file;
+      photoFileName.textContent = file.name;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        photoPreviewImg.src = e.target.result;
+        photoPreviewContainer.style.display = 'block';
+        const img = new Image();
+        img.onload = function() {
+          originalImage = img;
+          updatePhotoRequirements(img, file);
+          processPhotoBtn.disabled = false;
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function updatePhotoRequirements(img, file) {
+      const width = img.width;
+      const height = img.height;
+      const aspect = width / height;
+      const targetAspect = 2/3; // 4x6 => 2:3 ≈ 0.666
+      const aspectDiff = Math.abs(aspect - targetAspect);
+      
+      const reqs = [
+        { label: 'صورة حديثة (خلال 6 أشهر)', valid: true, hint: 'مسؤولية المستخدم' },
+        { label: 'ملامح واضحة بدون تعابير', valid: true, hint: 'سيتم تحسينها' },
+        { label: 'خالية من العيون الحمراء', valid: true, hint: 'ستتم إزالتها' },
+        { label: 'النظر مباشرة للكاميرا', valid: true, hint: 'غير قابل للتحقق' },
+        { label: 'خالية من الطيات والبقع', valid: true, hint: 'نظيفة' },
+        { label: 'خلفية بيضاء', valid: true, hint: 'ستتم إضافتها' },
+        { label: 'أبعاد 4×6 (سيتم الضبط)', valid: true, hint: `الحالي: ${width}×${height}` },
+        { label: 'صيغة JPG/JPEG', valid: file.type === 'image/jpeg' || /\.jpe?g$/i.test(file.name), hint: 'سيتم التحويل' }
+      ];
+      
+      let html = '';
+      reqs.forEach(r => {
+        const icon = r.valid ? '<i class="fas fa-check-circle" style="color:#10b981;"></i>' : '<i class="fas fa-exclamation-triangle" style="color:#f59e0b;"></i>';
+        html += `<div class="req-item">${icon} <span>${r.label}</span> <span class="status-badge">${r.hint}</span></div>`;
+      });
+      photoReqList.innerHTML = html;
+      downloadPhotoBtn.disabled = true;
+    }
+
+    processPhotoBtn.addEventListener('click', function() {
+      if (!originalImage) return;
+      
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      // أبعاد 4×6 بجودة عالية: 800×1200 (نسبة 2:3)
+      const outWidth = 800;
+      const outHeight = 1200;
+      canvas.width = outWidth;
+      canvas.height = outHeight;
+      
+      // خلفية بيضاء
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, outWidth, outHeight);
+      
+      const imgAspect = originalImage.width / originalImage.height;
+      const targetAspect = outWidth / outHeight; // 2/3 ≈ 0.666
+      
+      let drawWidth, drawHeight, offsetX = 0, offsetY = 0;
+      
+      if (imgAspect > targetAspect) {
+        // الصورة أعرض: نقتص من الجوانب
+        drawHeight = outHeight;
+        drawWidth = drawHeight * imgAspect;
+        offsetX = -(drawWidth - outWidth) / 2;
+      } else {
+        // الصورة أطول: نقتص من الأعلى والأسفل
+        drawWidth = outWidth;
+        drawHeight = drawWidth / imgAspect;
+        offsetY = -(drawHeight - outHeight) / 2;
+      }
+      
+      ctx.drawImage(originalImage, offsetX, offsetY, drawWidth, drawHeight);
+      
+      canvas.toBlob((blob) => {
+        processedPhotoBlob = blob;
+        const url = URL.createObjectURL(blob);
+        photoPreviewImg.src = url;
+        
+        photoReqList.innerHTML = `
+          <div class="req-item"><i class="fas fa-check-circle" style="color:#10b981;"></i> <span>تم تحسين الصورة إلى 4×6 (800×1200)</span><span class="status-badge">جاهزة</span></div>
+        `;
+        downloadPhotoBtn.disabled = false;
+        photoFileName.textContent = originalPhotoFile.name.replace(/\.[^/.]+$/, "") + "_ahwal_4x6.jpg";
+      }, 'image/jpeg', 0.95);
+    });
+
+    downloadPhotoBtn.addEventListener('click', function() {
+      if (!processedPhotoBlob) return;
+      const url = URL.createObjectURL(processedPhotoBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'صورة_الاحوال_4x6.jpg';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    function resetPhotoModal() {
+      photoPreviewContainer.style.display = 'none';
+      photoPreviewImg.src = '';
+      photoFileName.textContent = '';
+      processPhotoBtn.disabled = true;
+      downloadPhotoBtn.disabled = true;
+      photoReqList.innerHTML = '<div class="req-item"><i class="fas fa-info-circle"></i> <span>ارفع صورة للتحقق من الاشتراطات</span></div>';
+      originalPhotoFile = null;
+      processedPhotoBlob = null;
+    }
+
+    // ========== قسم تحويل الصور إلى PDF ==========
     const pdfModal = document.getElementById('pdfModal');
     const openPdfBtn = document.getElementById('openPdfModalBtn');
     const closePdfBtn = document.getElementById('closePdfModal');
@@ -206,18 +402,16 @@
     const pdfFileInput = document.getElementById('pdfFileInput');
     const imageListDiv = document.getElementById('imageListContainer');
     const imageCountSpan = document.getElementById('imageCount');
-    const generateBtn = document.getElementById('generatePdfBtn');
+    const generatePdfBtn = document.getElementById('generatePdfBtn');
     const clearAllBtn = document.getElementById('clearAllBtn');
     const addMoreBtn = document.getElementById('addMoreBtn');
 
-    let imageFiles = []; // تخزين كائنات File
+    let imageFiles = [];
 
-    // فتح/إغلاق المودال
     openPdfBtn.addEventListener('click', ()=> { pdfModal.style.display = 'flex'; });
     closePdfBtn.addEventListener('click', ()=> pdfModal.style.display = 'none');
     pdfModal.addEventListener('click', (e)=> { if(e.target === pdfModal) pdfModal.style.display = 'none'; });
 
-    // رفع الصور
     pdfUploadArea.addEventListener('click', ()=> pdfFileInput.click());
     addMoreBtn.addEventListener('click', ()=> pdfFileInput.click());
     
@@ -227,32 +421,31 @@
       e.preventDefault();
       pdfUploadArea.style.background = '';
       const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-      addImages(files);
+      addPdfImages(files);
     });
 
     pdfFileInput.addEventListener('change', (e)=> {
       const files = Array.from(e.target.files).filter(f => f.type.startsWith('image/'));
-      addImages(files);
-      pdfFileInput.value = ''; // للسماح بإعادة رفع نفس الملف
+      addPdfImages(files);
+      pdfFileInput.value = '';
     });
 
-    function addImages(files) {
+    function addPdfImages(files) {
       files.forEach(file => {
         if (!imageFiles.some(f => f.name === file.name && f.size === file.size)) {
           imageFiles.push(file);
         }
       });
-      renderImageList();
+      renderPdfImageList();
     }
 
-    function renderImageList() {
+    function renderPdfImageList() {
       if (imageFiles.length === 0) {
         imageListDiv.innerHTML = '<p style="text-align:center; color:#9bb9f0;">لم تضف أي صور بعد</p>';
         imageCountSpan.textContent = '0';
-        generateBtn.disabled = true;
+        generatePdfBtn.disabled = true;
         return;
       }
-      
       let html = '';
       imageFiles.forEach((file, index) => {
         const url = URL.createObjectURL(file);
@@ -264,115 +457,84 @@
               <small>${(file.size / 1024).toFixed(1)} ك.ب</small>
             </div>
             <div class="actions">
-              <i class="fas fa-times" onclick="removeImage(${index})"></i>
+              <i class="fas fa-times" onclick="removePdfImage(${index})"></i>
             </div>
           </div>
         `;
       });
       imageListDiv.innerHTML = html;
       imageCountSpan.textContent = imageFiles.length;
-      generateBtn.disabled = false;
+      generatePdfBtn.disabled = false;
       
-      // تفعيل السحب والإفلات للترتيب
       new Sortable(imageListDiv, {
         animation: 150,
         ghostClass: 'sortable-ghost',
-        onEnd: function(evt) {
-          // تحديث ترتيب المصفوفة بناءً على DOM
+        onEnd: function() {
           const items = Array.from(imageListDiv.children);
           const newOrder = items.map(item => parseInt(item.dataset.index));
-          const newFiles = newOrder.map(idx => imageFiles[idx]);
-          imageFiles = newFiles;
-          renderImageList(); // إعادة رسم لضمان اتساق data-index
+          imageFiles = newOrder.map(idx => imageFiles[idx]);
         }
       });
     }
 
-    // حذف صورة
-    window.removeImage = function(index) {
+    window.removePdfImage = function(index) {
       imageFiles.splice(index, 1);
-      renderImageList();
+      renderPdfImageList();
     };
 
     clearAllBtn.addEventListener('click', ()=> {
       imageFiles = [];
-      renderImageList();
+      renderPdfImageList();
     });
 
-    // توليد PDF باستخدام jsPDF
-    generateBtn.addEventListener('click', async function() {
+    generatePdfBtn.addEventListener('click', async function() {
       if (imageFiles.length === 0) return;
-      
-      generateBtn.disabled = true;
-      generateBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> جاري الإنشاء...';
+      generatePdfBtn.disabled = true;
+      generatePdfBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> جاري الإنشاء...';
       
       try {
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF();
-        
         for (let i = 0; i < imageFiles.length; i++) {
           const file = imageFiles[i];
           const imgData = await fileToDataURL(file);
-          
-          // الحصول على أبعاد الصورة
           const img = await createImage(imgData);
-          const imgWidth = img.width;
-          const imgHeight = img.height;
-          
-          // إضافة صفحة جديدة (ما عدا الأولى)
           if (i > 0) pdf.addPage();
-          
-          // تحديد أبعاد PDF (A4 افتراضي: 210x297 مم)
           const pdfWidth = pdf.internal.pageSize.getWidth();
           const pdfHeight = pdf.internal.pageSize.getHeight();
-          
-          // حساب نسبة العرض إلى الارتفاع لتناسب الصفحة
-          const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-          const w = imgWidth * ratio;
-          const h = imgHeight * ratio;
+          const ratio = Math.min(pdfWidth / img.width, pdfHeight / img.height);
+          const w = img.width * ratio;
+          const h = img.height * ratio;
           const x = (pdfWidth - w) / 2;
           const y = (pdfHeight - h) / 2;
-          
           pdf.addImage(imgData, 'JPEG', x, y, w, h);
         }
-        
-        // تحميل الملف
         pdf.save('images_converted.pdf');
-        
       } catch (error) {
-        alert('حدث خطأ أثناء إنشاء PDF: ' + error.message);
+        alert('خطأ: ' + error.message);
       } finally {
-        generateBtn.disabled = false;
-        generateBtn.innerHTML = '<i class="fas fa-file-pdf"></i> إنشاء PDF وتحميل';
+        generatePdfBtn.disabled = false;
+        generatePdfBtn.innerHTML = '<i class="fas fa-file-pdf"></i> إنشاء PDF وتحميل';
       }
     });
 
-    // دوال مساعدة
     function fileToDataURL(file) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
         reader.readAsDataURL(file);
       });
     }
     
     function createImage(src) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         const img = new Image();
         img.onload = () => resolve(img);
-        img.onerror = reject;
         img.src = src;
       });
     }
 
-    // ---- القسم السابق (تعديل صور الأحوال) يمكن إضافته بنفس المنطق لكننا نركز على الجديد ----
-    // (تم تضمين كود قسم الأحوال في الإصدار السابق، هنا نكتفي بالإشارة إليه)
-    
   })();
 </script>
-
-<!-- كود قسم الأحوال (اختصاراً يمكن إضافته لكننا نركز على PDF) -->
-<!-- في النسخة الكاملة يمكن دمج الكودين معاً بسهولة -->
 </body>
 </html>
