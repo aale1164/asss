@@ -1,339 +1,206 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>منصة آفاق | Pro Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-  <style>
-    /* جميع الأنماط كما هي دون تغيير */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Tajawal', sans-serif;
-      background: radial-gradient(circle at 20% 10%, #0b1424, #03070e);
-      color: #fff;
-      min-height: 100vh;
-      padding: 0 11px 22px;
-      direction: rtl;
-    }
-    .topbar {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 13px 20px; margin: 14px 0 7px;
-      background: rgba(18, 28, 46, 0.6); backdrop-filter: blur(12px);
-      border: 1px solid rgba(74, 144, 226, 0.2); border-radius: 42px;
-      box-shadow: 0 10px 24px -7px rgba(0,0,0,0.5);
-    }
-    .brand {
-      font-size: 1.25rem; font-weight: 800;
-      background: linear-gradient(135deg, #a0c8ff, #3b82f6);
-      -webkit-background-clip: text; background-clip: text; color: transparent;
-    }
-    .live-badge {
-      display: flex; align-items: center; gap: 6px;
-      background: rgba(59,130,246,0.2); padding: 6px 13px; border-radius: 28px;
-      border: 1px solid rgba(59,130,246,0.4); font-weight: 600; font-size: 0.7rem; color: #bdd3ff;
-    }
-    .live-badge i { color: #3b82f6; font-size: 0.6rem; animation: pulse 1.8s infinite; }
-    @keyframes pulse {
-      0% { opacity: 0.6; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.15); text-shadow: 0 0 6px #3b82f6; }
-      100% { opacity: 0.6; transform: scale(1); }
-    }
-    .container { max-width: 1400px; margin: 0 auto; }
-    .grid {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
-      margin: 21px 0 14px;
-    }
-    .card {
-      background: rgba(12, 22, 38, 0.7); backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,0.06); border-radius: 20px;
-      padding: 17px 8px 14px; display: flex; flex-direction: column; align-items: center;
-      text-align: center; cursor: pointer; transition: all 0.3s;
-      box-shadow: 0 7px 14px -3px rgba(0,0,0,0.5); position: relative; overflow: hidden;
-    }
-    .card::after {
-      content: ""; position: absolute; inset: 0;
-      background: radial-gradient(circle at 30% 20%, rgba(59,130,246,0.25), transparent 70%);
-      opacity: 0; transition: opacity 0.4s; pointer-events: none;
-    }
-    .card:hover { transform: translateY(-6px); background: rgba(20,40,65,0.8); border-color: rgba(59,130,246,0.5); }
-    .card:hover::after { opacity: 1; }
-    .image-wrapper {
-      width: 63px; height: 63px; margin-bottom: 11px; display: flex; align-items: center; justify-content: center;
-      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-      background: linear-gradient(145deg, rgba(59,130,246,0.2), rgba(16,30,54,0.7));
-      box-shadow: 0 7px 14px -3px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-    .card:hover .image-wrapper { background: linear-gradient(145deg, #1e3a6b, #0f1e32); box-shadow: 0 0 13px #3b82f6; }
-    .image-wrapper i { font-size: 32px; color: #e0edff; }
-    .card-title { font-size: 0.9rem; font-weight: 700; margin: 6px 0 4px; color: #f0f6ff; }
-    .card-stat { font-size: 0.7rem; color: #9bb9f0; background: rgba(0,0,0,0.2); padding: 3px 10px; border-radius: 21px; }
-    .footer {
-      text-align: center; padding: 17px 0 7px; opacity: 0.75; font-size: 0.7rem;
-      color: #b0c7e9; border-top: 1px dashed rgba(100,150,220,0.2); margin-top: 18px;
-    }
-    .modal-overlay {
-      position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.8);
-      backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center;
-      z-index: 1000; padding: 20px;
-    }
-    .modal-container {
-      background: rgba(8,18,30,0.95); backdrop-filter: blur(20px); border: 1px solid #3b82f6;
-      border-radius: 32px; width: 100%; max-width: 800px; max-height: 90vh;
-      overflow-y: auto; padding: 24px; box-shadow: 0 30px 50px rgba(0,0,0,0.7);
-    }
-    .modal-header {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 20px; border-bottom: 1px solid #2a3c58; padding-bottom: 12px;
-    }
-    .modal-header h3 { font-size: 1.5rem; color: #a0c8ff; }
-    .modal-header i { font-size: 24px; color: #60a5fa; cursor: pointer; }
-    .upload-area {
-      border: 2px dashed #3b82f6; border-radius: 24px; padding: 20px;
-      text-align: center; background: rgba(20,35,55,0.5); cursor: pointer;
-      margin-bottom: 20px; transition: 0.2s;
-    }
-    .upload-area:hover { background: rgba(59,130,246,0.1); border-color: #90c0ff; }
-    .upload-area i { font-size: 40px; color: #3b82f6; margin-bottom: 10px; }
-    .preview-image {
-      max-width: 100%; max-height: 250px; border-radius: 16px; margin: 15px 0; border: 2px solid #3b82f6;
-    }
-    .requirements-box {
-      background: #0f1a2b; border-radius: 20px; padding: 18px; margin: 20px 0; font-size: 0.9rem;
-    }
-    .req-item {
-      display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
-    }
-    .req-item i { width: 20px; color: #fbbf24; }
-    .status-badge {
-      padding: 4px 12px; border-radius: 30px; font-size: 0.8rem; background: #1e3a5f; margin-right: auto;
-    }
-    .btn {
-      background: #3b82f6; border: none; color: white; padding: 12px 24px;
-      border-radius: 40px; font-weight: 600; cursor: pointer; margin: 5px;
-      border: 1px solid #90c0ff; transition: 0.2s;
-    }
-    .btn-outline { background: transparent; border: 1px solid #3b82f6; }
-    .btn:hover { background: #2563eb; box-shadow: 0 0 15px #3b82f6; }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; background: #1e3a5f; box-shadow: none; }
-    .action-buttons { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-    .image-list {
-      display: flex; flex-direction: column; gap: 10px; margin: 20px 0;
-      max-height: 300px; overflow-y: auto;
-    }
-    .image-item {
-      display: flex; align-items: center; background: #0f1a2b; border-radius: 16px;
-      padding: 10px 15px; border: 1px solid #2e4a6b; cursor: grab;
-    }
-    .image-item img { width: 50px; height: 50px; object-fit: cover; border-radius: 12px; margin-left: 15px; }
-    .sortable-ghost { opacity: 0.4; background: #1e3a5f; }
-    .warning-text { color: #facc15; font-size: 0.8rem; margin-top: 5px; }
-    .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; margin-bottom: 5px; color: #b0cdff; }
-    .form-group input, .form-group textarea, .form-group select {
-      width: 100%; padding: 10px; border-radius: 16px; border: 1px solid #2e4a6b;
-      background: #0f1a2b; color: white; font-family: 'Tajawal';
-    }
-    .form-row { display: flex; gap: 10px; }
-    @media (max-width: 1100px) { .grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>منصة الأدوات الذكية</title>
+
+<!-- Plotly -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<!-- jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+body{
+    background:#0f172a;
+    color:white;
+    font-family:Arial;
+    text-align:center;
+}
+.container{
+    width:90%;
+    margin:auto;
+}
+.card{
+    background:#1e293b;
+    padding:20px;
+    margin:15px;
+    border-radius:15px;
+    box-shadow:0 0 15px rgba(0,0,0,0.3);
+}
+button{
+    background:#3b82f6;
+    border:none;
+    padding:10px 20px;
+    color:white;
+    border-radius:10px;
+    cursor:pointer;
+}
+input{
+    padding:10px;
+    border-radius:10px;
+    border:none;
+}
+#chart{
+    height:300px;
+}
+canvas{
+    background:white;
+}
+</style>
 </head>
+
 <body>
 
-<div class="topbar">
-  <div class="brand"><i class="fas fa-cube" style="margin-left: 7px; color: #3b82f6;"></i> منصة آفاق | Pro</div>
-  <div class="live-badge"><i class="fas fa-circle"></i> نظام مباشر · LIVE <i class="fas fa-shield-alt" style="margin-right: 6px;"></i></div>
-</div>
-
 <div class="container">
-  <div class="grid">
-    <div class="card"><div class="image-wrapper"><i class="fas fa-chart-pie"></i></div><div class="card-title">تحليل بيانات</div><div class="card-stat">+٢٤ تقرير</div></div>
-    
-    <div class="card" id="openAtsModalBtn">
-      <div class="image-wrapper"><i class="fas fa-file-alt"></i></div>
-      <div class="card-title">إنشاء سيرة ذاتية</div>
-      <div class="card-stat">ATS احترافية</div>
-    </div>
-    
-    <div class="card" id="openPhotoModalBtn">
-      <div class="image-wrapper"><i class="fas fa-id-card"></i></div>
-      <div class="card-title">تعديل صور الأحوال</div>
-      <div class="card-stat">4×6 آمن</div>
-    </div>
-    
-    <div class="card" id="openPdfModalBtn">
-      <div class="image-wrapper"><i class="fas fa-file-pdf"></i></div>
-      <div class="card-title">تحويل الصور إلى PDF</div>
-      <div class="card-stat">دمج + ترتيب</div>
-    </div>
-    
-    <div class="card"><div class="image-wrapper"><i class="fas fa-network-wired"></i></div><div class="card-title">شبكة</div><div class="card-stat">٥.٢ جيجابت/ث</div></div>
-    <div class="card"><div class="image-wrapper"><i class="fas fa-satellite-dish"></i></div><div class="card-title">بيانات مباشرة</div><div class="card-stat">تحديث كل ٣ ثوان</div></div>
-    <div class="card"><div class="image-wrapper"><i class="fas fa-coins"></i></div><div class="card-title">مالية</div><div class="card-stat">$١٢.٤ مليار</div></div>
-    <div class="card"><div class="image-wrapper"><i class="fas fa-database"></i></div><div class="card-title">تخزين</div><div class="card-stat">٧٨٪ مستخدم</div></div>
-  </div>
-  <div class="footer">© 2026 Pro Dashboard — تصميم احترافي · جاهز للتوسع</div>
+
+<h1>🚀 منصة أدوات ذكية</h1>
+
+<!-- 📊 تحليل البيانات -->
+<div class="card">
+<h2>📊 تحليل بيانات لحظي</h2>
+<input id="points" type="number" value="20">
+<button onclick="generateData()">تشغيل</button>
+<div id="chart"></div>
+<p id="ai-text"></p>
 </div>
 
-<!-- ========== مودال إنشاء السيرة الذاتية ========== -->
-<div class="modal-overlay" id="atsModal">
-  <div class="modal-container" style="max-width:700px;">
-    <div class="modal-header">
-      <h3><i class="fas fa-file-alt"></i> منشئ السيرة الذاتية الاحترافية</h3>
-      <i class="fas fa-times" id="closeAtsModalBtn"></i>
-    </div>
-    <div class="form-group"><label>الاسم الكامل</label><input type="text" id="fullName" placeholder="أحمد محمد علي"></div>
-    <div class="form-row">
-      <div class="form-group" style="flex:1;"><label>البريد الإلكتروني</label><input type="email" id="email" placeholder="example@domain.com"></div>
-      <div class="form-group" style="flex:1;"><label>رقم الهاتف</label><input type="tel" id="phone" placeholder="+966xxxxxxxxx"></div>
-    </div>
-    <div class="form-group"><label>تاريخ الميلاد</label><input type="text" id="birthDate" placeholder="1990-01-01"></div>
-    <div class="form-group"><label>النبذة التعريفية</label><textarea id="summary" rows="3" placeholder="اكتب نبذة مختصرة عن خبراتك وأهدافك..."></textarea></div>
-    <div class="form-group">
-      <label>المؤهل الدراسي</label>
-      <select id="educationSelect">
-        <option value="ثانوي">ثانوي</option>
-        <option value="دبلوم سنة">دبلوم سنة</option>
-        <option value="دبلوم متوسط">دبلوم متوسط</option>
-        <option value="جامعي">جامعي</option>
-        <option value="دراسات عليا">دراسات عليا</option>
-      </select>
-    </div>
-    <div class="form-group"><label>الخبرات العملية</label><textarea id="experience" rows="3" placeholder="مثال: مطور برمجيات - شركة التقنية (2020-2025)"></textarea></div>
-    <div class="form-group"><label>المهارات التقنية</label><input type="text" id="skills" placeholder="Python, SQL, Project Management, ..."></div>
-    <div class="form-group">
-      <label>لغة السيرة الذاتية</label>
-      <select id="languageSelect"><option value="ar">العربية</option><option value="en">English</option></select>
-    </div>
-    <div class="action-buttons">
-      <button class="btn" id="generateResumeBtn"><i class="fas fa-file-pdf"></i> إنشاء PDF احترافي</button>
-    </div>
-    <p class="warning-text" style="text-align:center;">* سيتم إنشاء PDF بجودة عالية وخط عربي واضح</p>
-  </div>
+<!-- 📄 PDF -->
+<div class="card">
+<h2>📄 تحويل صور إلى PDF</h2>
+<input type="file" id="images" multiple>
+<button onclick="convertToPDF()">تحويل</button>
 </div>
 
-<!-- مودال تعديل الصور (لم يتغير) -->
-<!-- مودال تحويل الصور إلى PDF (لم يتغير) -->
-<!-- سيتم تضمينهما كما في النسخة السابقة -->
+<!-- 🧾 CV -->
+<div class="card">
+<h2>🧾 إنشاء CV PDF</h2>
+<button onclick="generateResume()">إنشاء</button>
+</div>
+
+<!-- 🖼️ صورة أحوال -->
+<div class="card">
+<h2>🖼️ تجهيز صورة 4×6</h2>
+<input type="file" id="photo">
+<button onclick="processPhoto()">تحويل</button>
+<br><br>
+<canvas id="canvas" width="400" height="600"></canvas>
+</div>
+
+</div>
 
 <script>
-  (function(){
-    // دوال مساعدة (تستخدم لاحقاً)
-    function fileToDataURL(file) {
-      return new Promise(resolve => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
+const { jsPDF } = window.jspdf;
+
+/* ================= تحليل البيانات ================= */
+function generateData(){
+    let points = document.getElementById("points").value;
+
+    let x=[], y=[];
+    for(let i=0;i<points;i++){
+        x.push(i);
+        y.push(Math.random()*100);
+    }
+
+    Plotly.newPlot("chart", [{
+        x:x,
+        y:y,
+        type:'scatter',
+        mode:'lines+markers'
+    }]);
+
+    let avg = y.reduce((a,b)=>a+b)/y.length;
+    let trend = y[y.length-1] > y[0] ? "📈 صاعد" : "📉 نازل";
+    let strength = Math.abs(y[y.length-1]-y[0]);
+
+    document.getElementById("ai-text").innerText =
+    "الاتجاه: "+trend+"\n"+
+    "المتوسط: "+avg.toFixed(2)+"\n"+
+    "قوة الحركة: "+strength.toFixed(2);
+}
+
+/* تشغيل تلقائي */
+setInterval(generateData,1000);
+
+/* ================= PDF ================= */
+function convertToPDF(){
+    let files = document.getElementById("images").files;
+    if(files.length === 0) return alert("اختر صور");
+
+    let pdf = new jsPDF();
+
+    Array.from(files).forEach((file,i)=>{
+        let reader = new FileReader();
+        reader.onload = function(e){
+            let img = new Image();
+            img.onload = function(){
+
+                let w = pdf.internal.pageSize.getWidth();
+                let h = (img.height * w)/img.width;
+
+                if(i>0) pdf.addPage();
+
+                let format = file.type.includes('png') ? 'PNG' : 'JPEG';
+                pdf.addImage(e.target.result, format, 0, 0, w, h);
+
+                if(i === files.length-1){
+                    pdf.save("images.pdf");
+                }
+            }
+            img.src = e.target.result;
+        }
         reader.readAsDataURL(file);
-      });
-    }
-    function createImage(src) {
-      return new Promise(resolve => {
-        const img = new Image();
-        img.onload = () => resolve(img);
-        img.src = src;
-      });
-    }
-
-    // ========== 1. منشئ السيرة الذاتية (باستخدام html2canvas) ==========
-    const atsModal = document.getElementById('atsModal');
-    const openAtsBtn = document.getElementById('openAtsModalBtn');
-    const closeAtsBtn = document.getElementById('closeAtsModalBtn');
-    const generateResumeBtn = document.getElementById('generateResumeBtn');
-
-    openAtsBtn.addEventListener('click', ()=> atsModal.style.display='flex');
-    closeAtsBtn.addEventListener('click', ()=> atsModal.style.display='none');
-    atsModal.addEventListener('click', (e)=> { if(e.target === atsModal) atsModal.style.display='none'; });
-
-    generateResumeBtn.addEventListener('click', async function() {
-      const fullName = document.getElementById('fullName').value.trim() || 'الاسم الكامل';
-      const email = document.getElementById('email').value.trim() || 'email@example.com';
-      const phone = document.getElementById('phone').value.trim() || '+966xxxxxxxxx';
-      const birth = document.getElementById('birthDate').value.trim() || '';
-      const summary = document.getElementById('summary').value.trim() || 'ملخص احترافي.';
-      const education = document.getElementById('educationSelect').value;
-      const experience = document.getElementById('experience').value.trim();
-      const skills = document.getElementById('skills').value.trim();
-      const lang = document.getElementById('languageSelect').value;
-      const isRtl = lang === 'ar';
-      
-      // إنشاء عنصر HTML مؤقت لتوليد السيرة الذاتية
-      const resumeDiv = document.createElement('div');
-      resumeDir.style.direction = isRtl ? 'rtl' : 'ltr';
-      resumeDiv.style.fontFamily = "'Tajawal', 'Helvetica', 'Arial', sans-serif";
-      resumeDiv.style.padding = '40px';
-      resumeDiv.style.backgroundColor = 'white';
-      resumeDiv.style.color = '#2c3e50';
-      resumeDiv.style.width = '800px'; // عرض مناسب للـ PDF
-      resumeDiv.style.margin = '0 auto';
-      
-      // بناء المحتوى
-      resumeDiv.innerHTML = `
-        <div style="text-align: center; border-bottom: 3px solid #1a5f7a; padding-bottom: 15px; margin-bottom: 25px;">
-          <div style="font-size: 26pt; font-weight: bold; color: #1a5f7a; text-transform: uppercase;">${fullName}</div>
-          <div style="font-size: 10pt; color: #555; margin-top: 5px;">${[phone, email, birth].filter(Boolean).join(' | ')}</div>
-        </div>
-        
-        <div style="margin-bottom: 20px;">
-          <div style="font-size: 14pt; font-weight: bold; background-color: #f4f7f9; padding: 5px 10px; color: #1a5f7a; border-${isRtl ? 'right' : 'left'}: 5px solid #1a5f7a; margin-bottom: 10px;">${isRtl ? 'النبذة التعريفية' : 'Professional Summary'}</div>
-          <div style="margin: 10px 15px; text-align: justify; white-space: pre-wrap;">${summary}</div>
-        </div>
-        
-        <div style="margin-bottom: 20px;">
-          <div style="font-size: 14pt; font-weight: bold; background-color: #f4f7f9; padding: 5px 10px; color: #1a5f7a; border-${isRtl ? 'right' : 'left'}: 5px solid #1a5f7a; margin-bottom: 10px;">${isRtl ? 'المؤهلات العلمية' : 'Education'}</div>
-          <div style="margin: 10px 15px; text-align: justify;">${education}</div>
-        </div>
-        
-        ${experience ? `
-        <div style="margin-bottom: 20px;">
-          <div style="font-size: 14pt; font-weight: bold; background-color: #f4f7f9; padding: 5px 10px; color: #1a5f7a; border-${isRtl ? 'right' : 'left'}: 5px solid #1a5f7a; margin-bottom: 10px;">${isRtl ? 'الخبرات العملية' : 'Work Experience'}</div>
-          <div style="margin: 10px 15px; text-align: justify; white-space: pre-wrap;">${experience}</div>
-        </div>
-        ` : ''}
-        
-        ${skills ? `
-        <div style="margin-bottom: 20px;">
-          <div style="font-size: 14pt; font-weight: bold; background-color: #f4f7f9; padding: 5px 10px; color: #1a5f7a; border-${isRtl ? 'right' : 'left'}: 5px solid #1a5f7a; margin-bottom: 10px;">${isRtl ? 'المهارات التقنية' : 'Technical Skills'}</div>
-          <div style="margin: 10px 15px; text-align: justify;">${skills}</div>
-        </div>
-        ` : ''}
-        
-        <div style="text-align: center; font-size: 8pt; color: #aaa; margin-top: 50px;">Generated by Pro Dashboard - ATS Friendly</div>
-      `;
-      
-      // إضافة مؤقت للصفحة لالتقاط الصورة
-      document.body.appendChild(resumeDiv);
-      
-      try {
-        const canvas = await html2canvas(resumeDiv, { scale: 2, backgroundColor: '#ffffff' });
-        const imgData = canvas.toDataURL('image/jpeg', 0.95);
-        
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = pdf.internal.pageSize.getHeight();
-        
-        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
-        pdf.save(`Resume_${fullName.replace(/\s+/g, '_')}.pdf`);
-      } catch (error) {
-        alert('حدث خطأ أثناء إنشاء PDF: ' + error.message);
-      } finally {
-        document.body.removeChild(resumeDiv);
-      }
     });
+}
 
-    // ========== 2. تعديل الصور الشخصية (نفس الكود السابق) ==========
-    // ... سيتم إدراجه كاملاً في النسخة النهائية ...
+/* ================= CV ================= */
+function generateResume(){
+    let pdf = new jsPDF();
 
-    // ========== 3. تحويل الصور إلى PDF (نفس الكود السابق) ==========
-    // ... سيتم إدراجه كاملاً في النسخة النهائية ...
+    pdf.setFontSize(20);
+    pdf.text("السيرة الذاتية", 80, 20);
 
-  })();
+    pdf.setFontSize(12);
+    pdf.text("الاسم: عالي سعدون", 20, 40);
+    pdf.text("خبرة: أمن + AI", 20, 50);
+
+    pdf.save("cv.pdf");
+}
+
+/* ================= صورة أحوال ================= */
+function processPhoto(){
+    let file = document.getElementById("photo").files[0];
+    if(!file) return alert("اختر صورة");
+
+    let reader = new FileReader();
+    reader.onload = function(e){
+
+        let img = new Image();
+        img.onload = function(){
+
+            let canvas = document.getElementById("canvas");
+            let ctx = canvas.getContext("2d");
+
+            // مقاس 4x6 حقيقي
+            const dpi = 300;
+            const w = Math.round((4/2.54)*dpi);
+            const h = Math.round((6/2.54)*dpi);
+
+            canvas.width = w;
+            canvas.height = h;
+
+            // قص مركزي
+            let size = Math.min(img.width,img.height);
+            let sx = (img.width-size)/2;
+            let sy = (img.height-size)/2;
+
+            ctx.drawImage(img, sx, sy, size, size, 0, 0, w, h);
+        }
+        img.src = e.target.result;
+    }
+    reader.readAsDataURL(file);
+}
 </script>
+
 </body>
 </html>
