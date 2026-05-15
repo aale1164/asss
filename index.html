@@ -3,133 +3,830 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة عدناني للخدمات</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>منصة عدناني للخدمات | معالج الصور الذكي</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
     <style>
-        body { background-color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        /* تصغير المعاينة عشان ما تطلع كبيرة وتغطي الصفحة */
-        .preview-container { 
-            max-width: 200px; 
-            max-height: 250px;
-            margin: 15px auto; 
-            border: 2px dashed #3b82f6; 
-            padding: 5px;
+        :root {
+            --primary: #1e40af;
+            --primary-light: #3b82f6;
+            --gold: #f59e0b;
+            --surface: #ffffff;
+            --bg: #f1f5f9;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+            font-family: 'Segoe UI', 'Tahoma', 'Geneva', 'Verdana', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* شريط التقدم العلوي */
+        .top-progress {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #1e40af, #3b82f6, #60a5fa);
+            z-index: 9999;
+            transform-origin: right;
+            animation: progressPulse 3s ease-in-out infinite;
+        }
+        @keyframes progressPulse {
+            0%,
+            100% {
+                opacity: 0.7;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* البطاقة الرئيسية */
+        .main-card {
+            background: var(--surface);
+            border-radius: 2rem;
+            box-shadow: 0 25px 60px rgba(30, 64, 175, 0.08), 0 8px 20px rgba(0, 0, 0, 0.04);
+            border: 2px solid #e2e8f0;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+            position: relative;
             overflow: hidden;
+        }
+        .main-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 30px 70px rgba(30, 64, 175, 0.14), 0 10px 28px rgba(0, 0, 0, 0.06);
+            transform: translateY(-3px);
+        }
+        .main-card::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            left: -60px;
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.07) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* حاوية المعاينة */
+        .preview-wrapper {
+            width: 180px;
+            height: 240px;
+            /* نسبة 4x6 */
+            margin: 24px auto;
+            border: 3px dashed #cbd5e1;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #f9fafb;
+            background: #f8fafc;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.35s ease;
+            cursor: default;
         }
-        #imagePreview { max-width: 100%; max-height: 100%; display: none; border-radius: 4px; }
+        .preview-wrapper.has-image {
+            border-style: solid;
+            border-color: #3b82f6;
+            background: #ffffff;
+            box-shadow: 0 6px 24px rgba(59, 130, 246, 0.12);
+        }
+        .preview-wrapper .placeholder-icon {
+            font-size: 2.5rem;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+        .preview-wrapper.has-image .placeholder-icon {
+            opacity: 0;
+            position: absolute;
+        }
+        #imagePreview {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: none;
+            border-radius: 12px;
+            transition: transform 0.3s;
+        }
+        #imagePreview.show {
+            display: block;
+            animation: fadeInScale 0.4s ease-out;
+        }
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.92);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        .ratio-badge {
+            position: absolute;
+            bottom: 6px;
+            left: 6px;
+            background: #1e40af;
+            color: #fff;
+            font-size: 9px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .preview-wrapper.has-image .ratio-badge {
+            opacity: 1;
+        }
+
+        /* أزرار */
+        .btn-primary {
+            background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 22px rgba(30, 64, 175, 0.25);
+            width: 100%;
+            letter-spacing: 0.3px;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+            box-shadow: 0 12px 30px rgba(30, 64, 175, 0.35);
+            transform: translateY(-2px);
+        }
+        .btn-primary:active {
+            transform: scale(0.96);
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+        }
+        .btn-download {
+            background: #e2e8f0;
+            color: #94a3b8;
+            padding: 14px 24px;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 1rem;
+            border: none;
+            cursor: not-allowed;
+            transition: all 0.3s ease;
+            width: 100%;
+            letter-spacing: 0.3px;
+        }
+        .btn-download.active {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 8px 22px rgba(5, 150, 105, 0.3);
+        }
+        .btn-download.active:hover {
+            box-shadow: 0 12px 30px rgba(5, 150, 105, 0.4);
+            transform: translateY(-2px);
+        }
+        .btn-download.active:active {
+            transform: scale(0.96);
+        }
+
+        /* قائمة الخدمات */
+        .service-item {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 16px 20px;
+            border-radius: 16px;
+            font-weight: 600;
+            color: #166534;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .service-item:hover {
+            background: #dcfce7;
+            border-color: #86efac;
+            transform: translateX(-4px);
+            box-shadow: 0 4px 16px rgba(22, 163, 74, 0.1);
+        }
+        .service-dot {
+            width: 10px;
+            height: 10px;
+            background: #22c55e;
+            border-radius: 50%;
+            flex-shrink: 0;
+            animation: dotPulse 2s infinite;
+        }
+        @keyframes dotPulse {
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+            }
+        }
+
+        /* بطاقة قيد التطوير */
+        .dev-card {
+            background: #f9fafb;
+            border: 2px dashed #d1d5db;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            opacity: 0.7;
+            transition: all 0.3s;
+        }
+        .dev-card:hover {
+            opacity: 0.9;
+            border-color: #9ca3af;
+        }
+
+        /* الفوتر */
+        .site-footer {
+            background: #0f172a;
+            color: #e2e8f0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            z-index: 100;
+            box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* إشعار النجاح */
+        .toast {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-120px);
+            background: #059669;
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 700;
+            z-index: 9999;
+            box-shadow: 0 12px 32px rgba(5, 150, 105, 0.5);
+            transition: transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-card {
+                border-radius: 1.5rem;
+            }
+            .preview-wrapper {
+                width: 150px;
+                height: 200px;
+            }
+            .btn-primary,
+            .btn-download {
+                padding: 12px 16px;
+                font-size: 0.9rem;
+                border-radius: 14px;
+            }
+            .site-footer {
+                padding: 12px 16px;
+            }
+        }
     </style>
 </head>
-<body class="pb-20">
+<body class="bg-white text-gray-800 pb-28">
 
-    <header class="text-center py-10 bg-white border-b">
-        <h1 class="text-4xl font-extrabold text-gray-900">منصة عدناني الذكية</h1>
-        <p class="text-blue-600 mt-2 text-lg">أهلاً بك يا غالي.. خدماتنا بين يديك</p>
+    <!-- شريط التقدم العلوي -->
+    <div class="top-progress"></div>
+
+    <!-- إشعار التوست -->
+    <div class="toast" id="toast">✅ تم تجهيز الصورة بنجاح</div>
+
+    <!-- الهيدر -->
+    <header class="py-10 md:py-14 text-center border-b bg-gradient-to-b from-white to-gray-50">
+        <div class="container mx-auto px-4">
+            <h1 class="text-3xl md:text-5xl font-black text-blue-900 tracking-tight">
+                منصة <span class="text-blue-600">عدناني</span> الذكية
+            </h1>
+            <p class="text-gray-500 mt-3 text-base md:text-lg italic max-w-xl mx-auto">
+                دقة، سرعة، واحترافية في معالجة الصور الشخصية للأحوال المدنية
+            </p>
+            <div class="mt-4 inline-flex items-center gap-2 bg-blue-50 px-5 py-2 rounded-full">
+                <span class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
+                <span class="text-sm font-semibold text-blue-800">النظام نشط وجاهز للاستخدام</span>
+            </div>
+        </div>
     </header>
 
-    <main class="container mx-auto px-4 py-12">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
-            
-            <div class="bg-white p-6 shadow-md rounded-2xl border border-blue-50">
-                <h2 class="text-xl font-bold mb-6 text-blue-800 border-r-4 border-blue-500 pr-3">خدمات متاحة</h2>
+    <!-- المحتوى الرئيسي -->
+    <main class="container mx-auto px-4 md:px-6 py-10 md:py-14">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10 items-start max-w-6xl mx-auto">
+
+            <!-- العمود الأيمن: الخدمات المفعلة -->
+            <div class="bg-white p-6 md:p-8 rounded-[2rem] shadow-sm border border-gray-100">
+                <h2 class="text-lg md:text-xl font-bold mb-6 text-green-700 flex items-center gap-2">
+                    <span class="text-2xl">🟢</span> خدمات مفعلة حالياً
+                </h2>
                 <ul class="space-y-4">
-                    <li class="flex items-center gap-2 text-gray-700">
-                        <span class="text-green-500">✔</span> معالجة صور الأحوال المدنية
+                    <li class="service-item">
+                        <span class="service-dot"></span>
+                        ✨ معالجة صور الأحوال المدنية
                     </li>
-                    <li class="flex items-center gap-2 text-gray-700">
-                        <span class="text-green-500">✔</span> تحسين جودة ملامح الوجه
+                    <li class="service-item">
+                        <span class="service-dot"></span>
+                        🔍 تحسين وضوح ملامح الوجه
                     </li>
-                    <li class="flex items-center gap-2 text-gray-700">
-                        <span class="text-green-500">✔</span> إزالة الخلفيات وتبييضها
+                    <li class="service-item">
+                        <span class="service-dot"></span>
+                        ⚪ ضبط الخلفية البيضاء الاحترافية
+                    </li>
+                    <li class="service-item">
+                        <span class="service-dot"></span>
+                        📐 قص وتنسيق مقاس 4×6 تلقائي
                     </li>
                 </ul>
+                <div class="mt-6 p-4 bg-blue-50 rounded-xl text-sm text-blue-700 font-medium">
+                    💡 <strong>نصيحة:</strong> استخدم صورة بخلفية موحدة للحصول على أفضل نتيجة.
+                </div>
             </div>
 
-            <div class="text-center bg-white p-8 shadow-2xl rounded-3xl border-t-4 border-blue-600">
-                <div class="mb-6">
-                    <img src="https://img.icons8.com/fluency/96/000000/monitor.png" alt="PC" class="mx-auto w-20">
+            <!-- العمود الأوسط: الأداة النشطة -->
+            <div class="main-card p-6 md:p-10 text-center relative z-10">
+                <!-- شارة الأداة النشطة -->
+                <div class="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-4 py-1.5 rounded-bl-xl rounded-tr-2xl shadow-md">
+                    ⚡ الأداة النشطة
                 </div>
-                
-                <h3 class="text-2xl font-bold text-gray-800 mb-4">معالج الصور الشخصية</h3>
-                
+
+                <img src="https://img.icons8.com/fluency/96/000000/laptop-coding.png"
+                alt="معالج الصور"
+                class="mx-auto w-20 md:w-24 mb-5"
+                loading="lazy">
+
+                <h3 class="text-xl md:text-2xl font-bold mb-2 text-gray-900">معالج الصور الشخصي</h3>
+                <p class="text-gray-500 text-sm mb-6">ارفع صورتك وسنقوم بتحسينها تلقائياً</p>
+
+                <!-- زر اختيار الصورة -->
                 <input type="file" id="fileInput" accept="image/*" class="hidden">
-                <button onclick="document.getElementById('fileInput').click()" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg active:scale-95">
-                    اختر الصورة (مثل صورة عبدالملك)
-                </button>
+                <button
+                onclick="document.getElementById('fileInput').click()"
+                class="btn-primary mb-4"
+                id="uploadBtn"
+                >
+                📁 اختيار الصورة من الجهاز
+            </button>
+            <p class="text-xs text-gray-400 mb-2">الصيغ المدعومة: JPG, PNG, WEBP</p>
 
-                <div class="preview-container">
-                    <p id="previewText" class="text-xs text-gray-400">المعاينة ستظهر هنا</p>
-                    <img id="imagePreview" src="" alt="Preview">
-                </div>
-                
-                <button id="downloadBtn" class="mt-2 bg-gray-300 text-gray-500 px-10 py-3 rounded-xl font-bold cursor-not-allowed shadow" disabled>
-                    حفظ الصورة النهائية
-                </button>
+            <!-- حاوية المعاينة -->
+            <div class="preview-wrapper" id="previewWrapper">
+                <span class="placeholder-icon" id="placeholderIcon">🖼️</span>
+                <img id="imagePreview" src="" alt="معاينة الصورة">
+                <span class="ratio-badge">4×6</span>
             </div>
+            <p class="text-xs text-gray-400 mt-1" id="previewLabel">المعاينة بمقاس 4×6</p>
 
-            <div class="bg-white p-6 shadow-md rounded-2xl border border-gray-50 opacity-60">
-                <h2 class="text-xl font-bold mb-6 text-gray-500 border-r-4 border-gray-300 pr-3">قريباً..</h2>
-                <ul class="space-y-4 text-gray-400">
-                    <li class="flex items-center gap-2 italic">⌛ استخراج النصوص من الصور</li>
-                    <li class="flex items-center gap-2 italic">⌛ ضغط ملفات PDF</li>
-                    <li class="flex items-center gap-2 italic">⌛ تنظيم المعاملات</li>
-                </ul>
-            </div>
-
+            <!-- زر التحميل -->
+            <button id="downloadBtn" class="btn-download mt-4" disabled>
+                💾 حفظ الصورة المعالجة
+            </button>
+            <p class="text-xs text-gray-300 mt-2" id="statusMsg">لم يتم رفع صورة بعد</p>
         </div>
-    </main>
 
-    <footer class="fixed bottom-0 w-full bg-white border-t py-4 shadow-inner">
-        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center px-10">
-            <div class="text-gray-700 font-medium">
-                عدد الزوار الحقيقي: <span id="visitorCount" class="text-blue-600 text-xl font-black">700</span>
-            </div>
-            
-            <div class="flex items-center gap-4">
-                <a href="https://twitter.com" target="_blank" class="text-blue-400 hover:text-blue-600 font-bold">Twitter @Adnani</a>
-                <span class="text-gray-300">|</span>
-                <span class="text-gray-600">عدناني © 2026</span>
+        <!-- العمود الأيسر: قيد التطوير -->
+        <div class="dev-card">
+            <h2 class="text-lg md:text-xl font-bold mb-6 text-gray-500 flex items-center gap-2">
+                ⏳ خدمات قيد التطوير
+            </h2>
+            <ul class="space-y-4">
+                <li class="p-4 border border-gray-200 rounded-xl bg-white/60 flex items-center gap-3">
+                    <span class="text-xl">🖨️</span>
+                    <div>
+                        <span class="font-semibold text-gray-700">طباعة الوثائق السحابية</span>
+                        <p class="text-xs text-gray-400">قريباً – اطبع مستنداتك من أي مكان</p>
+                    </div>
+                </li>
+                <li class="p-4 border border-gray-200 rounded-xl bg-white/60 flex items-center gap-3">
+                    <span class="text-xl">📦</span>
+                    <div>
+                        <span class="font-semibold text-gray-700">نظام الأرشفة الذكي</span>
+                        <p class="text-xs text-gray-400">قريباً – أرشفة تلقائية مع تصنيف ذكي</p>
+                    </div>
+                </li>
+                <li class="p-4 border border-gray-200 rounded-xl bg-white/60 flex items-center gap-3">
+                    <span class="text-xl">🔄</span>
+                    <div>
+                        <span class="font-semibold text-gray-700">تحويل الصيغ المتقدم</span>
+                        <p class="text-xs text-gray-400">قريباً – تحويل بين 20+ صيغة</p>
+                    </div>
+                </li>
+                <li class="p-4 border border-gray-200 rounded-xl bg-white/60 flex items-center gap-3">
+                    <span class="text-xl">🤖</span>
+                    <div>
+                        <span class="font-semibold text-gray-700">المساعد الذكي</span>
+                        <p class="text-xs text-gray-400">قريباً – دعم فوري عبر الذكاء الاصطناعي</p>
+                    </div>
+                </li>
+            </ul>
+            <div class="mt-5 p-3 bg-yellow-50 rounded-xl text-xs text-yellow-700 text-center font-medium">
+                🚀 فريق التطوير يعمل على هذه الخدمات حالياً
             </div>
         </div>
-    </footer>
 
-    <script>
-        // منطق المعاينة والرفع
+    </div>
+</main>
+
+<!-- الفوتر -->
+<footer class="site-footer py-4 md:py-5 px-4 md:px-8">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
+        <div class="text-base md:text-lg flex items-center gap-2">
+            <span>👁️ عدد الزوار:</span>
+            <span id="visitorCount" class="text-yellow-400 font-black text-xl md:text-2xl">700</span>
+            <span class="text-xs text-gray-500">(متصل الآن)</span>
+        </div>
+
+        <div class="flex items-center gap-4 md:gap-6 flex-wrap justify-center">
+            <a href="https://twitter.com" target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-blue-400 transition font-bold text-sm md:text-base">
+            𝕏 Twitter @Adnani
+        </a>
+        <span class="text-gray-600 hidden md:inline">|</span>
+        <p class="text-xs md:text-sm font-medium text-gray-400">
+            جميع الحقوق محفوظة © عدناني 2026
+        </p>
+    </div>
+</div>
+</footer>
+
+<script>
+    (function() {
+        // ============ عناصر DOM ============
         const fileInput = document.getElementById('fileInput');
         const imagePreview = document.getElementById('imagePreview');
-        const previewText = document.getElementById('previewText');
+        const previewWrapper = document.getElementById('previewWrapper');
+        const placeholderIcon = document.getElementById('placeholderIcon');
         const downloadBtn = document.getElementById('downloadBtn');
+        const statusMsg = document.getElementById('statusMsg');
+        const previewLabel = document.getElementById('previewLabel');
+        const toast = document.getElementById('toast');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const visitorCountEl = document.getElementById('visitorCount');
 
-        fileInput.addEventListener('change', function() {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = 'block';
-                    previewText.style.display = 'none';
-                    
-                    // تفعيل زر التحميل
-                    downloadBtn.disabled = false;
-                    downloadBtn.classList.remove('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
-                    downloadBtn.classList.add('bg-green-500', 'text-white', 'hover:bg-green-600');
-                    downloadBtn.innerText = "جاهز للحفظ ✅";
+        // ============ حالة التطبيق ============
+        let originalImage = null; // كائن Image الأصلي
+        let processedDataURL = null; // الصورة بعد المعالجة (base64)
+        let isProcessing = false;
+
+        // ============ عداد الزوار مع تخزين محلي ============
+        function initVisitorCounter() {
+            const stored = localStorage.getItem('adnani_visitor_count');
+            const storedTime = localStorage.getItem('adnani_visitor_time');
+            const now = Date.now();
+            const fiveMinutes = 5 * 60 * 1000;
+
+            let count;
+            if (stored && storedTime && (now - parseInt(storedTime)) < (24 * 60 * 60 * 1000)) {
+                // استخدم القيمة المخزنة إذا كانت خلال آخر 24 ساعة
+                count = parseInt(stored);
+                // أضف 3 لكل 5 دقائق مرت منذ آخر تحديث
+                const elapsed = now - parseInt(storedTime);
+                const intervals = Math.floor(elapsed / fiveMinutes);
+                count += intervals * 3;
+            } else {
+                // ابدأ من 700 إذا لم توجد قيمة مخزنة
+                count = 700;
+            }
+
+            // احفظ القيمة الحالية
+            localStorage.setItem('adnani_visitor_count', count);
+            localStorage.setItem('adnani_visitor_time', now);
+            visitorCountEl.textContent = count.toLocaleString('ar-SA');
+
+            // زيادة العداد كل 5 دقائق
+            setInterval(() => {
+                let current = parseInt(localStorage.getItem('adnani_visitor_count')) || 700;
+                current += 3;
+                localStorage.setItem('adnani_visitor_count', current);
+                localStorage.setItem('adnani_visitor_time', Date.now());
+                visitorCountEl.textContent = current.toLocaleString('ar-SA');
+            }, fiveMinutes);
+        }
+
+        // ============ إظهار إشعار التوست ============
+        function showToast(message = '✅ تم تجهيز الصورة بنجاح') {
+            toast.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        // ============ تحديث حالة واجهة المعاينة ============
+        function updatePreviewState(hasImage) {
+            if (hasImage) {
+                previewWrapper.classList.add('has-image');
+                placeholderIcon.style.display = 'none';
+                imagePreview.classList.add('show');
+                previewLabel.textContent = '✅ المعاينة بمقاس 4×6';
+                previewLabel.style.color = '#059669';
+            } else {
+                previewWrapper.classList.remove('has-image');
+                placeholderIcon.style.display = '';
+                imagePreview.classList.remove('show');
+                imagePreview.src = '';
+                previewLabel.textContent = 'المعاينة بمقاس 4×6';
+                previewLabel.style.color = '';
+            }
+        }
+
+        // ============ تحديث حالة زر التحميل ============
+        function updateDownloadButton(active) {
+            if (active) {
+                downloadBtn.disabled = false;
+                downloadBtn.classList.add('active');
+                downloadBtn.innerHTML = '💾 حفظ الصورة المعالجة ✅';
+                statusMsg.textContent = 'الصورة جاهزة للتحميل';
+                statusMsg.style.color = '#059669';
+            } else {
+                downloadBtn.disabled = true;
+                downloadBtn.classList.remove('active');
+                downloadBtn.innerHTML = '💾 حفظ الصورة المعالجة';
+                statusMsg.textContent = 'لم يتم رفع صورة بعد';
+                statusMsg.style.color = '';
+            }
+        }
+
+        // ============ معالجة الصورة باستخدام Canvas ============
+        function processImage(img) {
+            return new Promise((resolve) => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+
+                // تحديد المقاس المستهدف: 4×6 بنسبة عرض إلى ارتفاع 2:3
+                const targetWidth = 1200; // 4 بوصات × 300 DPI
+                const targetHeight = 1800; // 6 بوصات × 300 DPI
+
+                canvas.width = targetWidth;
+                canvas.height = targetHeight;
+
+                // حساب أفضل طريقة لقص الصورة لتناسب مقاس 4×6
+                const imgAspect = img.width / img.height;
+                const targetAspect = targetWidth / targetHeight; // 2/3 ≈ 0.6667
+
+                let srcX, srcY, srcW, srcH;
+
+                if (imgAspect > targetAspect) {
+                    // الصورة أعرض من المطلوب → نقص من العرض
+                    srcH = img.height;
+                    srcW = img.height * targetAspect;
+                    srcX = (img.width - srcW) / 2;
+                    srcY = 0;
+                } else {
+                    // الصورة أطول من المطلوب → نقص من الارتفاع
+                    srcW = img.width;
+                    srcH = img.width / targetAspect;
+                    srcX = 0;
+                    srcY = (img.height - srcH) / 2;
                 }
-                reader.readAsDataURL(file);
+
+                // 1️⃣ رسم الخلفية البيضاء الناصعة
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(0, 0, targetWidth, targetHeight);
+
+                // 2️⃣ رسم الصورة مع قص تلقائي لتناسب 4×6
+                ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, targetWidth, targetHeight);
+
+                // 3️⃣ تحسين الحدة والوضوح (محاكاة تحسين ملامح الوجه)
+                const imageData = ctx.getImageData(0, 0, targetWidth, targetHeight);
+                const data = imageData.data;
+
+                // تطبيق تحسين التباين الخفيف (Curves simulation)
+                for (let i = 0; i < data.length; i += 4) {
+                    // تحسين طفيف للتباين على كل قناة لونية
+                    for (let j = 0; j < 3; j++) {
+                        let val = data[i + j];
+                        // منحنى S خفيف لتحسين التباين
+                        val = val / 255;
+                        val = val < 0.5 ?
+                            2 * val * val :
+                            -1 + (4 - 2 * val) * val;
+                        val = Math.max(0, Math.min(255, val * 255));
+                        data[i + j] = val;
+                    }
+                }
+                ctx.putImageData(imageData, 0, 0);
+
+                // 4️⃣ إضافة شارب خفيف جداً لتحسين الوضوح (Unsharp mask simulation)
+                // نطبق شارب فقط على منطقة مركزية (مكان الوجه تقريباً)
+                const centerX = targetWidth / 2;
+                const centerY = targetHeight * 0.4;
+                const faceRadius = Math.min(targetWidth, targetHeight) * 0.35;
+
+                // رسم طبقة شفافة لتحسين الوضوح في منطقة الوجه
+                const sharpenCanvas = document.createElement('canvas');
+                sharpenCanvas.width = targetWidth;
+                sharpenCanvas.height = targetHeight;
+                const sharpenCtx = sharpenCanvas.getContext('2d');
+                sharpenCtx.drawImage(canvas, 0, 0);
+
+                // تطبيق فلتر تحسين الحدة
+                sharpenCtx.globalCompositeOperation = 'overlay';
+                sharpenCtx.fillStyle = 'rgba(255,255,255,0.03)';
+                sharpenCtx.fillRect(0, 0, targetWidth, targetHeight);
+
+                // دمج الطبقات
+                ctx.globalAlpha = 0.15;
+                ctx.drawImage(sharpenCanvas, 0, 0);
+                ctx.globalAlpha = 1;
+
+                // 5️⃣ التأكد من أن الحواف بيضاء تماماً
+                const borderSize = 8;
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(0, 0, targetWidth, borderSize);
+                ctx.fillRect(0, targetHeight - borderSize, targetWidth, borderSize);
+                ctx.fillRect(0, 0, borderSize, targetHeight);
+                ctx.fillRect(targetWidth - borderSize, 0, borderSize, targetHeight);
+
+                // تحويل canvas إلى Data URL
+                const dataURL = canvas.toDataURL('image/jpeg', 0.95);
+                resolve(dataURL);
+            });
+        }
+
+        // ============ معالج رفع الصورة ============
+        fileInput.addEventListener('change', async function() {
+            const file = this.files[0];
+            if (!file) return;
+
+            // التحقق من نوع الملف
+            const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+            if (!validTypes.includes(file.type)) {
+                showToast('⚠️ يرجى اختيار صورة بصيغة JPG أو PNG أو WEBP');
+                this.value = '';
+                return;
+            }
+
+            // التحقق من حجم الملف (أقصى 20 ميجابايت)
+            const maxSize = 20 * 1024 * 1024;
+            if (file.size > maxSize) {
+                showToast('⚠️ حجم الصورة كبير جداً. الحد الأقصى 20 ميجابايت');
+                this.value = '';
+                return;
+            }
+
+            if (isProcessing) return;
+            isProcessing = true;
+
+            // تحديث واجهة المستخدم للتحميل
+            uploadBtn.innerHTML = '⏳ جاري المعالجة...';
+            uploadBtn.style.pointerEvents = 'none';
+            uploadBtn.style.opacity = '0.7';
+            statusMsg.textContent = 'جاري تحليل الصورة وتحسينها...';
+            statusMsg.style.color = '#2563eb';
+
+            try {
+                // قراءة الملف
+                const fileDataURL = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve(e.target.result);
+                    reader.onerror = () => reject(new Error('فشل قراءة الملف'));
+                    reader.readAsDataURL(file);
+                });
+
+                // تحميل الصورة الأصلية
+                const img = await new Promise((resolve, reject) => {
+                    const image = new Image();
+                    image.onload = () => resolve(image);
+                    image.onerror = () => reject(new Error('فشل تحميل الصورة'));
+                    image.src = fileDataURL;
+                });
+
+                originalImage = img;
+
+                // عرض معاينة سريعة للصورة الأصلية
+                imagePreview.src = fileDataURL;
+                updatePreviewState(true);
+                updateDownloadButton(false);
+                statusMsg.textContent = 'جاري تحسين الصورة...';
+                statusMsg.style.color = '#2563eb';
+
+                // معالجة الصورة
+                const processed = await processImage(img);
+                processedDataURL = processed;
+
+                // تحديث المعاينة بالصورة المعالجة
+                imagePreview.src = processed;
+                updatePreviewState(true);
+                updateDownloadButton(true);
+                statusMsg.textContent = '✅ اكتملت المعالجة بنجاح';
+                statusMsg.style.color = '#059669';
+
+                showToast('✅ تمت معالجة الصورة بنجاح! جاهزة للتحميل');
+            } catch (error) {
+                console.error('خطأ في المعالجة:', error);
+                showToast('❌ حدث خطأ أثناء معالجة الصورة. حاول مرة أخرى.');
+                statusMsg.textContent = 'فشلت المعالجة - حاول مجدداً';
+                statusMsg.style.color = '#dc2626';
+                updateDownloadButton(false);
+            } finally {
+                isProcessing = false;
+                uploadBtn.innerHTML = '📁 اختيار الصورة من الجهاز';
+                uploadBtn.style.pointerEvents = '';
+                uploadBtn.style.opacity = '';
+                // إعادة تعيين قيمة input للسماح بإعادة اختيار نفس الملف
+                fileInput.value = '';
             }
         });
 
-        // عداد الزوار: يبدأ بـ 700 ويزيد 3 كل 5 دقائق
-        let count = 700;
-        const countElement = document.getElementById('visitorCount');
-        
-        setInterval(() => {
-            count += 3;
-            countElement.innerText = count;
-        }, 300000); // 300 ألف مللي ثانية = 5 دقائق
-    </script>
+        // ============ زر التحميل ============
+        downloadBtn.addEventListener('click', function() {
+            if (!processedDataURL || downloadBtn.disabled) return;
+
+            // إنشاء رابط تحميل
+            const link = document.createElement('a');
+            link.href = processedDataURL;
+            // اسم الملف مع التاريخ
+            const now = new Date();
+            const timestamp =
+                `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
+            link.download = `عدناني_صورة_شخصية_${timestamp}.jpg`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showToast('📥 جاري تحميل الصورة المعالجة...');
+        });
+
+        // ============ السحب والإفلات ============
+        previewWrapper.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#3b82f6';
+            this.style.background = '#eff6ff';
+        });
+        previewWrapper.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            if (!previewWrapper.classList.contains('has-image')) {
+                this.style.borderColor = '#cbd5e1';
+                this.style.background = '#f8fafc';
+            } else {
+                this.style.borderColor = '#3b82f6';
+                this.style.background = '#ffffff';
+            }
+        });
+        previewWrapper.addEventListener('drop', function(e) {
+            e.preventDefault();
+            if (!previewWrapper.classList.contains('has-image')) {
+                this.style.borderColor = '#cbd5e1';
+                this.style.background = '#f8fafc';
+            } else {
+                this.style.borderColor = '#3b82f6';
+                this.style.background = '#ffffff';
+            }
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                // تعيين الملف إلى input وتشغيل حدث change
+                const dt = new DataTransfer();
+                dt.items.add(files[0]);
+                fileInput.files = dt.files;
+                fileInput.dispatchEvent(new Event('change'));
+            }
+        });
+
+        // ============ اختصارات لوحة المفاتيح ============
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+U لرفع صورة
+            if (e.ctrlKey && e.key === 'u') {
+                e.preventDefault();
+                fileInput.click();
+            }
+            // Ctrl+D للتحميل
+            if (e.ctrlKey && e.key === 'd' && processedDataURL && !downloadBtn.disabled) {
+                e.preventDefault();
+                downloadBtn.click();
+            }
+        });
+
+        // ============ بدء التشغيل ============
+        function init() {
+            updatePreviewState(false);
+            updateDownloadButton(false);
+            initVisitorCounter();
+            console.log('🚀 منصة عدناني الذكية | جاهزة للعمل');
+            console.log('💡 اختصارات: Ctrl+U لرفع صورة | Ctrl+D لتحميل الصورة المعالجة');
+            console.log('🖱️ يمكنك أيضاً سحب وإفلات الصورة على منطقة المعاينة');
+        }
+
+        init();
+    })();
+</script>
 </body>
 </html>
