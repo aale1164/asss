@@ -3,271 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة آفاق للخدمات الإلكترونية</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <title>منصة عدناني للخدمات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root {
-            --primary-blue: #0a192f;
-            --accent-blue: #64ffda;
-            --text-gray: #8892b0;
-            --bg-dark: #020c1b;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-dark);
-            color: white;
-            margin: 0;
-            overflow-x: hidden;
-        }
-
-        /* الشريط العلوي */
-        .top-bar {
-            background: linear-gradient(90deg, #0a192f, #112240);
-            padding: 15px;
-            text-align: center;
-            border-bottom: 2px solid var(--accent-blue);
-        }
-
-        .visitor-counter {
-            font-size: 0.9rem;
-            color: var(--accent-blue);
-            margin-top: 5px;
-        }
-
-        /* الحاوية الرئيسية */
-        .main-container {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 50px 20px;
-            flex-wrap: wrap;
-        }
-
-        /* الأعمدة الجانبية */
-        .services-column {
-            flex: 1;
-            min-width: 300px;
-            max-width: 350px;
-        }
-
-        .service-card {
-            background: #112240;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            border-left: 4px solid var(--accent-blue);
-            transition: 0.3s;
-            cursor: pointer;
-        }
-
-        .service-card:hover {
-            transform: translateY(-5px);
-            background: #1d2d50;
-        }
-
-        .service-card i {
-            color: var(--accent-blue);
-            margin-left: 10px;
-            font-size: 1.5rem;
-        }
-
-        /* قسم الكمبيوتر (المنتصف) */
-        .center-illustration {
-            flex: 1;
-            text-align: center;
-            min-width: 300px;
-            position: relative;
-        }
-
-        .center-illustration img {
-            width: 100%;
-            max-width: 450px;
-            filter: drop-shadow(0 0 20px var(--accent-blue));
-        }
-
-        /* قسم المعاينة وتعديل الصور */
-        #image-tool {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #112240;
-            padding: 30px;
-            border-radius: 15px;
-            z-index: 1000;
-            box-shadow: 0 0 50px rgba(0,0,0,0.8);
-            width: 90%;
-            max-width: 600px;
-        }
-
-        canvas {
-            display: none;
-        }
-
-        .preview-box {
-            border: 2px dashed var(--accent-blue);
-            margin: 15px 0;
-            text-align: center;
-            padding: 10px;
-        }
-
-        .preview-box img {
-            max-width: 100%;
-            height: auto;
-        }
-
-        .btn {
-            background: var(--accent-blue);
-            color: var(--bg-dark);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        .footer {
-            text-align: center;
-            padding: 40px;
-            color: var(--text-gray);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .main-container { flex-direction: column; }
-            .center-illustration { order: -1; margin-bottom: 30px; }
-        }
+        body { background-color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .preview-container { max-width: 250px; margin: 10px auto; border: 2px dashed #ccc; padding: 10px; }
+        #imagePreview { width: 100%; height: auto; display: none; border-radius: 8px; }
     </style>
 </head>
 <body>
 
-    <div class="top-bar">
-        <h1>منصة آفاق للخدمات الإلكترونية</h1>
-        <p>هذه مجرد هدية للمتابعين ولا تنسونا من صالح دعائكم</p>
-        <div class="visitor-counter" id="visitor-box">
-            عدد الزوار الآن: <span id="count">700</span>
-        </div>
-    </div>
+    <header class="text-center py-8 bg-gray-50 border-b">
+        <h1 class="text-3xl font-bold text-gray-800">مرحباً بك في منصة عدناني</h1>
+        <p class="text-gray-600 mt-2">نقدم لك أفضل حلول معالجة الصور الشخصية</p>
+    </header>
 
-    <div class="main-container">
-        <div class="services-column">
-            <div class="service-card" onclick="openImageTool()">
-                <i class="fas fa-id-card"></i>
-                <h3>تعديل الصور (الأحوال المدنية)</h3>
-                <p>مقاس 4x6 - خلفية بيضاء - جودة عالية</p>
+    <main class="container mx-auto px-4 py-10">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+            
+            <div class="bg-white p-6 shadow-lg rounded-xl border border-green-100">
+                <h2 class="text-xl font-bold mb-4 text-green-700">خدمات مفعلة</h2>
+                <ul class="space-y-3">
+                    <li class="p-3 bg-green-50 rounded">✅ معالجة صور الأحوال المدنية</li>
+                    <li class="p-3 bg-green-50 rounded">✅ تحسين وضوح الوجه</li>
+                    <li class="p-3 bg-green-50 rounded">✅ ضبط خلفية الصورة (بيضاء)</li>
+                </ul>
             </div>
-            <div class="service-card">
-                <i class="fas fa-file-pdf"></i>
-                <h3>دمج ملفات PDF</h3>
-                <p>دمج عدة ملفات في مستند واحد</p>
-            </div>
-            <div class="service-card">
-                <i class="fas fa-images"></i>
-                <h3>تحويل الصور إلى PDF</h3>
-                <p>بناء ملفات بصيغة PDF من صورك</p>
-            </div>
-        </div>
 
-        <div class="center-illustration">
-            <img src="https://img.freepik.com/free-vector/hacker-operating-laptop-cartoon-icon-illustration-technology-business-icon-concept-isolated-flat-cartoon-style_138676-2387.jpg" alt="المبرمج عدناني">
-            <h2>تصميم وإعداد المبرمج عدناني</h2>
-        </div>
+            <div class="text-center bg-white p-6 shadow-2xl rounded-xl border-2 border-blue-500">
+                <h2 class="text-xl font-bold mb-4">معالجة صور الأحوال</h2>
+                <img src="https://img.icons8.com/fluency/96/000000/computer.png" alt="PC" class="mx-auto mb-4">
+                
+                <input type="file" id="fileInput" accept="image/*" class="hidden">
+                <button onclick="document.getElementById('fileInput').click()" class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition">
+                    اختر صورة ابني عبدالملك
+                </button>
 
-        <div class="services-column">
-            <div class="service-card" style="opacity: 0.6; border-left-color: gray;">
-                <i class="fas fa-chart-line"></i>
-                <h3>تحليل البيانات (قريباً)</h3>
-                <p>أدوات متقدمة لتحليل البيانات الضخمة</p>
+                <div class="preview-container mt-4">
+                    <p class="text-sm text-gray-500 mb-2">معاينة الصورة (مقاس مضبوط):</p>
+                    <img id="imagePreview" src="" alt="Preview">
+                </div>
+                
+                <button id="downloadBtn" class="mt-4 bg-gray-400 text-white px-6 py-2 rounded-full cursor-not-allowed" disabled>
+                    حفظ الصورة المعالجة
+                </button>
             </div>
-            <div class="service-card" style="opacity: 0.6; border-left-color: gray;">
-                <i class="fas fa-video"></i>
-                <h3>تحليل بيانات الفيديوهات (قريباً)</h3>
-                <p>استخراج المعلومات بواسطة AI</p>
-            </div>
-            <div class="service-card" style="opacity: 0.6; border-left-color: gray;">
-                <i class="fas fa-code"></i>
-                <h3>أداة المبرمج القوية (قريباً)</h3>
-                <p>بيئة تطوير متقدمة قيد العمل</p>
-            </div>
-        </div>
-    </div>
 
-    <div id="image-tool">
-        <h3>معالجة الصورة للمقاييس الرسمية</h3>
-        <input type="file" id="upload" accept="image/*">
-        <div class="preview-box" id="previewArea">
-            <p>المعاينة ستظهر هنا</p>
-        </div>
-        <button class="btn" onclick="processImage()">تحسين ومعالجة فورية</button>
-        <button class="btn" style="background:gray; color:white;" onclick="closeImageTool()">إغلاق</button>
-        <canvas id="canvas"></canvas>
-    </div>
+            <div class="bg-white p-6 shadow-lg rounded-xl border border-gray-100 opacity-75">
+                <h2 class="text-xl font-bold mb-4 text-gray-700">خدمات مستقبلية</h2>
+                <ul class="space-y-3 text-gray-500">
+                    <li class="p-3 bg-gray-50 rounded">⏳ طباعة المستندات الذكية</li>
+                    <li class="p-3 bg-gray-50 rounded">⏳ التوقيع الإلكتروني</li>
+                    <li class="p-3 bg-gray-50 rounded">⏳ الأرشفة السحابية</li>
+                </ul>
+            </div>
 
-    <div class="footer">
-        <p>جميع الحقوق محفوظة للمبرمج عدناني &copy; 2026</p>
-        <a href="https://twitter.com" style="color: var(--accent-blue); text-decoration: none;"><i class="fab fa-twitter"></i> تابعنا على تويتر</a>
-    </div>
+        </div>
+    </main>
+
+    <footer class="fixed bottom-0 w-full bg-gray-900 text-white py-4 text-center">
+        <div class="flex justify-center items-center gap-6">
+            <div>عدد الزوار: <span id="visitorCount" class="font-bold text-yellow-400">700</span></div>
+            <a href="https://twitter.com" target="_blank" class="text-blue-400 hover:underline">تابعني على تويتر</a>
+            <div class="text-sm text-gray-400">جميع الحقوق محفوظة © عدناني</div>
+        </div>
+    </footer>
 
     <script>
-        // عداد الزوار
+        // Image Preview Logic
+        const fileInput = document.getElementById('fileInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    downloadBtn.disabled = false;
+                    downloadBtn.classList.replace('bg-gray-400', 'bg-green-600');
+                    downloadBtn.classList.remove('cursor-not-allowed');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Visitor Counter Logic (Increases by 3 every 5 minutes)
         let count = 700;
+        const countElement = document.getElementById('visitorCount');
+        
         setInterval(() => {
             count += 3;
-            document.getElementById('count').innerText = count;
-        }, 300000); // زيادة كل 5 دقائق
-
-        // وظائف أداة الصور
-        function openImageTool() {
-            document.getElementById('image-tool').style.display = 'block';
-        }
-
-        function closeImageTool() {
-            document.getElementById('image-tool').style.display = 'none';
-        }
-
-        function processImage() {
-            const input = document.getElementById('upload');
-            const canvas = document.getElementById('canvas');
-            const ctx = canvas.getContext('2d');
-            const previewArea = document.getElementById('previewArea');
-
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const img = new Image();
-                    img.onload = function () {
-                        // المقاسات الرسمية (تنسيق 480x640 للويب)
-                        canvas.width = 480;
-                        canvas.height = 640;
-                        
-                        // رسم خلفية بيضاء
-                        ctx.fillStyle = "#FFFFFF";
-                        ctx.fillRect(0, 0, canvas.width, canvas.height);
-                        
-                        // حساب أبعاد الصورة للمحافظة على التناسب
-                        let ratio = Math.min(canvas.width / img.width, canvas.height / img.height);
-                        let nw = img.width * ratio;
-                        let nh = img.height * ratio;
-                        let x = (canvas.width - nw) / 2;
-                        let y = (canvas.height - nh) / 2;
-
-                        // تطبيق تحسين بسيط (Brightness/Contrast)
-                        ctx.filter = "contrast(1.1) brightness(1.05) saturate(1.1)";
-                        ctx.drawImage(img, x, y, nw, nh);
-                        
-                        // عرض المعاينة
-                        const dataUrl = canvas.toDataURL('image/jpeg');
-                        previewArea.innerHTML = `<img src="${dataUrl}"><br><a href="${dataUrl}" download="ahwal_photo.jpg" class="btn" style="display:block; text-decoration:none; text-align:center;">تحميل الصورة الجاهزة</a>`;
-                    };
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
+            countElement.innerText = count;
+        }, 300000); // 300,000ms = 5 minutes
     </script>
 </body>
 </html>
