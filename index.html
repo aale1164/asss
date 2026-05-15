@@ -1,832 +1,409 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة عدناني للخدمات | معالج الصور الذكي</title>
-    <script src="https://cdn.tailwindcss.com">
-    </script>
-    <style>
-        :root {
-            --primary: #1e40af;
-            --primary-light: #3b82f6;
-            --gold: #f59e0b;
-            --surface: #ffffff;
-            --bg: #f1f5f9;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
-            font-family: 'Segoe UI', 'Tahoma', 'Geneva', 'Verdana', sans-serif;
-            overflow-x: hidden;
-            min-height: 100vh;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* شريط التقدم العلوي */
-        .top-progress {
-            position: fixed;
-            top: 0;
-            right: 0;
-            left: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #1e40af, #3b82f6, #60a5fa);
-            z-index: 9999;
-            transform-origin: right;
-            animation: progressPulse 3s ease-in-out infinite;
-        }
-        @keyframes progressPulse {
-            0%,
-            100% {
-                opacity: 0.7;
-            }
-            50% {
-                opacity: 1;
-            }
-        }
-
-        /* البطاقة الرئيسية */
-        .main-card {
-            background: var(--surface);
-            border-radius: 2rem;
-            box-shadow: 0 25px 60px rgba(30, 64, 175, 0.08), 0 8px 20px rgba(0, 0, 0, 0.04);
-            border: 2px solid #e2e8f0;
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1.2);
-            position: relative;
-            overflow: hidden;
-        }
-        .main-card:hover {
-            border-color: #3b82f6;
-            box-shadow: 0 30px 70px rgba(30, 64, 175, 0.14), 0 10px 28px rgba(0, 0, 0, 0.06);
-            transform: translateY(-3px);
-        }
-        .main-card::before {
-            content: '';
-            position: absolute;
-            top: -60px;
-            left: -60px;
-            width: 140px;
-            height: 140px;
-            background: radial-gradient(circle, rgba(59, 130, 246, 0.07) 0%, transparent 70%);
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        /* حاوية المعاينة */
-        .preview-wrapper {
-            width: 180px;
-            height: 240px;
-            /* نسبة 4x6 */
-            margin: 24px auto;
-            border: 3px dashed #cbd5e1;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f8fafc;
-            overflow: hidden;
-            position: relative;
-            transition: all 0.35s ease;
-            cursor: default;
-        }
-        .preview-wrapper.has-image {
-            border-style: solid;
-            border-color: #3b82f6;
-            background: #ffffff;
-            box-shadow: 0 6px 24px rgba(59, 130, 246, 0.12);
-        }
-        .preview-wrapper .placeholder-icon {
-            font-size: 2.5rem;
-            opacity: 0.5;
-            transition: opacity 0.3s;
-        }
-        .preview-wrapper.has-image .placeholder-icon {
-            opacity: 0;
-            position: absolute;
-        }
-        #imagePreview {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            display: none;
-            border-radius: 12px;
-            transition: transform 0.3s;
-        }
-        #imagePreview.show {
-            display: block;
-            animation: fadeInScale 0.4s ease-out;
-        }
-        @keyframes fadeInScale {
-            from {
-                opacity: 0;
-                transform: scale(0.92);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        .ratio-badge {
-            position: absolute;
-            bottom: 6px;
-            left: 6px;
-            background: #1e40af;
-            color: #fff;
-            font-size: 9px;
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .preview-wrapper.has-image .ratio-badge {
-            opacity: 1;
-        }
-
-        /* أزرار */
-        .btn-primary {
-            background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
-            color: #fff;
-            padding: 14px 24px;
-            border-radius: 16px;
-            font-weight: 700;
-            font-size: 1rem;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 22px rgba(30, 64, 175, 0.25);
-            width: 100%;
-            letter-spacing: 0.3px;
-        }
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
-            box-shadow: 0 12px 30px rgba(30, 64, 175, 0.35);
-            transform: translateY(-2px);
-        }
-        .btn-primary:active {
-            transform: scale(0.96);
-            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
-        }
-        .btn-download {
-            background: #e2e8f0;
-            color: #94a3b8;
-            padding: 14px 24px;
-            border-radius: 16px;
-            font-weight: 700;
-            font-size: 1rem;
-            border: none;
-            cursor: not-allowed;
-            transition: all 0.3s ease;
-            width: 100%;
-            letter-spacing: 0.3px;
-        }
-        .btn-download.active {
-            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-            color: #fff;
-            cursor: pointer;
-            box-shadow: 0 8px 22px rgba(5, 150, 105, 0.3);
-        }
-        .btn-download.active:hover {
-            box-shadow: 0 12px 30px rgba(5, 150, 105, 0.4);
-            transform: translateY(-2px);
-        }
-        .btn-download.active:active {
-            transform: scale(0.96);
-        }
-
-        /* قائمة الخدمات */
-        .service-item {
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            padding: 16px 20px;
-            border-radius: 16px;
-            font-weight: 600;
-            color: #166534;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .service-item:hover {
-            background: #dcfce7;
-            border-color: #86efac;
-            transform: translateX(-4px);
-            box-shadow: 0 4px 16px rgba(22, 163, 74, 0.1);
-        }
-        .service-dot {
-            width: 10px;
-            height: 10px;
-            background: #22c55e;
-            border-radius: 50%;
-            flex-shrink: 0;
-            animation: dotPulse 2s infinite;
-        }
-        @keyframes dotPulse {
-            0%,
-            100% {
-                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
-            }
-            50% {
-                box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
-            }
-        }
-
-        /* بطاقة قيد التطوير */
-        .dev-card {
-            background: #f9fafb;
-            border: 2px dashed #d1d5db;
-            border-radius: 1.5rem;
-            padding: 2rem;
-            opacity: 0.7;
-            transition: all 0.3s;
-        }
-        .dev-card:hover {
-            opacity: 0.9;
-            border-color: #9ca3af;
-        }
-
-        /* الفوتر */
-        .site-footer {
-            background: #0f172a;
-            color: #e2e8f0;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            z-index: 100;
-            box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        /* إشعار النجاح */
-        .toast {
-            position: fixed;
-            top: 24px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-120px);
-            background: #059669;
-            color: #fff;
-            padding: 14px 28px;
-            border-radius: 50px;
-            font-weight: 700;
-            z-index: 9999;
-            box-shadow: 0 12px 32px rgba(5, 150, 105, 0.5);
-            transition: transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            pointer-events: none;
-            white-space: nowrap;
-        }
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .main-card {
-                border-radius: 1.5rem;
-            }
-            .preview-wrapper {
-                width: 150px;
-                height: 200px;
-            }
-            .btn-primary,
-            .btn-download {
-                padding: 12px 16px;
-                font-size: 0.9rem;
-                border-radius: 14px;
-            }
-            .site-footer {
-                padding: 12px 16px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منصة آفاق | Pro Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background: radial-gradient(circle at 20% 10%, #0b1424, #03070e);
+      color: #fff;
+      min-height: 100vh;
+      padding: 0 11px 22px;
+      direction: rtl;
+    }
+    .topbar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 13px 20px; margin: 14px 0 7px;
+      background: rgba(18, 28, 46, 0.6); backdrop-filter: blur(12px);
+      border: 1px solid rgba(74, 144, 226, 0.2); border-radius: 42px;
+      box-shadow: 0 10px 24px -7px rgba(0,0,0,0.5);
+    }
+    .brand {
+      font-size: 1.25rem; font-weight: 800;
+      background: linear-gradient(135deg, #a0c8ff, #3b82f6);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .live-badge {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(59,130,246,0.2); padding: 6px 13px; border-radius: 28px;
+      border: 1px solid rgba(59,130,246,0.4); font-weight: 600; font-size: 0.7rem; color: #bdd3ff;
+    }
+    .live-badge i { color: #3b82f6; font-size: 0.6rem; animation: pulse 1.8s infinite; }
+    @keyframes pulse {
+      0% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.15); text-shadow: 0 0 6px #3b82f6; }
+      100% { opacity: 0.6; transform: scale(1); }
+    }
+    .container { max-width: 1400px; margin: 0 auto; }
+    .grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+      margin: 21px 0 14px;
+    }
+    .card {
+      background: rgba(12, 22, 38, 0.7); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.06); border-radius: 20px;
+      padding: 17px 8px 14px; display: flex; flex-direction: column; align-items: center;
+      text-align: center; cursor: pointer; transition: all 0.3s;
+      box-shadow: 0 7px 14px -3px rgba(0,0,0,0.5); position: relative; overflow: hidden;
+    }
+    .card::after {
+      content: ""; position: absolute; inset: 0;
+      background: radial-gradient(circle at 30% 20%, rgba(59,130,246,0.25), transparent 70%);
+      opacity: 0; transition: opacity 0.4s; pointer-events: none;
+    }
+    .card:hover { transform: translateY(-6px); background: rgba(20,40,65,0.8); border-color: rgba(59,130,246,0.5); }
+    .card:hover::after { opacity: 1; }
+    .image-wrapper {
+      width: 63px; height: 63px; margin-bottom: 11px; display: flex; align-items: center; justify-content: center;
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      background: linear-gradient(145deg, rgba(59,130,246,0.2), rgba(16,30,54,0.7));
+      box-shadow: 0 7px 14px -3px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .card:hover .image-wrapper { background: linear-gradient(145deg, #1e3a6b, #0f1e32); box-shadow: 0 0 13px #3b82f6; }
+    .image-wrapper i { font-size: 32px; color: #e0edff; }
+    .card-title { font-size: 0.9rem; font-weight: 700; margin: 6px 0 4px; color: #f0f6ff; }
+    .card-stat { font-size: 0.7rem; color: #9bb9f0; background: rgba(0,0,0,0.2); padding: 3px 10px; border-radius: 21px; }
+    .footer {
+      text-align: center; padding: 17px 0 7px; opacity: 0.75; font-size: 0.7rem;
+      color: #b0c7e9; border-top: 1px dashed rgba(100,150,220,0.2); margin-top: 18px;
+    }
+    .footer a { color: #a0c8ff; text-decoration: none; font-weight: 600; transition: 0.2s; }
+    .footer a:hover { color: #3b82f6; text-shadow: 0 0 8px #3b82f6; }
+    .modal-overlay {
+      position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center;
+      z-index: 1000; padding: 20px;
+    }
+    .modal-container {
+      background: rgba(8,18,30,0.95); backdrop-filter: blur(20px); border: 1px solid #3b82f6;
+      border-radius: 32px; width: 100%; max-width: 800px; max-height: 90vh;
+      overflow-y: auto; padding: 24px; box-shadow: 0 30px 50px rgba(0,0,0,0.7);
+    }
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 20px; border-bottom: 1px solid #2a3c58; padding-bottom: 12px;
+    }
+    .modal-header h3 { font-size: 1.5rem; color: #a0c8ff; }
+    .modal-header i { font-size: 24px; color: #60a5fa; cursor: pointer; }
+    .upload-area {
+      border: 2px dashed #3b82f6; border-radius: 24px; padding: 20px;
+      text-align: center; background: rgba(20,35,55,0.5); cursor: pointer;
+      margin-bottom: 20px; transition: 0.2s;
+    }
+    .upload-area:hover { background: rgba(59,130,246,0.1); border-color: #90c0ff; }
+    .upload-area i { font-size: 40px; color: #3b82f6; margin-bottom: 10px; }
+    .preview-image {
+      max-width: 100%; max-height: 250px; border-radius: 16px; margin: 15px 0; border: 2px solid #3b82f6;
+    }
+    .requirements-box {
+      background: #0f1a2b; border-radius: 20px; padding: 18px; margin: 20px 0; font-size: 0.9rem;
+    }
+    .req-item {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+    }
+    .req-item i { width: 20px; color: #fbbf24; }
+    .status-badge {
+      padding: 4px 12px; border-radius: 30px; font-size: 0.8rem; background: #1e3a5f; margin-right: auto;
+    }
+    .btn {
+      background: #3b82f6; border: none; color: white; padding: 12px 24px;
+      border-radius: 40px; font-weight: 600; cursor: pointer; margin: 5px;
+      border: 1px solid #90c0ff; transition: 0.2s;
+    }
+    .btn-outline { background: transparent; border: 1px solid #3b82f6; }
+    .btn:hover { background: #2563eb; box-shadow: 0 0 15px #3b82f6; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; background: #1e3a5f; box-shadow: none; }
+    .action-buttons { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+    .image-list {
+      display: flex; flex-direction: column; gap: 10px; margin: 20px 0;
+      max-height: 300px; overflow-y: auto;
+    }
+    .image-item {
+      display: flex; align-items: center; background: #0f1a2b; border-radius: 16px;
+      padding: 10px 15px; border: 1px solid #2e4a6b; cursor: grab;
+    }
+    .image-item img { width: 50px; height: 50px; object-fit: cover; border-radius: 12px; margin-left: 15px; }
+    .sortable-ghost { opacity: 0.4; background: #1e3a5f; }
+    .warning-text { color: #facc15; font-size: 0.8rem; margin-top: 5px; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; color: #b0cdff; }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%; padding: 10px; border-radius: 16px; border: 1px solid #2e4a6b;
+      background: #0f1a2b; color: white; font-family: 'Tajawal';
+    }
+    .form-row { display: flex; gap: 10px; }
+    @media (max-width: 1100px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
+  </style>
 </head>
-<body class="bg-white text-gray-800 pb-28">
+<body>
 
-    <!-- شريط التقدم العلوي -->
-    <div class="top-progress"></div>
-
-    <!-- إشعار التوست -->
-    <div class="toast" id="toast">✅ تم تجهيز الصورة بنجاح</div>
-
-    <!-- الهيدر -->
-    <header class="py-10 md:py-14 text-center border-b bg-gradient-to-b from-white to-gray-50">
-        <div class="container mx-auto px-4">
-            <h1 class="text-3xl md:text-5xl font-black text-blue-900 tracking-tight">
-                منصة <span class="text-blue-600">عدناني</span> الذكية
-            </h1>
-            <p class="text-gray-500 mt-3 text-base md:text-lg italic max-w-xl mx-auto">
-                دقة، سرعة، واحترافية في معالجة الصور الشخصية للأحوال المدنية
-            </p>
-            <div class="mt-4 inline-flex items-center gap-2 bg-blue-50 px-5 py-2 rounded-full">
-                <span class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
-                <span class="text-sm font-semibold text-blue-800">النظام نشط وجاهز للاستخدام</span>
-            </div>
-        </div>
-    </header>
-
-    <!-- المحتوى الرئيسي -->
-    <main class="container mx-auto px-4 md:px-6 py-10 md:py-14">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10 items-start max-w-6xl mx-auto">
-
-            <!-- العمود الأيمن: الخدمات المفعلة -->
-            <div class="bg-white p-6 md:p-8 rounded-[2rem] shadow-sm border border-gray-100">
-                <h2 class="text-lg md:text-xl font-bold mb-6 text-green-700 flex items-center gap-2">
-                    <span class="text-2xl">🟢</span> خدمات مفعلة حالياً
-                </h2>
-                <ul class="space-y-4">
-                    <li class="service-item">
-                        <span class="service-dot"></span>
-                        ✨ معالجة صور الأحوال المدنية
-                    </li>
-                    <li class="service-item">
-                        <span class="service-dot"></span>
-                        🔍 تحسين وضوح ملامح الوجه
-                    </li>
-                    <li class="service-item">
-                        <span class="service-dot"></span>
-                        ⚪ ضبط الخلفية البيضاء الاحترافية
-                    </li>
-                    <li class="service-item">
-                        <span class="service-dot"></span>
-                        📐 قص وتنسيق مقاس 4×6 تلقائي
-                    </li>
-                </ul>
-                <div class="mt-6 p-4 bg-blue-50 rounded-xl text-sm text-blue-700 font-medium">
-                    💡 <strong>نصيحة:</strong> استخدم صورة بخلفية موحدة للحصول على أفضل نتيجة.
-                </div>
-            </div>
-
-            <!-- العمود الأوسط: الأداة النشطة -->
-            <div class="main-card p-6 md:p-10 text-center relative z-10">
-                <!-- شارة الأداة النشطة -->
-                <div class="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-4 py-1.5 rounded-bl-xl rounded-tr-2xl shadow-md">
-                    ⚡ الأداة النشطة
-                </div>
-
-                <img src="https://img.icons8.com/fluency/96/000000/laptop-coding.png"
-                alt="معالج الصور"
-                class="mx-auto w-20 md:w-24 mb-5"
-                loading="lazy">
-
-                <h3 class="text-xl md:text-2xl font-bold mb-2 text-gray-900">معالج الصور الشخصي</h3>
-                <p class="text-gray-500 text-sm mb-6">ارفع صورتك وسنقوم بتحسينها تلقائياً</p>
-
-                <!-- زر اختيار الصورة -->
-                <input type="file" id="fileInput" accept="image/*" class="hidden">
-                <button
-                onclick="document.getElementById('fileInput').click()"
-                class="btn-primary mb-4"
-                id="uploadBtn"
-                >
-                📁 اختيار الصورة من الجهاز
-            </button>
-            <p class="text-xs text-gray-400 mb-2">الصيغ المدعومة: JPG, PNG, WEBP</p>
-
-            <!-- حاوية المعاينة -->
-            <div class="preview-wrapper" id="previewWrapper">
-                <span class="placeholder-icon" id="placeholderIcon">🖼️</span>
-                <img id="imagePreview" src="" alt="معاينة الصورة">
-                <span class="ratio-badge">4×6</span>
-            </div>
-            <p class="text-xs text-gray-400 mt-1" id="previewLabel">المعاينة بمقاس 4×6</p>
-
-            <!-- زر التحميل -->
-            <button id="downloadBtn" class="btn-download mt-4" disabled>
-                💾 حفظ الصورة المعالجة
-            </button>
-            <p class="text-xs text-gray-300 mt-2" id="statusMsg">لم يتم رفع صورة بعد</p>
-        </div>
-
-        <!-- العمود الأيسر: قيد التطوير -->
-        <div class="dev-card">
-            <h2 class="text-lg md:text-xl font-bold mb-6 text-gray-500 flex items-center gap-2">
-                ⏳ خدمات قيد التطوير
-            </h2>
-            <ul class="space-y-4">
-                <li class="p-4 border border-gray-200 rounded-xl bg-white/60 flex items-center gap-3">
-                    <span class="text-xl">🖨️</span>
-                    <div>
-                        <span class="font-semibold text-gray-700">طباعة الوثائق السحابية</span>
-                        <p class="text-xs text-gray-400">قريباً – اطبع مستنداتك من أي مكان</p>
-                    </div>
-                </li>
-                <li class="p-4 border border-gray-200 rounded-xl bg-white/60 flex items-center gap-3">
-                    <span class="text-xl">📦</span>
-                    <div>
-                        <span class="font-semibold text-gray-700">نظام الأرشفة الذكي</span>
-                        <p class="text-xs text-gray-400">قريباً – أرشفة تلقائية مع تصنيف ذكي</p>
-                    </div>
-                </li>
-                <li class="p-4 border border-gray-200 rounded-xl bg-white/60 flex items-center gap-3">
-                    <span class="text-xl">🔄</span>
-                    <div>
-                        <span class="font-semibold text-gray-700">تحويل الصيغ المتقدم</span>
-                        <p class="text-xs text-gray-400">قريباً – تحويل بين 20+ صيغة</p>
-                    </div>
-                </li>
-                <li class="p-4 border border-gray-200 rounded-xl bg-white/60 flex items-center gap-3">
-                    <span class="text-xl">🤖</span>
-                    <div>
-                        <span class="font-semibold text-gray-700">المساعد الذكي</span>
-                        <p class="text-xs text-gray-400">قريباً – دعم فوري عبر الذكاء الاصطناعي</p>
-                    </div>
-                </li>
-            </ul>
-            <div class="mt-5 p-3 bg-yellow-50 rounded-xl text-xs text-yellow-700 text-center font-medium">
-                🚀 فريق التطوير يعمل على هذه الخدمات حالياً
-            </div>
-        </div>
-
-    </div>
-</main>
-
-<!-- الفوتر -->
-<footer class="site-footer py-4 md:py-5 px-4 md:px-8">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
-        <div class="text-base md:text-lg flex items-center gap-2">
-            <span>👁️ عدد الزوار:</span>
-            <span id="visitorCount" class="text-yellow-400 font-black text-xl md:text-2xl">700</span>
-            <span class="text-xs text-gray-500">(متصل الآن)</span>
-        </div>
-
-        <div class="flex items-center gap-4 md:gap-6 flex-wrap justify-center">
-            <a href="https://twitter.com" target="_blank"
-            rel="noopener noreferrer"
-            class="hover:text-blue-400 transition font-bold text-sm md:text-base">
-            𝕏 Twitter @Adnani
-        </a>
-        <span class="text-gray-600 hidden md:inline">|</span>
-        <p class="text-xs md:text-sm font-medium text-gray-400">
-            جميع الحقوق محفوظة © عدناني 2026
-        </p>
-    </div>
+<div class="topbar">
+  <div class="brand"><i class="fas fa-cube" style="margin-left: 7px; color: #3b82f6;"></i> منصة آفاق | Pro</div>
+  <div class="live-badge"><i class="fas fa-circle"></i> نظام مباشر · LIVE <i class="fas fa-shield-alt" style="margin-right: 6px;"></i></div>
 </div>
-</footer>
+
+<div class="container">
+  <div class="grid">
+    <div class="card"><div class="image-wrapper"><i class="fas fa-chart-pie"></i></div><div class="card-title">تحليل بيانات</div><div class="card-stat">+٢٤ تقرير</div></div>
+    
+    <div class="card" id="openAtsModalBtn">
+      <div class="image-wrapper"><i class="fas fa-file-alt"></i></div>
+      <div class="card-title">إنشاء سيرة ذاتية</div>
+      <div class="card-stat">ATS احترافية</div>
+    </div>
+    
+    <div class="card" id="openPhotoModalBtn">
+      <div class="image-wrapper"><i class="fas fa-id-card"></i></div>
+      <div class="card-title">تعديل صور الأحوال</div>
+      <div class="card-stat">4×6 آمن</div>
+    </div>
+    
+    <div class="card" id="openPdfModalBtn">
+      <div class="image-wrapper"><i class="fas fa-file-pdf"></i></div>
+      <div class="card-title">تحويل الصور إلى PDF</div>
+      <div class="card-stat">دمج + ترتيب</div>
+    </div>
+    
+    <div class="card"><div class="image-wrapper"><i class="fas fa-network-wired"></i></div><div class="card-title">شبكة</div><div class="card-stat">٥.٢ جيجابت/ث</div></div>
+    <div class="card"><div class="image-wrapper"><i class="fas fa-satellite-dish"></i></div><div class="card-title">بيانات مباشرة</div><div class="card-stat">تحديث كل ٣ ثوان</div></div>
+    <div class="card"><div class="image-wrapper"><i class="fas fa-coins"></i></div><div class="card-title">مالية</div><div class="card-stat">$١٢.٤ مليار</div></div>
+    <div class="card"><div class="image-wrapper"><i class="fas fa-database"></i></div><div class="card-title">تخزين</div><div class="card-stat">٧٨٪ مستخدم</div></div>
+  </div>
+  <div class="footer">
+    <span style="font-weight: 800; background: linear-gradient(135deg, #a0c8ff, #3b82f6); -webkit-background-clip: text; background-clip: text; color: transparent;">آفاق</span> · 
+    © 2026 — تصميم <span style="color: #fbbf24;">عـدنـانـي</span> · 
+    <a href="https://twitter.com/aale1164" target="_blank" rel="noopener noreferrer">
+      <i class="fab fa-twitter" style="margin:0 4px;"></i>@aale1164
+    </a>
+  </div>
+</div>
+
+<!-- مودال السيرة الذاتية -->
+<div class="modal-overlay" id="atsModal">
+  <div class="modal-container" style="max-width:700px;">
+    <div class="modal-header"><h3><i class="fas fa-file-alt"></i> منشئ السيرة الذاتية</h3><i class="fas fa-times" id="closeAtsModalBtn"></i></div>
+    <div class="form-group"><label>الاسم الكامل</label><input type="text" id="fullName" placeholder="أحمد محمد علي"></div>
+    <div class="form-row">
+      <div class="form-group" style="flex:1;"><label>البريد الإلكتروني</label><input type="email" id="email" placeholder="example@domain.com"></div>
+      <div class="form-group" style="flex:1;"><label>رقم الهاتف</label><input type="tel" id="phone" placeholder="+966xxxxxxxxx"></div>
+    </div>
+    <div class="form-group"><label>تاريخ الميلاد</label><input type="text" id="birthDate" placeholder="1990-01-01"></div>
+    <div class="form-group"><label>النبذة التعريفية</label><textarea id="summary" rows="3"></textarea></div>
+    <div class="form-group"><label>المؤهل الدراسي</label><select id="educationSelect"><option value="ثانوي">ثانوي</option><option value="دبلوم سنة">دبلوم سنة</option><option value="دبلوم متوسط">دبلوم متوسط</option><option value="جامعي">جامعي</option><option value="دراسات عليا">دراسات عليا</option></select></div>
+    <div class="form-group"><label>الخبرات العملية</label><textarea id="experience" rows="3"></textarea></div>
+    <div class="form-group"><label>المهارات التقنية</label><input type="text" id="skills" placeholder="Python, SQL..."></div>
+    <div class="form-group"><label>لغة السيرة الذاتية</label><select id="languageSelect"><option value="ar">العربية</option><option value="en">English</option></select></div>
+    <div class="action-buttons"><button class="btn" id="generateResumeBtn"><i class="fas fa-file-pdf"></i> إنشاء PDF</button></div>
+    <p class="warning-text">* خط رومان | العناوين 16pt عريض | النصوص 14pt</p>
+  </div>
+</div>
+
+<!-- مودال تعديل الصور -->
+<div class="modal-overlay" id="photoModal">
+  <div class="modal-container">
+    <div class="modal-header"><h3><i class="fas fa-id-card"></i> معالج صور الأحوال</h3><i class="fas fa-times" id="closePhotoModalBtn"></i></div>
+    <div class="upload-area" id="photoUploadArea"><i class="fas fa-cloud-upload-alt"></i><p>ارفع صورة الوجه</p><input type="file" id="photoFileInput" accept="image/*" style="display:none;"></div>
+    <div id="photoPreviewContainer" style="display:none; text-align:center;"><img id="photoPreviewImg" class="preview-image" src=""><p id="photoFileName" style="color:#ccc;"></p></div>
+    <div class="requirements-box"><h4>الاشتراطات</h4><div id="photoReqList"><div class="req-item"><i class="fas fa-info-circle"></i> ارفع صورة</div></div></div>
+    <div class="action-buttons"><button class="btn" id="processPhotoBtn" disabled><i class="fas fa-magic"></i> تحسين إلى 4×6</button><button class="btn btn-outline" id="downloadPhotoBtn" disabled><i class="fas fa-download"></i> تحميل</button></div>
+  </div>
+</div>
+
+<!-- مودال تحويل PDF -->
+<div class="modal-overlay" id="pdfModal">
+  <div class="modal-container">
+    <div class="modal-header"><h3><i class="fas fa-file-pdf"></i> تحويل الصور إلى PDF</h3><i class="fas fa-times" id="closePdfModalBtn"></i></div>
+    <div class="upload-area" id="pdfUploadArea"><i class="fas fa-cloud-upload-alt"></i><p>اختر صوراً</p><input type="file" id="pdfFileInput" accept="image/*" multiple style="display:none;"></div>
+    <div style="display:flex; justify-content:space-between;"><span><i class="fas fa-images"></i> <span id="imageCount">0</span> صور</span><button class="btn-outline btn" id="clearAllPdfBtn" style="padding:6px 16px;"><i class="fas fa-trash-alt"></i> مسح الكل</button></div>
+    <div class="image-list" id="imageListContainer"><p style="text-align:center;">لم تضف صوراً بعد</p></div>
+    <div class="action-buttons"><button class="btn-outline btn" id="addMorePdfBtn"><i class="fas fa-plus"></i> إضافة</button><button class="btn" id="generatePdfBtn" disabled><i class="fas fa-file-pdf"></i> إنشاء PDF</button></div>
+  </div>
+</div>
 
 <script>
-    (function() {
-        // ============ عناصر DOM ============
-        const fileInput = document.getElementById('fileInput');
-        const imagePreview = document.getElementById('imagePreview');
-        const previewWrapper = document.getElementById('previewWrapper');
-        const placeholderIcon = document.getElementById('placeholderIcon');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const statusMsg = document.getElementById('statusMsg');
-        const previewLabel = document.getElementById('previewLabel');
-        const toast = document.getElementById('toast');
-        const uploadBtn = document.getElementById('uploadBtn');
-        const visitorCountEl = document.getElementById('visitorCount');
+  (function(){
+    // دوال مساعدة
+    function fileToDataURL(file) {
+      return new Promise(r => { const reader = new FileReader(); reader.onload = () => r(reader.result); reader.readAsDataURL(file); });
+    }
+    function createImage(src) {
+      return new Promise(r => { const img = new Image(); img.onload = () => r(img); img.src = src; });
+    }
 
-        // ============ حالة التطبيق ============
-        let originalImage = null; // كائن Image الأصلي
-        let processedDataURL = null; // الصورة بعد المعالجة (base64)
-        let isProcessing = false;
+    // 1. السيرة الذاتية (خط رومان)
+    const atsModal = document.getElementById('atsModal');
+    document.getElementById('openAtsModalBtn').addEventListener('click', ()=> atsModal.style.display='flex');
+    document.getElementById('closeAtsModalBtn').addEventListener('click', ()=> atsModal.style.display='none');
+    atsModal.addEventListener('click', e=> { if(e.target===atsModal) atsModal.style.display='none'; });
+    document.getElementById('generateResumeBtn').addEventListener('click', async function() {
+      const fullName = document.getElementById('fullName').value.trim() || 'الاسم الكامل';
+      const email = document.getElementById('email').value.trim() || 'email@example.com';
+      const phone = document.getElementById('phone').value.trim() || '+966xxxxxxxxx';
+      const birth = document.getElementById('birthDate').value.trim() || '';
+      const summary = document.getElementById('summary').value.trim() || 'ملخص احترافي.';
+      const education = document.getElementById('educationSelect').value;
+      const experience = document.getElementById('experience').value.trim();
+      const skills = document.getElementById('skills').value.trim();
+      const lang = document.getElementById('languageSelect').value;
+      const isRtl = lang === 'ar';
+      
+      const resumeDiv = document.createElement('div');
+      resumeDiv.style.direction = isRtl ? 'rtl' : 'ltr';
+      resumeDiv.style.fontFamily = "'Times New Roman', Times, serif, Arial, sans-serif";
+      resumeDiv.style.padding = '40px'; resumeDiv.style.backgroundColor = 'white'; resumeDiv.style.color = '#2c3e50'; resumeDiv.style.width = '800px'; resumeDiv.style.margin = '0 auto';
+      
+      resumeDiv.innerHTML = `
+        <div style="text-align: center; border-bottom: 3px solid #1a5f7a; padding-bottom: 15px; margin-bottom: 25px;">
+          <div style="font-size: 26pt; font-weight: bold; color: #1a5f7a;">${fullName}</div>
+          <div style="font-size: 12pt; color: #555; margin-top: 5px;">${[phone, email, birth].filter(Boolean).join(' | ')}</div>
+        </div>
+        <div style="margin-bottom: 20px;">
+          <div style="font-size: 16pt; font-weight: bold; background-color: #f4f7f9; padding: 5px 10px; color: #1a5f7a; border-${isRtl ? 'right' : 'left'}: 5px solid #1a5f7a;">${isRtl ? 'النبذة التعريفية' : 'Professional Summary'}</div>
+          <div style="font-size: 14pt; margin: 10px 15px; text-align: justify; white-space: pre-wrap;">${summary}</div>
+        </div>
+        <div style="margin-bottom: 20px;">
+          <div style="font-size: 16pt; font-weight: bold; background-color: #f4f7f9; padding: 5px 10px; color: #1a5f7a; border-${isRtl ? 'right' : 'left'}: 5px solid #1a5f7a;">${isRtl ? 'المؤهلات العلمية' : 'Education'}</div>
+          <div style="font-size: 14pt; margin: 10px 15px;">${education}</div>
+        </div>
+        ${experience ? `<div style="margin-bottom: 20px;"><div style="font-size: 16pt; font-weight: bold; background-color: #f4f7f9; padding: 5px 10px; color: #1a5f7a; border-${isRtl ? 'right' : 'left'}: 5px solid #1a5f7a;">${isRtl ? 'الخبرات العملية' : 'Work Experience'}</div><div style="font-size: 14pt; margin: 10px 15px; white-space: pre-wrap;">${experience}</div></div>` : ''}
+        ${skills ? `<div style="margin-bottom: 20px;"><div style="font-size: 16pt; font-weight: bold; background-color: #f4f7f9; padding: 5px 10px; color: #1a5f7a; border-${isRtl ? 'right' : 'left'}: 5px solid #1a5f7a;">${isRtl ? 'المهارات التقنية' : 'Technical Skills'}</div><div style="font-size: 14pt; margin: 10px 15px;">${skills}</div></div>` : ''}
+        <div style="text-align: center; font-size: 10pt; color: #aaa; margin-top: 50px;">Generated by Pro Dashboard - ATS Friendly</div>
+      `;
+      document.body.appendChild(resumeDiv);
+      try {
+        const canvas = await html2canvas(resumeDiv, { scale: 2, backgroundColor: '#ffffff' });
+        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        pdf.addImage(imgData, 'JPEG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
+        pdf.save(`Resume_${fullName.replace(/\s+/g, '_')}.pdf`);
+      } catch(e) { alert('خطأ: '+e.message); } finally { document.body.removeChild(resumeDiv); }
+    });
 
-        // ============ عداد الزوار مع تخزين محلي ============
-        function initVisitorCounter() {
-            const stored = localStorage.getItem('adnani_visitor_count');
-            const storedTime = localStorage.getItem('adnani_visitor_time');
-            const now = Date.now();
-            const fiveMinutes = 5 * 60 * 1000;
+    // 2. تعديل الصور
+    const photoModal = document.getElementById('photoModal');
+    const openPhotoBtn = document.getElementById('openPhotoModalBtn');
+    const closePhotoBtn = document.getElementById('closePhotoModalBtn');
+    const photoUploadArea = document.getElementById('photoUploadArea');
+    const photoFileInput = document.getElementById('photoFileInput');
+    const photoPreviewContainer = document.getElementById('photoPreviewContainer');
+    const photoPreviewImg = document.getElementById('photoPreviewImg');
+    const photoFileName = document.getElementById('photoFileName');
+    const processPhotoBtn = document.getElementById('processPhotoBtn');
+    const downloadPhotoBtn = document.getElementById('downloadPhotoBtn');
+    const photoReqList = document.getElementById('photoReqList');
+    let originalPhotoImage = null, originalPhotoFile = null, processedPhotoBlob = null;
 
-            let count;
-            if (stored && storedTime && (now - parseInt(storedTime)) < (24 * 60 * 60 * 1000)) {
-                // استخدم القيمة المخزنة إذا كانت خلال آخر 24 ساعة
-                count = parseInt(stored);
-                // أضف 3 لكل 5 دقائق مرت منذ آخر تحديث
-                const elapsed = now - parseInt(storedTime);
-                const intervals = Math.floor(elapsed / fiveMinutes);
-                count += intervals * 3;
-            } else {
-                // ابدأ من 700 إذا لم توجد قيمة مخزنة
-                count = 700;
-            }
+    openPhotoBtn.addEventListener('click', ()=> { resetPhotoModal(); photoModal.style.display='flex'; });
+    closePhotoBtn.addEventListener('click', ()=> photoModal.style.display='none');
+    photoModal.addEventListener('click', e=> { if(e.target===photoModal) photoModal.style.display='none'; });
+    photoUploadArea.addEventListener('click', ()=> photoFileInput.click());
+    photoUploadArea.addEventListener('dragover', e=> { e.preventDefault(); photoUploadArea.style.background='rgba(59,130,246,0.2)'; });
+    photoUploadArea.addEventListener('dragleave', ()=> photoUploadArea.style.background='');
+    photoUploadArea.addEventListener('drop', e=> { e.preventDefault(); photoUploadArea.style.background=''; const file = e.dataTransfer.files[0]; if(file&&file.type.startsWith('image/')) handlePhotoFile(file); });
+    photoFileInput.addEventListener('change', e=> { if(e.target.files[0]) handlePhotoFile(e.target.files[0]); });
 
-            // احفظ القيمة الحالية
-            localStorage.setItem('adnani_visitor_count', count);
-            localStorage.setItem('adnani_visitor_time', now);
-            visitorCountEl.textContent = count.toLocaleString('ar-SA');
+    function handlePhotoFile(file) {
+      originalPhotoFile = file; photoFileName.textContent = file.name;
+      const reader = new FileReader();
+      reader.onload = e => {
+        photoPreviewImg.src = e.target.result; photoPreviewContainer.style.display='block';
+        const img = new Image();
+        img.onload = function() {
+          originalPhotoImage = img;
+          photoReqList.innerHTML = `<div class="req-item"><i class="fas fa-check-circle" style="color:#10b981;"></i> الأبعاد: ${img.width}×${img.height}</div>`;
+          processPhotoBtn.disabled = false; downloadPhotoBtn.disabled = true;
+        }; img.src = e.target.result;
+      }; reader.readAsDataURL(file);
+    }
 
-            // زيادة العداد كل 5 دقائق
-            setInterval(() => {
-                let current = parseInt(localStorage.getItem('adnani_visitor_count')) || 700;
-                current += 3;
-                localStorage.setItem('adnani_visitor_count', current);
-                localStorage.setItem('adnani_visitor_time', Date.now());
-                visitorCountEl.textContent = current.toLocaleString('ar-SA');
-            }, fiveMinutes);
+    processPhotoBtn.addEventListener('click', function() {
+      if(!originalPhotoImage) return;
+      const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+      const outW = 800, outH = 1200; canvas.width = outW; canvas.height = outH;
+      ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, outW, outH);
+      const imgAspect = originalPhotoImage.width / originalPhotoImage.height;
+      const targetAspect = outW / outH; const safeScale = 1.10;
+      let drawW, drawH, offX = 0, offY = 0;
+      if(imgAspect > targetAspect) { drawH = outH * safeScale; drawW = drawH * imgAspect; offX = -(drawW - outW)/2; offY = -(drawH - outH)/2; }
+      else { drawW = outW * safeScale; drawH = drawW / imgAspect; offX = -(drawW - outW)/2; offY = -(drawH - outH)/2; }
+      ctx.drawImage(originalPhotoImage, offX, offY, drawW, drawH);
+      canvas.toBlob(blob => {
+        processedPhotoBlob = blob; photoPreviewImg.src = URL.createObjectURL(blob);
+        photoReqList.innerHTML = `<div class="req-item"><i class="fas fa-check-circle" style="color:#10b981;"></i> تم التحسين مع هامش 10%</div>`;
+        downloadPhotoBtn.disabled = false; photoFileName.textContent = originalPhotoFile.name.replace(/\.[^.]+$/, "") + "_4x6_آمن.jpg";
+      }, 'image/jpeg', 0.95);
+    });
+
+    downloadPhotoBtn.addEventListener('click', function() {
+      if(!processedPhotoBlob) return; const a = document.createElement('a');
+      a.href = URL.createObjectURL(processedPhotoBlob); a.download = 'صورة_الاحوال_4x6_آمنة.jpg'; a.click();
+    });
+
+    function resetPhotoModal() {
+      photoPreviewContainer.style.display='none'; processPhotoBtn.disabled = true; downloadPhotoBtn.disabled = true;
+      photoReqList.innerHTML = '<div class="req-item"><i class="fas fa-info-circle"></i> ارفع صورة</div>';
+      originalPhotoImage = null; processedPhotoBlob = null;
+    }
+
+    // 3. تحويل PDF
+    const pdfModal = document.getElementById('pdfModal');
+    const openPdfBtn = document.getElementById('openPdfModalBtn');
+    const closePdfBtn = document.getElementById('closePdfModalBtn');
+    const pdfUploadArea = document.getElementById('pdfUploadArea');
+    const pdfFileInput = document.getElementById('pdfFileInput');
+    const imageListDiv = document.getElementById('imageListContainer');
+    const imageCountSpan = document.getElementById('imageCount');
+    const generatePdfBtn = document.getElementById('generatePdfBtn');
+    const clearAllPdfBtn = document.getElementById('clearAllPdfBtn');
+    const addMorePdfBtn = document.getElementById('addMorePdfBtn');
+    let pdfImageFiles = [], sortableInstance = null;
+
+    openPdfBtn.addEventListener('click', ()=> { pdfModal.style.display='flex'; });
+    closePdfBtn.addEventListener('click', ()=> pdfModal.style.display='none');
+    pdfModal.addEventListener('click', e=> { if(e.target===pdfModal) pdfModal.style.display='none'; });
+    pdfUploadArea.addEventListener('click', ()=> pdfFileInput.click());
+    addMorePdfBtn.addEventListener('click', ()=> pdfFileInput.click());
+    pdfUploadArea.addEventListener('dragover', e=> { e.preventDefault(); pdfUploadArea.style.background='rgba(59,130,246,0.2)'; });
+    pdfUploadArea.addEventListener('dragleave', ()=> pdfUploadArea.style.background='');
+    pdfUploadArea.addEventListener('drop', e=> { e.preventDefault(); pdfUploadArea.style.background=''; const files = Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')); addPdfFiles(files); });
+    pdfFileInput.addEventListener('change', e=> { const files = Array.from(e.target.files).filter(f=>f.type.startsWith('image/')); addPdfFiles(files); pdfFileInput.value = ''; });
+
+    function addPdfFiles(files) { files.forEach(f => { if(!pdfImageFiles.some(ex=>ex.name===f.name&&ex.size===f.size)) pdfImageFiles.push(f); }); renderPdfList(); }
+    function renderPdfList() {
+      if(pdfImageFiles.length === 0) { imageListDiv.innerHTML = '<p style="text-align:center;">لم تضف صوراً</p>'; imageCountSpan.textContent = '0'; generatePdfBtn.disabled = true; return; }
+      let html = ''; pdfImageFiles.forEach((f, i) => { const url = URL.createObjectURL(f); html += `<div class="image-item" data-index="${i}"><img src="${url}"><div class="info"><div>${f.name}</div><small>${(f.size/1024).toFixed(1)} ك.ب</small></div><div class="actions"><i class="fas fa-times" onclick="removePdfImage(${i})"></i></div></div>`; });
+      imageListDiv.innerHTML = html; imageCountSpan.textContent = pdfImageFiles.length; generatePdfBtn.disabled = false;
+      if(sortableInstance) sortableInstance.destroy();
+      sortableInstance = new Sortable(imageListDiv, { animation: 150, ghostClass: 'sortable-ghost', onEnd: function() { const items = Array.from(imageListDiv.children); const newOrder = items.map(it => parseInt(it.dataset.index)); pdfImageFiles = newOrder.map(idx => pdfImageFiles[idx]); } });
+    }
+    window.removePdfImage = function(index) { pdfImageFiles.splice(index, 1); renderPdfList(); };
+    clearAllPdfBtn.addEventListener('click', ()=> { pdfImageFiles = []; renderPdfList(); });
+    generatePdfBtn.addEventListener('click', async function() {
+      if(!pdfImageFiles.length) return; generatePdfBtn.disabled = true; generatePdfBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> جاري...';
+      try {
+        const { jsPDF } = window.jspdf; const pdf = new jsPDF();
+        for(let i=0; i<pdfImageFiles.length; i++) {
+          const file = pdfImageFiles[i]; const dataUrl = await fileToDataURL(file); const img = await createImage(dataUrl);
+          if(i>0) pdf.addPage(); const pdfW = pdf.internal.pageSize.getWidth(), pdfH = pdf.internal.pageSize.getHeight();
+          const ratio = Math.min(pdfW/img.width, pdfH/img.height); const w = img.width * ratio, h = img.height * ratio;
+          pdf.addImage(dataUrl, 'JPEG', (pdfW-w)/2, (pdfH-h)/2, w, h);
         }
-
-        // ============ إظهار إشعار التوست ============
-        function showToast(message = '✅ تم تجهيز الصورة بنجاح') {
-            toast.textContent = message;
-            toast.classList.add('show');
-            clearTimeout(toast._timeout);
-            toast._timeout = setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2500);
-        }
-
-        // ============ تحديث حالة واجهة المعاينة ============
-        function updatePreviewState(hasImage) {
-            if (hasImage) {
-                previewWrapper.classList.add('has-image');
-                placeholderIcon.style.display = 'none';
-                imagePreview.classList.add('show');
-                previewLabel.textContent = '✅ المعاينة بمقاس 4×6';
-                previewLabel.style.color = '#059669';
-            } else {
-                previewWrapper.classList.remove('has-image');
-                placeholderIcon.style.display = '';
-                imagePreview.classList.remove('show');
-                imagePreview.src = '';
-                previewLabel.textContent = 'المعاينة بمقاس 4×6';
-                previewLabel.style.color = '';
-            }
-        }
-
-        // ============ تحديث حالة زر التحميل ============
-        function updateDownloadButton(active) {
-            if (active) {
-                downloadBtn.disabled = false;
-                downloadBtn.classList.add('active');
-                downloadBtn.innerHTML = '💾 حفظ الصورة المعالجة ✅';
-                statusMsg.textContent = 'الصورة جاهزة للتحميل';
-                statusMsg.style.color = '#059669';
-            } else {
-                downloadBtn.disabled = true;
-                downloadBtn.classList.remove('active');
-                downloadBtn.innerHTML = '💾 حفظ الصورة المعالجة';
-                statusMsg.textContent = 'لم يتم رفع صورة بعد';
-                statusMsg.style.color = '';
-            }
-        }
-
-        // ============ معالجة الصورة باستخدام Canvas ============
-        function processImage(img) {
-            return new Promise((resolve) => {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-
-                // تحديد المقاس المستهدف: 4×6 بنسبة عرض إلى ارتفاع 2:3
-                const targetWidth = 1200; // 4 بوصات × 300 DPI
-                const targetHeight = 1800; // 6 بوصات × 300 DPI
-
-                canvas.width = targetWidth;
-                canvas.height = targetHeight;
-
-                // حساب أفضل طريقة لقص الصورة لتناسب مقاس 4×6
-                const imgAspect = img.width / img.height;
-                const targetAspect = targetWidth / targetHeight; // 2/3 ≈ 0.6667
-
-                let srcX, srcY, srcW, srcH;
-
-                if (imgAspect > targetAspect) {
-                    // الصورة أعرض من المطلوب → نقص من العرض
-                    srcH = img.height;
-                    srcW = img.height * targetAspect;
-                    srcX = (img.width - srcW) / 2;
-                    srcY = 0;
-                } else {
-                    // الصورة أطول من المطلوب → نقص من الارتفاع
-                    srcW = img.width;
-                    srcH = img.width / targetAspect;
-                    srcX = 0;
-                    srcY = (img.height - srcH) / 2;
-                }
-
-                // 1️⃣ رسم الخلفية البيضاء الناصعة
-                ctx.fillStyle = '#FFFFFF';
-                ctx.fillRect(0, 0, targetWidth, targetHeight);
-
-                // 2️⃣ رسم الصورة مع قص تلقائي لتناسب 4×6
-                ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, targetWidth, targetHeight);
-
-                // 3️⃣ تحسين الحدة والوضوح (محاكاة تحسين ملامح الوجه)
-                const imageData = ctx.getImageData(0, 0, targetWidth, targetHeight);
-                const data = imageData.data;
-
-                // تطبيق تحسين التباين الخفيف (Curves simulation)
-                for (let i = 0; i < data.length; i += 4) {
-                    // تحسين طفيف للتباين على كل قناة لونية
-                    for (let j = 0; j < 3; j++) {
-                        let val = data[i + j];
-                        // منحنى S خفيف لتحسين التباين
-                        val = val / 255;
-                        val = val < 0.5 ?
-                            2 * val * val :
-                            -1 + (4 - 2 * val) * val;
-                        val = Math.max(0, Math.min(255, val * 255));
-                        data[i + j] = val;
-                    }
-                }
-                ctx.putImageData(imageData, 0, 0);
-
-                // 4️⃣ إضافة شارب خفيف جداً لتحسين الوضوح (Unsharp mask simulation)
-                // نطبق شارب فقط على منطقة مركزية (مكان الوجه تقريباً)
-                const centerX = targetWidth / 2;
-                const centerY = targetHeight * 0.4;
-                const faceRadius = Math.min(targetWidth, targetHeight) * 0.35;
-
-                // رسم طبقة شفافة لتحسين الوضوح في منطقة الوجه
-                const sharpenCanvas = document.createElement('canvas');
-                sharpenCanvas.width = targetWidth;
-                sharpenCanvas.height = targetHeight;
-                const sharpenCtx = sharpenCanvas.getContext('2d');
-                sharpenCtx.drawImage(canvas, 0, 0);
-
-                // تطبيق فلتر تحسين الحدة
-                sharpenCtx.globalCompositeOperation = 'overlay';
-                sharpenCtx.fillStyle = 'rgba(255,255,255,0.03)';
-                sharpenCtx.fillRect(0, 0, targetWidth, targetHeight);
-
-                // دمج الطبقات
-                ctx.globalAlpha = 0.15;
-                ctx.drawImage(sharpenCanvas, 0, 0);
-                ctx.globalAlpha = 1;
-
-                // 5️⃣ التأكد من أن الحواف بيضاء تماماً
-                const borderSize = 8;
-                ctx.fillStyle = '#FFFFFF';
-                ctx.fillRect(0, 0, targetWidth, borderSize);
-                ctx.fillRect(0, targetHeight - borderSize, targetWidth, borderSize);
-                ctx.fillRect(0, 0, borderSize, targetHeight);
-                ctx.fillRect(targetWidth - borderSize, 0, borderSize, targetHeight);
-
-                // تحويل canvas إلى Data URL
-                const dataURL = canvas.toDataURL('image/jpeg', 0.95);
-                resolve(dataURL);
-            });
-        }
-
-        // ============ معالج رفع الصورة ============
-        fileInput.addEventListener('change', async function() {
-            const file = this.files[0];
-            if (!file) return;
-
-            // التحقق من نوع الملف
-            const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-            if (!validTypes.includes(file.type)) {
-                showToast('⚠️ يرجى اختيار صورة بصيغة JPG أو PNG أو WEBP');
-                this.value = '';
-                return;
-            }
-
-            // التحقق من حجم الملف (أقصى 20 ميجابايت)
-            const maxSize = 20 * 1024 * 1024;
-            if (file.size > maxSize) {
-                showToast('⚠️ حجم الصورة كبير جداً. الحد الأقصى 20 ميجابايت');
-                this.value = '';
-                return;
-            }
-
-            if (isProcessing) return;
-            isProcessing = true;
-
-            // تحديث واجهة المستخدم للتحميل
-            uploadBtn.innerHTML = '⏳ جاري المعالجة...';
-            uploadBtn.style.pointerEvents = 'none';
-            uploadBtn.style.opacity = '0.7';
-            statusMsg.textContent = 'جاري تحليل الصورة وتحسينها...';
-            statusMsg.style.color = '#2563eb';
-
-            try {
-                // قراءة الملف
-                const fileDataURL = await new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => resolve(e.target.result);
-                    reader.onerror = () => reject(new Error('فشل قراءة الملف'));
-                    reader.readAsDataURL(file);
-                });
-
-                // تحميل الصورة الأصلية
-                const img = await new Promise((resolve, reject) => {
-                    const image = new Image();
-                    image.onload = () => resolve(image);
-                    image.onerror = () => reject(new Error('فشل تحميل الصورة'));
-                    image.src = fileDataURL;
-                });
-
-                originalImage = img;
-
-                // عرض معاينة سريعة للصورة الأصلية
-                imagePreview.src = fileDataURL;
-                updatePreviewState(true);
-                updateDownloadButton(false);
-                statusMsg.textContent = 'جاري تحسين الصورة...';
-                statusMsg.style.color = '#2563eb';
-
-                // معالجة الصورة
-                const processed = await processImage(img);
-                processedDataURL = processed;
-
-                // تحديث المعاينة بالصورة المعالجة
-                imagePreview.src = processed;
-                updatePreviewState(true);
-                updateDownloadButton(true);
-                statusMsg.textContent = '✅ اكتملت المعالجة بنجاح';
-                statusMsg.style.color = '#059669';
-
-                showToast('✅ تمت معالجة الصورة بنجاح! جاهزة للتحميل');
-            } catch (error) {
-                console.error('خطأ في المعالجة:', error);
-                showToast('❌ حدث خطأ أثناء معالجة الصورة. حاول مرة أخرى.');
-                statusMsg.textContent = 'فشلت المعالجة - حاول مجدداً';
-                statusMsg.style.color = '#dc2626';
-                updateDownloadButton(false);
-            } finally {
-                isProcessing = false;
-                uploadBtn.innerHTML = '📁 اختيار الصورة من الجهاز';
-                uploadBtn.style.pointerEvents = '';
-                uploadBtn.style.opacity = '';
-                // إعادة تعيين قيمة input للسماح بإعادة اختيار نفس الملف
-                fileInput.value = '';
-            }
-        });
-
-        // ============ زر التحميل ============
-        downloadBtn.addEventListener('click', function() {
-            if (!processedDataURL || downloadBtn.disabled) return;
-
-            // إنشاء رابط تحميل
-            const link = document.createElement('a');
-            link.href = processedDataURL;
-            // اسم الملف مع التاريخ
-            const now = new Date();
-            const timestamp =
-                `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
-            link.download = `عدناني_صورة_شخصية_${timestamp}.jpg`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            showToast('📥 جاري تحميل الصورة المعالجة...');
-        });
-
-        // ============ السحب والإفلات ============
-        previewWrapper.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            this.style.borderColor = '#3b82f6';
-            this.style.background = '#eff6ff';
-        });
-        previewWrapper.addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            if (!previewWrapper.classList.contains('has-image')) {
-                this.style.borderColor = '#cbd5e1';
-                this.style.background = '#f8fafc';
-            } else {
-                this.style.borderColor = '#3b82f6';
-                this.style.background = '#ffffff';
-            }
-        });
-        previewWrapper.addEventListener('drop', function(e) {
-            e.preventDefault();
-            if (!previewWrapper.classList.contains('has-image')) {
-                this.style.borderColor = '#cbd5e1';
-                this.style.background = '#f8fafc';
-            } else {
-                this.style.borderColor = '#3b82f6';
-                this.style.background = '#ffffff';
-            }
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                // تعيين الملف إلى input وتشغيل حدث change
-                const dt = new DataTransfer();
-                dt.items.add(files[0]);
-                fileInput.files = dt.files;
-                fileInput.dispatchEvent(new Event('change'));
-            }
-        });
-
-        // ============ اختصارات لوحة المفاتيح ============
-        document.addEventListener('keydown', function(e) {
-            // Ctrl+U لرفع صورة
-            if (e.ctrlKey && e.key === 'u') {
-                e.preventDefault();
-                fileInput.click();
-            }
-            // Ctrl+D للتحميل
-            if (e.ctrlKey && e.key === 'd' && processedDataURL && !downloadBtn.disabled) {
-                e.preventDefault();
-                downloadBtn.click();
-            }
-        });
-
-        // ============ بدء التشغيل ============
-        function init() {
-            updatePreviewState(false);
-            updateDownloadButton(false);
-            initVisitorCounter();
-            console.log('🚀 منصة عدناني الذكية | جاهزة للعمل');
-            console.log('💡 اختصارات: Ctrl+U لرفع صورة | Ctrl+D لتحميل الصورة المعالجة');
-            console.log('🖱️ يمكنك أيضاً سحب وإفلات الصورة على منطقة المعاينة');
-        }
-
-        init();
-    })();
+        pdf.save('images_converted.pdf');
+      } catch(err) { alert('خطأ: '+err.message); }
+      finally { generatePdfBtn.disabled = false; generatePdfBtn.innerHTML = '<i class="fas fa-file-pdf"></i> إنشاء PDF'; }
+    });
+  })();
 </script>
 </body>
 </html>
