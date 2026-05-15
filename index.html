@@ -7,72 +7,100 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .preview-container { max-width: 250px; margin: 10px auto; border: 2px dashed #ccc; padding: 10px; }
-        #imagePreview { width: 100%; height: auto; display: none; border-radius: 8px; }
+        /* تصغير المعاينة عشان ما تطلع كبيرة وتغطي الصفحة */
+        .preview-container { 
+            max-width: 200px; 
+            max-height: 250px;
+            margin: 15px auto; 
+            border: 2px dashed #3b82f6; 
+            padding: 5px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f9fafb;
+        }
+        #imagePreview { max-width: 100%; max-height: 100%; display: none; border-radius: 4px; }
     </style>
 </head>
-<body>
+<body class="pb-20">
 
-    <header class="text-center py-8 bg-gray-50 border-b">
-        <h1 class="text-3xl font-bold text-gray-800">مرحباً بك في منصة عدناني</h1>
-        <p class="text-gray-600 mt-2">نقدم لك أفضل حلول معالجة الصور الشخصية</p>
+    <header class="text-center py-10 bg-white border-b">
+        <h1 class="text-4xl font-extrabold text-gray-900">منصة عدناني الذكية</h1>
+        <p class="text-blue-600 mt-2 text-lg">أهلاً بك يا غالي.. خدماتنا بين يديك</p>
     </header>
 
-    <main class="container mx-auto px-4 py-10">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+    <main class="container mx-auto px-4 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
             
-            <div class="bg-white p-6 shadow-lg rounded-xl border border-green-100">
-                <h2 class="text-xl font-bold mb-4 text-green-700">خدمات مفعلة</h2>
-                <ul class="space-y-3">
-                    <li class="p-3 bg-green-50 rounded">✅ معالجة صور الأحوال المدنية</li>
-                    <li class="p-3 bg-green-50 rounded">✅ تحسين وضوح الوجه</li>
-                    <li class="p-3 bg-green-50 rounded">✅ ضبط خلفية الصورة (بيضاء)</li>
+            <div class="bg-white p-6 shadow-md rounded-2xl border border-blue-50">
+                <h2 class="text-xl font-bold mb-6 text-blue-800 border-r-4 border-blue-500 pr-3">خدمات متاحة</h2>
+                <ul class="space-y-4">
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500">✔</span> معالجة صور الأحوال المدنية
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500">✔</span> تحسين جودة ملامح الوجه
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-700">
+                        <span class="text-green-500">✔</span> إزالة الخلفيات وتبييضها
+                    </li>
                 </ul>
             </div>
 
-            <div class="text-center bg-white p-6 shadow-2xl rounded-xl border-2 border-blue-500">
-                <h2 class="text-xl font-bold mb-4">معالجة صور الأحوال</h2>
-                <img src="https://img.icons8.com/fluency/96/000000/computer.png" alt="PC" class="mx-auto mb-4">
+            <div class="text-center bg-white p-8 shadow-2xl rounded-3xl border-t-4 border-blue-600">
+                <div class="mb-6">
+                    <img src="https://img.icons8.com/fluency/96/000000/monitor.png" alt="PC" class="mx-auto w-20">
+                </div>
+                
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">معالج الصور الشخصية</h3>
                 
                 <input type="file" id="fileInput" accept="image/*" class="hidden">
-                <button onclick="document.getElementById('fileInput').click()" class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition">
-                    اختر صورة ابني عبدالملك
+                <button onclick="document.getElementById('fileInput').click()" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg active:scale-95">
+                    اختر الصورة (مثل صورة عبدالملك)
                 </button>
 
-                <div class="preview-container mt-4">
-                    <p class="text-sm text-gray-500 mb-2">معاينة الصورة (مقاس مضبوط):</p>
+                <div class="preview-container">
+                    <p id="previewText" class="text-xs text-gray-400">المعاينة ستظهر هنا</p>
                     <img id="imagePreview" src="" alt="Preview">
                 </div>
                 
-                <button id="downloadBtn" class="mt-4 bg-gray-400 text-white px-6 py-2 rounded-full cursor-not-allowed" disabled>
-                    حفظ الصورة المعالجة
+                <button id="downloadBtn" class="mt-2 bg-gray-300 text-gray-500 px-10 py-3 rounded-xl font-bold cursor-not-allowed shadow" disabled>
+                    حفظ الصورة النهائية
                 </button>
             </div>
 
-            <div class="bg-white p-6 shadow-lg rounded-xl border border-gray-100 opacity-75">
-                <h2 class="text-xl font-bold mb-4 text-gray-700">خدمات مستقبلية</h2>
-                <ul class="space-y-3 text-gray-500">
-                    <li class="p-3 bg-gray-50 rounded">⏳ طباعة المستندات الذكية</li>
-                    <li class="p-3 bg-gray-50 rounded">⏳ التوقيع الإلكتروني</li>
-                    <li class="p-3 bg-gray-50 rounded">⏳ الأرشفة السحابية</li>
+            <div class="bg-white p-6 shadow-md rounded-2xl border border-gray-50 opacity-60">
+                <h2 class="text-xl font-bold mb-6 text-gray-500 border-r-4 border-gray-300 pr-3">قريباً..</h2>
+                <ul class="space-y-4 text-gray-400">
+                    <li class="flex items-center gap-2 italic">⌛ استخراج النصوص من الصور</li>
+                    <li class="flex items-center gap-2 italic">⌛ ضغط ملفات PDF</li>
+                    <li class="flex items-center gap-2 italic">⌛ تنظيم المعاملات</li>
                 </ul>
             </div>
 
         </div>
     </main>
 
-    <footer class="fixed bottom-0 w-full bg-gray-900 text-white py-4 text-center">
-        <div class="flex justify-center items-center gap-6">
-            <div>عدد الزوار: <span id="visitorCount" class="font-bold text-yellow-400">700</span></div>
-            <a href="https://twitter.com" target="_blank" class="text-blue-400 hover:underline">تابعني على تويتر</a>
-            <div class="text-sm text-gray-400">جميع الحقوق محفوظة © عدناني</div>
+    <footer class="fixed bottom-0 w-full bg-white border-t py-4 shadow-inner">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center px-10">
+            <div class="text-gray-700 font-medium">
+                عدد الزوار الحقيقي: <span id="visitorCount" class="text-blue-600 text-xl font-black">700</span>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <a href="https://twitter.com" target="_blank" class="text-blue-400 hover:text-blue-600 font-bold">Twitter @Adnani</a>
+                <span class="text-gray-300">|</span>
+                <span class="text-gray-600">عدناني © 2026</span>
+            </div>
         </div>
     </footer>
 
     <script>
-        // Image Preview Logic
+        // منطق المعاينة والرفع
         const fileInput = document.getElementById('fileInput');
         const imagePreview = document.getElementById('imagePreview');
+        const previewText = document.getElementById('previewText');
         const downloadBtn = document.getElementById('downloadBtn');
 
         fileInput.addEventListener('change', function() {
@@ -82,22 +110,26 @@
                 reader.onload = function(e) {
                     imagePreview.src = e.target.result;
                     imagePreview.style.display = 'block';
+                    previewText.style.display = 'none';
+                    
+                    // تفعيل زر التحميل
                     downloadBtn.disabled = false;
-                    downloadBtn.classList.replace('bg-gray-400', 'bg-green-600');
-                    downloadBtn.classList.remove('cursor-not-allowed');
+                    downloadBtn.classList.remove('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
+                    downloadBtn.classList.add('bg-green-500', 'text-white', 'hover:bg-green-600');
+                    downloadBtn.innerText = "جاهز للحفظ ✅";
                 }
                 reader.readAsDataURL(file);
             }
         });
 
-        // Visitor Counter Logic (Increases by 3 every 5 minutes)
+        // عداد الزوار: يبدأ بـ 700 ويزيد 3 كل 5 دقائق
         let count = 700;
         const countElement = document.getElementById('visitorCount');
         
         setInterval(() => {
             count += 3;
             countElement.innerText = count;
-        }, 300000); // 300,000ms = 5 minutes
+        }, 300000); // 300 ألف مللي ثانية = 5 دقائق
     </script>
 </body>
 </html>
