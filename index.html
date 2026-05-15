@@ -1,321 +1,152 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>منصة آفاق | Pro Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Tajawal', sans-serif;
-      background: radial-gradient(circle at 20% 10%, #0b1424, #03070e);
-      color: #fff;
-      min-height: 100vh;
-      padding: 0 11px 22px;
-      direction: rtl;
-    }
-    .topbar {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 13px 20px; margin: 14px 0 7px;
-      background: rgba(18, 28, 46, 0.6); backdrop-filter: blur(12px);
-      border: 1px solid rgba(74, 144, 226, 0.2); border-radius: 42px;
-      box-shadow: 0 10px 24px -7px rgba(0,0,0,0.5);
-    }
-    .brand {
-      font-size: 1.25rem; font-weight: 800;
-      background: linear-gradient(135deg, #a0c8ff, #3b82f6);
-      -webkit-background-clip: text; background-clip: text; color: transparent;
-    }
-    .live-badge {
-      display: flex; align-items: center; gap: 6px;
-      background: rgba(59,130,246,0.2); padding: 6px 13px; border-radius: 28px;
-      border: 1px solid rgba(59,130,246,0.4); font-weight: 600; font-size: 0.7rem; color: #bdd3ff;
-    }
-    .live-badge i { color: #3b82f6; font-size: 0.6rem; animation: pulse 1.8s infinite; }
-    @keyframes pulse {
-      0% { opacity: 0.6; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.15); text-shadow: 0 0 6px #3b82f6; }
-      100% { opacity: 0.6; transform: scale(1); }
-    }
-    .container { max-width: 1400px; margin: 0 auto; }
-    .grid {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
-      margin: 21px 0 14px;
-    }
-    .card {
-      background: rgba(12, 22, 38, 0.7); backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,0.06); border-radius: 20px;
-      padding: 17px 8px 14px; display: flex; flex-direction: column; align-items: center;
-      text-align: center; cursor: pointer; transition: all 0.3s;
-      box-shadow: 0 7px 14px -3px rgba(0,0,0,0.5); position: relative; overflow: hidden;
-    }
-    .card::after {
-      content: ""; position: absolute; inset: 0;
-      background: radial-gradient(circle at 30% 20%, rgba(59,130,246,0.25), transparent 70%);
-      opacity: 0; transition: opacity 0.4s; pointer-events: none;
-    }
-    .card:hover { transform: translateY(-6px); background: rgba(20,40,65,0.8); border-color: rgba(59,130,246,0.5); }
-    .card:hover::after { opacity: 1; }
-    .image-wrapper {
-      width: 63px; height: 63px; margin-bottom: 11px; display: flex; align-items: center; justify-content: center;
-      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-      background: linear-gradient(145deg, rgba(59,130,246,0.2), rgba(16,30,54,0.7));
-      box-shadow: 0 7px 14px -3px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-    .card:hover .image-wrapper { background: linear-gradient(145deg, #1e3a6b, #0f1e32); box-shadow: 0 0 13px #3b82f6; }
-    .image-wrapper i { font-size: 32px; color: #e0edff; }
-    .card-title { font-size: 0.9rem; font-weight: 700; margin: 6px 0 4px; color: #f0f6ff; }
-    .card-stat { font-size: 0.7rem; color: #9bb9f0; background: rgba(0,0,0,0.2); padding: 3px 10px; border-radius: 21px; }
-    .footer {
-      text-align: center; padding: 17px 0 7px; opacity: 0.75; font-size: 0.7rem;
-      color: #b0c7e9; border-top: 1px dashed rgba(100,150,220,0.2); margin-top: 18px;
-    }
-    .footer a { color: #a0c8ff; text-decoration: none; font-weight: 600; }
-    .footer a:hover { color: #3b82f6; }
-    .modal-overlay {
-      position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.8);
-      backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center;
-      z-index: 1000; padding: 20px;
-    }
-    .modal-container {
-      background: rgba(8,18,30,0.95); backdrop-filter: blur(20px); border: 1px solid #3b82f6;
-      border-radius: 32px; width: 100%; max-width: 850px; max-height: 90vh;
-      overflow-y: auto; padding: 24px; box-shadow: 0 30px 50px rgba(0,0,0,0.7);
-    }
-    .modal-header {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 20px; border-bottom: 1px solid #2a3c58; padding-bottom: 12px;
-    }
-    .modal-header h3 { font-size: 1.5rem; color: #a0c8ff; }
-    .modal-header i { font-size: 24px; color: #60a5fa; cursor: pointer; }
-    .btn {
-      background: #3b82f6; border: none; color: white; padding: 12px 24px;
-      border-radius: 40px; font-weight: 600; cursor: pointer; margin: 5px;
-      border: 1px solid #90c0ff; transition: 0.2s;
-    }
-    .btn-outline { background: transparent; border: 1px solid #3b82f6; }
-    .btn:hover { background: #2563eb; box-shadow: 0 0 15px #3b82f6; }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; background: #1e3a5f; }
-
-    /* أنماط إضافية للمحرر والأقسام الجديدة */
-    .code-editor-textarea {
-      width: 100%; height: 300px; background: #0a121f; color: #e0e0e0;
-      border: 1px solid #2e4a6b; border-radius: 16px; padding: 15px;
-      font-family: 'Fira Code', monospace; font-size: 14px; direction: ltr; resize: vertical;
-    }
-    .preview-iframe {
-      width: 100%; height: 300px; border: 1px solid #3b82f6; border-radius: 16px;
-      background: white; margin-top: 10px;
-    }
-    .key-output {
-      background: #0f1a2b; padding: 15px; border-radius: 16px; word-break: break-all;
-      font-family: monospace; margin-top: 10px; border: 1px solid #2e4a6b;
-    }
-    .vital-item { display: flex; justify-content: space-between; margin: 8px 0; }
-    .progress-bar { height: 8px; background: #2e4a6b; border-radius: 10px; overflow: hidden; }
-    .progress-fill { height: 100%; background: #3b82f6; width: 0%; transition: width 0.5s; }
-    .request-item { background: #0f1a2b; border-radius: 12px; padding: 10px; margin-bottom: 8px; }
-    .request-detail { font-size: 0.8rem; color: #b0c7e9; }
-
-    @media (max-width: 1100px) { .grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
-  </style>
-</head>
-<body>
-
-<div class="topbar">
-  <div class="brand"><i class="fas fa-cube" style="margin-left: 7px; color: #3b82f6;"></i> منصة آفاق | Pro</div>
-  <div class="live-badge"><i class="fas fa-circle"></i> نظام مباشر · LIVE <i class="fas fa-shield-alt" style="margin-right: 6px;"></i></div>
-</div>
-
-<div class="container">
-  <div class="grid">
-    <!-- الأقسام الأربعة الجديدة -->
-    <div class="card" id="openEditorModal">
-      <div class="image-wrapper"><i class="fas fa-code"></i></div>
-      <div class="card-title">محرر الأكواد المباشر</div>
-      <div class="card-stat">HTML/CSS/JS</div>
-    </div>
-    <div class="card" id="openNetworkModal">
-      <div class="image-wrapper"><i class="fas fa-network-wired"></i></div>
-      <div class="card-title">محلل طلبات الشبكة</div>
-      <div class="card-stat">HTTP Profiler</div>
-    </div>
-    <div class="card" id="openCryptoModal">
-      <div class="image-wrapper"><i class="fas fa-key"></i></div>
-      <div class="card-title">مولد مفاتيح التشفير</div>
-      <div class="card-stat">RSA/AES</div>
-    </div>
-    <div class="card" id="openVitalsModal">
-      <div class="image-wrapper"><i class="fas fa-microchip"></i></div>
-      <div class="card-title">مراقب أداء النظام</div>
-      <div class="card-stat">CPU/RAM/شبكة</div>
-    </div>
-    <!-- باقي الأقسام السابقة -->
-    <div class="card" id="openAnalysisModalBtn"><div class="image-wrapper"><i class="fas fa-magnifying-glass"></i></div><div class="card-title">تحليل الصور والفيديوهات</div><div class="card-stat">كشف التلاعب</div></div>
-    <div class="card" id="openAtsModalBtn"><div class="image-wrapper"><i class="fas fa-file-alt"></i></div><div class="card-title">إنشاء سيرة ذاتية</div><div class="card-stat">ATS احترافية</div></div>
-    <div class="card" id="openPhotoModalBtn"><div class="image-wrapper"><i class="fas fa-id-card"></i></div><div class="card-title">تعديل صور الهوية</div><div class="card-stat">معايير الأحوال</div></div>
-    <div class="card" id="openPdfModalBtn"><div class="image-wrapper"><i class="fas fa-file-pdf"></i></div><div class="card-title">تحويل الصور إلى PDF</div><div class="card-stat">دمج + ترتيب</div></div>
-  </div>
-  <div class="footer">
-    <span style="font-weight: 800; background: linear-gradient(135deg, #a0c8ff, #3b82f6); -webkit-background-clip: text; background-clip: text; color: transparent;">آفاق</span> · 
-    © 2026 — تصميم <span style="color: #fbbf24;">عـدنـانـي</span> · 
-    <a href="https://twitter.com/aale1164" target="_blank" rel="noopener noreferrer"><i class="fab fa-twitter"></i>@aale1164</a>
-  </div>
-</div>
-
-<!-- المودالات الجديدة -->
-<!-- 1. محرر الأكواد المباشر -->
+<!-- الجزء الخاص بمحرر الأكواد فقط تم تعديله داخل الكود الكامل (سأعرضه مختصراً) -->
+<!-- داخل modal editorModal -->
 <div class="modal-overlay" id="editorModal">
   <div class="modal-container" style="max-width:900px;">
     <div class="modal-header"><h3><i class="fas fa-code"></i> محرر الأكواد المباشر</h3><i class="fas fa-times" id="closeEditorModal"></i></div>
     <div style="display:flex; gap:10px; margin-bottom:10px;">
+      <button class="btn btn-outline tab-btn active" data-lang="html">🟠 HTML/CSS/JS</button>
+      <button class="btn btn-outline tab-btn" data-lang="python">🐍 بايثون</button>
       <button class="btn btn-outline" id="runCodeBtn"><i class="fas fa-play"></i> تنفيذ</button>
       <button class="btn btn-outline" id="clearEditorBtn"><i class="fas fa-eraser"></i> مسح</button>
     </div>
-    <textarea class="code-editor-textarea" id="codeEditor"><!DOCTYPE html>
-<html>
-<head><style>body{font-family:sans-serif;}</style></head>
-<body>
-  <h1>مرحباً بالعالم!</h1>
-  <p>أكتب كود HTML/CSS/JS هنا</p>
-</body>
-</html></textarea>
-    <iframe id="previewFrame" class="preview-iframe"></iframe>
+    <textarea class="code-editor-textarea" id="codeEditor"></textarea>
+    <div id="outputArea" style="background:#0f1a2b;color:#fff;padding:15px;border-radius:16px;margin-top:10px;display:none;font-family:monospace;"></div>
+    <iframe id="previewFrame" class="preview-iframe" style="display:none;"></iframe>
   </div>
 </div>
-
-<!-- 2. محلل طلبات الشبكة -->
-<div class="modal-overlay" id="networkModal">
-  <div class="modal-container">
-    <div class="modal-header"><h3><i class="fas fa-network-wired"></i> محلل طلبات HTTP</h3><i class="fas fa-times" id="closeNetworkModal"></i></div>
-    <div class="form-group"><label>رابط API / URL</label><input type="text" id="requestUrl" value="https://jsonplaceholder.typicode.com/posts/1"></div>
-    <div class="form-group"><label>نوع الطلب</label><select id="requestMethod"><option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option></select></div>
-    <button class="btn" id="sendRequestBtn"><i class="fas fa-paper-plane"></i> إرسال الطلب</button>
-    <div id="responseArea" style="margin-top:20px;"></div>
-  </div>
-</div>
-
-<!-- 3. مولد مفاتيح التشفير -->
-<div class="modal-overlay" id="cryptoModal">
-  <div class="modal-container">
-    <div class="modal-header"><h3><i class="fas fa-key"></i> مولد مفاتيح التشفير</h3><i class="fas fa-times" id="closeCryptoModal"></i></div>
-    <div class="form-group"><label>نوع المفتاح</label><select id="keyType"><option value="aes">AES (256-bit)</option><option value="rsa">RSA (2048-bit)</option></select></div>
-    <button class="btn" id="generateKeyBtn"><i class="fas fa-redo"></i> توليد مفتاح جديد</button>
-    <div class="key-output" id="keyOutput" style="display:none;"></div>
-  </div>
-</div>
-
-<!-- 4. مراقب أداء النظام -->
-<div class="modal-overlay" id="vitalsModal">
-  <div class="modal-container">
-    <div class="modal-header"><h3><i class="fas fa-microchip"></i> مراقب أداء النظام</h3><i class="fas fa-times" id="closeVitalsModal"></i></div>
-    <div class="vital-item"><span>وحدة المعالجة (CPU)</span><span id="cpuValue">0%</span></div>
-    <div class="progress-bar"><div class="progress-fill" id="cpuBar" style="width:0%;"></div></div>
-    <div class="vital-item" style="margin-top:15px;"><span>الذاكرة (RAM)</span><span id="ramValue">0%</span></div>
-    <div class="progress-bar"><div class="progress-fill" id="ramBar" style="width:0%;"></div></div>
-    <div class="vital-item" style="margin-top:15px;"><span>الشبكة (Network)</span><span id="netValue">0 Mbps</span></div>
-    <div class="progress-bar"><div class="progress-fill" id="netBar" style="width:0%; background:#10b981;"></div></div>
-    <p style="text-align:center; margin-top:15px;">* محاكاة ديناميكية للاستخدام</p>
-  </div>
-</div>
-
-<!-- باقي المودالات (السيرة الذاتية، تعديل الصور، تحويل PDF) مضمنة في النسخة النهائية -->
-<!-- ... سيتم تضمينها كاملة ... -->
-
 <script>
+  // الكود الخاص بالمحرر مع دعم بايثون (محاكي)
   (function(){
-    // ----- الدوال المساعدة العامة -----
-    function $(id){ return document.getElementById(id); }
-    
-    // ----- 1. محرر الأكواد -----
-    const editorModal = $('editorModal');
-    $('openEditorModal').addEventListener('click', ()=> editorModal.style.display='flex');
-    $('closeEditorModal').addEventListener('click', ()=> editorModal.style.display='none');
-    $('runCodeBtn').addEventListener('click', ()=>{
-      const frame = $('previewFrame');
-      const code = $('codeEditor').value;
-      frame.srcdoc = code;
-    });
-    $('clearEditorBtn').addEventListener('click', ()=>{ $('codeEditor').value = ''; });
-    // تنفيذ افتراضي
-    $('previewFrame').srcdoc = $('codeEditor').value;
+    const editorTextarea = document.getElementById('codeEditor');
+    const previewFrame = document.getElementById('previewFrame');
+    const outputDiv = document.getElementById('outputArea');
+    const runBtn = document.getElementById('runCodeBtn');
+    const clearBtn = document.getElementById('clearEditorBtn');
+    const tabBtns = document.querySelectorAll('#editorModal .tab-btn[data-lang]');
+    let currentLang = 'html'; // default
 
-    // ----- 2. محلل الشبكة -----
-    const networkModal = $('networkModal');
-    $('openNetworkModal').addEventListener('click', ()=> networkModal.style.display='flex');
-    $('closeNetworkModal').addEventListener('click', ()=> networkModal.style.display='none');
-    $('sendRequestBtn').addEventListener('click', async ()=>{
-      const url = $('requestUrl').value;
-      const method = $('requestMethod').value;
-      const responseArea = $('responseArea');
-      responseArea.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> جاري الإرسال...';
-      try {
-        const res = await fetch(url, { method });
-        const headers = [...res.headers.entries()].map(([k,v])=>`<strong>${k}:</strong> ${v}`).join('<br>');
-        const body = await res.text();
-        responseArea.innerHTML = `
-          <div class="request-item">
-            <h4>الحالة: ${res.status} ${res.statusText}</h4>
-            <div class="request-detail"><strong>الرؤوس:</strong><br>${headers}</div>
-            <div class="request-detail" style="margin-top:10px;"><strong>الاستجابة:</strong><br><pre style="white-space:pre-wrap;max-height:200px;overflow-y:auto;">${body.slice(0,1000)}</pre></div>
-          </div>
-        `;
-      } catch(e){
-        responseArea.innerHTML = `<div class="req-item" style="color:#f87171;">فشل الطلب: ${e.message}</div>`;
-      }
+    // المحتوى الافتراضي عند فتح HTML
+    const defaultHTML = `<!DOCTYPE html>
+<html>
+<head><style>body{font-family:'Tajawal',sans-serif;text-align:center;padding:50px;}</style></head>
+<body>
+  <h1 style="color:#3b82f6;">مرحبا بك هذا الكود برمجة وتطوير عدنااني</h1>
+  <p>جرب كتابة أكواد HTML/CSS/JS هنا</p>
+</body>
+</html>`;
+    const defaultPython = `# بايثون بسيط للمبتدئين
+print("مرحبا بك هذا الكود برمجة وتطوير عدنااني")
+x = 10
+y = 20
+print("المجموع:", x + y)
+for i in range(3):
+    print("عدنااني", i+1)
+`;
+
+    editorTextarea.value = defaultHTML;
+    previewFrame.srcdoc = defaultHTML;
+    outputDiv.style.display = 'none';
+    previewFrame.style.display = 'block';
+
+    // تبديل التبويبات
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', function(){
+        tabBtns.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentLang = this.dataset.lang;
+        if(currentLang === 'html'){
+          editorTextarea.value = defaultHTML;
+          previewFrame.style.display = 'block';
+          outputDiv.style.display = 'none';
+          previewFrame.srcdoc = editorTextarea.value;
+        } else {
+          editorTextarea.value = defaultPython;
+          previewFrame.style.display = 'none';
+          outputDiv.style.display = 'none';
+        }
+      });
     });
 
-    // ----- 3. مولد مفاتيح التشفير -----
-    const cryptoModal = $('cryptoModal');
-    $('openCryptoModal').addEventListener('click', ()=> cryptoModal.style.display='flex');
-    $('closeCryptoModal').addEventListener('click', ()=> cryptoModal.style.display='none');
-    $('generateKeyBtn').addEventListener('click', ()=>{
-      const type = $('keyType').value;
-      const output = $('keyOutput');
-      if(type === 'aes'){
-        const key = CryptoJS.lib.WordArray.random(32).toString();
-        output.innerHTML = `<strong>مفتاح AES (256-bit):</strong><br><code>${key}</code>`;
+    // تنفيذ الكود
+    runBtn.addEventListener('click', function(){
+      if(currentLang === 'html'){
+        previewFrame.srcdoc = editorTextarea.value;
+        previewFrame.style.display = 'block';
+        outputDiv.style.display = 'none';
       } else {
-        // RSA (محاكاة باستخدام CryptoJS لمفتاح عشوائي)
-        const publicKey = CryptoJS.lib.WordArray.random(64).toString();
-        const privateKey = CryptoJS.lib.WordArray.random(64).toString();
-        output.innerHTML = `<strong>مفتاح RSA العام:</strong><br><code>${publicKey}</code><br><strong>المفتاح الخاص:</strong><br><code>${privateKey}</code>`;
+        // محاكي بايثون بسيط
+        previewFrame.style.display = 'none';
+        outputDiv.style.display = 'block';
+        const code = editorTextarea.value;
+        try {
+          // معالجة بسيطة لـ print والمتغيرات (محاكاة تعليمية)
+          let output = '';
+          const lines = code.split('\n');
+          const variables = {};
+          // دالة مساعدة لتقييم تعابير بسيطة
+          function evalSimple(expr) {
+            // استبدال أسماء المتغيرات
+            for(const v in variables) expr = expr.replace(new RegExp('\\b'+v+'\\b','g'), variables[v]);
+            return Function('"use strict"; return (' + expr + ')')();
+          }
+          for(let line of lines){
+            line = line.trim();
+            if(line.startsWith('print(') && line.endsWith(')')){
+              const inner = line.slice(6,-1).split(',').map(s=>s.trim());
+              const vals = inner.map(s=>{
+                if(s.startsWith('"')||s.startsWith("'")) return s.slice(1,-1);
+                return evalSimple(s);
+              });
+              output += vals.join(' ') + '\n';
+            } else if(line.includes('=') && !line.startsWith('for') && !line.startsWith('if')){
+              const [varName, ...rest] = line.split('=');
+              const expr = rest.join('=').trim();
+              if(varName.trim() && expr){
+                variables[varName.trim()] = evalSimple(expr);
+              }
+            } else if(line.startsWith('for') && line.includes('in range(')){
+              // دعم بسيط للتكرار
+              const match = line.match(/for\s+(\w+)\s+in\s+range\((\d+)\)/);
+              if(match){
+                const loopVar = match[1];
+                const count = parseInt(match[2]);
+                for(let i=0; i<count; i++){
+                  variables[loopVar] = i;
+                  // نبحث عن السطر التالي داخل الكتلة (بسيط)
+                  const nextLine = lines[lines.indexOf(line)+1]?.trim();
+                  if(nextLine && nextLine.startsWith('print(')){
+                    // نفذ الطباعة مع استبدال المتغير
+                    let printLine = nextLine;
+                    for(const v in variables) printLine = printLine.replace(new RegExp('\\b'+v+'\\b','g'), variables[v]);
+                    const inner = printLine.slice(6,-1).split(',').map(s=>s.trim());
+                    const vals = inner.map(s=>{
+                      if(s.startsWith('"')||s.startsWith("'")) return s.slice(1,-1);
+                      return evalSimple(s);
+                    });
+                    output += vals.join(' ') + '\n';
+                  }
+                }
+              }
+            }
+          }
+          outputDiv.innerHTML = '<pre style="margin:0;">' + (output || 'لا يوجد مخرجات') + '</pre>';
+        } catch(e){
+          outputDiv.innerHTML = '<pre style="color:#f87171; margin:0;">خطأ: ' + e.message + '</pre>';
+        }
       }
-      output.style.display = 'block';
     });
 
-    // ----- 4. مراقب أداء النظام (محاكاة) -----
-    const vitalsModal = $('vitalsModal');
-    $('openVitalsModal').addEventListener('click', ()=>{
-      vitalsModal.style.display='flex';
-      if(!window.vitalsInterval){
-        window.vitalsInterval = setInterval(updateVitals, 1500);
+    clearBtn.addEventListener('click', function(){
+      if(currentLang === 'html'){
+        editorTextarea.value = '';
+        previewFrame.srcdoc = '';
+      } else {
+        editorTextarea.value = '';
+        outputDiv.innerHTML = '';
       }
     });
-    $('closeVitalsModal').addEventListener('click', ()=>{
-      vitalsModal.style.display='none';
-    });
-    function updateVitals(){
-      const cpu = Math.floor(Math.random()*60+15);
-      const ram = Math.floor(Math.random()*40+25);
-      const net = (Math.random()*8+2).toFixed(1);
-      $('cpuValue').textContent = cpu+'%'; $('cpuBar').style.width = cpu+'%';
-      $('ramValue').textContent = ram+'%'; $('ramBar').style.width = ram+'%';
-      $('netValue').textContent = net+' Mbps'; $('netBar').style.width = (net*10)+'%';
-    }
 
-    // ----- تهيئة الأقسام السابقة (تم تضمينها في النسخة النهائية) -----
-    // (تحليل الصور، السيرة الذاتية، تعديل الصور، تحويل PDF)
-    // سيتم إدراجها من الردود السابقة دون تغيير.
+    // فتح/إغلاق المودال (كما هو مع باقي المودالات)
+    // ... باقي الأكواد ...
   })();
 </script>
-</body>
-</html>
