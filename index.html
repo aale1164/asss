@@ -163,15 +163,14 @@
   </div>
 </div>
 
-<!-- المودالات كاملة -->
 <!-- 1. تحليل الصور والفيديوهات -->
 <div class="modal-overlay" id="analysisModal">
   <div class="modal-container">
     <div class="modal-header"><h3><i class="fas fa-magnifying-glass"></i> كشف التلاعب (ELA)</h3><i class="fas fa-times" id="closeAnalysisModalBtn"></i></div>
-    <div class="tool-description"><i class="fas fa-info-circle"></i> ارفع صورة أو فيديو، وسيتم تحليلها باستخدام Error Level Analysis لتحديد ما إذا كانت أصلية أم معدّلة. المناطق الداكنة تشير إلى تعديل محتمل.</div>
+    <div class="tool-description"><i class="fas fa-info-circle"></i> ارفع صورة أو فيديو لتحليلها باستخدام Error Level Analysis. المناطق الداكنة تشير إلى احتمالية التعديل.</div>
     <div style="display:flex; gap:10px; margin-bottom:15px;"><button class="tab-btn active" data-type="image">🖼️ صورة</button><button class="tab-btn" data-type="video">🎥 فيديو</button></div>
-    <div id="uploadAreaImage" class="upload-area"><i class="fas fa-cloud-upload-alt"></i><p>ارفع صورة (JPG/PNG)</p><input type="file" id="fileInputImage" accept="image/*" style="display:none;"></div>
-    <div id="uploadAreaVideo" class="upload-area" style="display:none;"><i class="fas fa-cloud-upload-alt"></i><p>ارفع فيديو (MP4/MOV)</p><input type="file" id="fileInputVideo" accept="video/*" style="display:none;"></div>
+    <div id="uploadAreaImage" class="upload-area"><i class="fas fa-cloud-upload-alt"></i><p>ارفع صورة</p><input type="file" id="fileInputImage" accept="image/*" style="display:none;"></div>
+    <div id="uploadAreaVideo" class="upload-area" style="display:none;"><i class="fas fa-cloud-upload-alt"></i><p>ارفع فيديو</p><input type="file" id="fileInputVideo" accept="video/*" style="display:none;"></div>
     <div id="mediaPreview" style="text-align:center;display:none;"><img id="previewImage" class="preview-image" style="display:none;"><video id="previewVideo" class="preview-image" controls style="display:none;"></video></div>
     <button class="btn" id="analyzeBtn" disabled><i class="fas fa-magnifying-glass"></i> تحليل</button>
     <div id="analysisResult" style="display:none; margin-top:20px;"><h4>خريطة ELA</h4><img id="elaImage" style="max-width:100%; border:2px solid #facc15;"><p id="verdict" style="margin-top:10px;"></p></div>
@@ -183,8 +182,8 @@
 <div class="modal-overlay" id="atsModal">
   <div class="modal-container" style="max-width:700px;">
     <div class="modal-header"><h3><i class="fas fa-file-alt"></i> منشئ السيرة الذاتية</h3><i class="fas fa-times" id="closeAtsModalBtn"></i></div>
-    <div class="tool-description"><i class="fas fa-info-circle"></i> املأ بياناتك واضغط إنشاء PDF لتحصل على سيرة ذاتية بخط Times New Roman ومتوافقة مع ATS.</div>
-    <div class="form-group"><label>الاسم الكامل</label><input type="text" id="fullName" placeholder="أحمد محمد"></div>
+    <div class="tool-description"><i class="fas fa-info-circle"></i> املأ بياناتك واضغط إنشاء PDF لتحصل على سيرة ذاتية بخط Times New Roman متوافقة مع ATS.</div>
+    <div class="form-group"><label>الاسم</label><input type="text" id="fullName" placeholder="أحمد محمد"></div>
     <div class="form-row"><div class="form-group"><label>البريد</label><input type="email" id="email"></div><div class="form-group"><label>الهاتف</label><input type="tel" id="phone"></div></div>
     <div class="form-group"><label>تاريخ الميلاد</label><input type="text" id="birthDate"></div>
     <div class="form-group"><label>النبذة</label><textarea id="summary" rows="3"></textarea></div>
@@ -201,10 +200,10 @@
 <div class="modal-overlay" id="photoModal">
   <div class="modal-container">
     <div class="modal-header"><h3><i class="fas fa-id-card"></i> معالج صور الهوية</h3><i class="fas fa-times" id="closePhotoModalBtn"></i></div>
-    <div class="tool-description"><i class="fas fa-info-circle"></i> ارفع صورة وجهك وستُضبط تلقائياً إلى 480×640 بكسل مع خلفية بيضاء وهامش آمن 10%، طبقاً لمعايير الأحوال المدنية.</div>
-    <div class="upload-area" id="photoUploadArea"><i class="fas fa-cloud-upload-alt"></i><p>ارفع صورة (JPG/PNG)</p><input type="file" id="photoFileInput" accept="image/*" style="display:none;"></div>
+    <div class="tool-description"><i class="fas fa-info-circle"></i> ارفع صورة وجهك وستُضبط إلى 480×640 مع خلفية بيضاء وهامش 10% حسب معايير الأحوال.</div>
+    <div class="upload-area" id="photoUploadArea"><i class="fas fa-cloud-upload-alt"></i><p>ارفع صورة</p><input type="file" id="photoFileInput" accept="image/*" style="display:none;"></div>
     <div id="photoPreviewContainer" style="display:none;text-align:center;"><img id="photoPreviewImg" class="preview-image"><p id="photoFileName"></p></div>
-    <div class="requirements-box"><h4>المعايير</h4><div id="photoReqList"><div class="req-item"><i class="fas fa-info-circle"></i> المقاس 480×640، خلفية بيضاء، معالجة تلقائية</div></div></div>
+    <div class="requirements-box"><h4>المعايير</h4><div id="photoReqList"><div class="req-item"><i class="fas fa-info-circle"></i> 480×640، خلفية بيضاء، معالجة تلقائية</div></div></div>
     <button class="btn" id="processPhotoBtn" disabled><i class="fas fa-magic"></i> تحسين</button>
     <button class="btn btn-outline" id="downloadPhotoBtn" disabled><i class="fas fa-download"></i> تحميل</button>
     <div class="signature">برمجة عدناني</div>
@@ -215,7 +214,7 @@
 <div class="modal-overlay" id="pdfModal">
   <div class="modal-container">
     <div class="modal-header"><h3><i class="fas fa-file-pdf"></i> تحويل الصور إلى PDF</h3><i class="fas fa-times" id="closePdfModalBtn"></i></div>
-    <div class="tool-description"><i class="fas fa-info-circle"></i> ارفع عدة صور، رتبها بالسحب، ثم حمّلها كملف PDF متعدد الصفحات.</div>
+    <div class="tool-description"><i class="fas fa-info-circle"></i> ارفع صوراً متعددة، رتبها بالسحب، ثم حمّلها كملف PDF واحد.</div>
     <div class="upload-area" id="pdfUploadArea"><i class="fas fa-cloud-upload-alt"></i><p>اختر صوراً</p><input type="file" id="pdfFileInput" accept="image/*" multiple style="display:none;"></div>
     <div style="display:flex;justify-content:space-between;"><span><span id="imageCount">0</span> صور</span><button class="btn-outline btn" id="clearAllPdfBtn">مسح الكل</button></div>
     <div class="image-list" id="imageListContainer"></div>
@@ -229,7 +228,7 @@
 <div class="modal-overlay" id="editorModal">
   <div class="modal-container" style="max-width:950px;">
     <div class="modal-header"><h3><i class="fas fa-code"></i> محرر الأكواد</h3><i class="fas fa-times" id="closeEditorModal"></i></div>
-    <div class="tool-description"><i class="fas fa-info-circle"></i> اكتب كود HTML/CSS/JS أو بايثون، وشاهد النتيجة مباشرة. يدعم العربية. مثالي للمبتدئين.</div>
+    <div class="tool-description"><i class="fas fa-info-circle"></i> اكتب HTML/CSS/JS أو بايثون، وشاهد النتيجة مباشرة. يدعم العربية.</div>
     <div style="display:flex;gap:8px;margin-bottom:15px;">
       <button class="tab-btn active" data-lang="html">🌐 HTML</button>
       <button class="tab-btn" data-lang="python">🐍 Python</button>
@@ -247,7 +246,7 @@
 <div class="modal-overlay" id="networkModal">
   <div class="modal-container">
     <div class="modal-header"><h3><i class="fas fa-network-wired"></i> محلل طلبات HTTP</h3><i class="fas fa-times" id="closeNetworkModal"></i></div>
-    <div class="tool-description"><i class="fas fa-info-circle"></i> اكتب رابط API واختر نوع الطلب (GET/POST)، ثم اضغط إرسال لترى الرد كاملاً مع الرؤوس.</div>
+    <div class="tool-description"><i class="fas fa-info-circle"></i> اكتب رابط API واختر نوع الطلب (GET/POST)، ثم اضغط إرسال لترى الرد والرؤوس.</div>
     <div class="form-group"><label>الرابط</label><input type="text" id="requestUrl" value="https://jsonplaceholder.typicode.com/posts/1"></div>
     <div class="form-group"><label>الطريقة</label><select id="requestMethod"><option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option></select></div>
     <button class="btn" id="sendRequestBtn"><i class="fas fa-paper-plane"></i> إرسال</button>
@@ -260,7 +259,7 @@
 <div class="modal-overlay" id="cryptoModal">
   <div class="modal-container">
     <div class="modal-header"><h3><i class="fas fa-key"></i> مولد مفاتيح التشفير</h3><i class="fas fa-times" id="closeCryptoModal"></i></div>
-    <div class="tool-description"><i class="fas fa-info-circle"></i> اختر نوع المفتاح (AES 256-bit أو RSA زوج مفاتيح) واضغط توليد لتحصل على مفاتيح عشوائية قوية.</div>
+    <div class="tool-description"><i class="fas fa-info-circle"></i> اختر نوع المفتاح (AES 256-bit أو RSA) واضغط توليد لتحصل على مفاتيح عشوائية قوية.</div>
     <div class="form-group"><label>النوع</label><select id="keyType"><option value="aes">AES 256-bit</option><option value="rsa">RSA 2048-bit</option></select></div>
     <button class="btn" id="generateKeyBtn"><i class="fas fa-redo"></i> توليد</button>
     <div class="key-output" id="keyOutput" style="display:none;"></div>
@@ -272,7 +271,7 @@
 <div class="modal-overlay" id="vitalsModal">
   <div class="modal-container">
     <div class="modal-header"><h3><i class="fas fa-microchip"></i> مراقب أداء النظام</h3><i class="fas fa-times" id="closeVitalsModal"></i></div>
-    <div class="tool-description"><i class="fas fa-info-circle"></i> لوحة محاكاة حية لاستخدام المعالج والذاكرة والشبكة، تُحدَّث تلقائياً.</div>
+    <div class="tool-description"><i class="fas fa-info-circle"></i> لوحة محاكاة حية لاستخدام المعالج والذاكرة والشبكة.</div>
     <div class="vital-item"><span>المعالج (CPU)</span><span id="cpuValue">0%</span></div><div class="progress-bar"><div id="cpuBar" class="progress-fill"></div></div>
     <div class="vital-item"><span>الذاكرة (RAM)</span><span id="ramValue">0%</span></div><div class="progress-bar"><div id="ramBar" class="progress-fill"></div></div>
     <div class="vital-item"><span>الشبكة</span><span id="netValue">0 Mbps</span></div><div class="progress-bar"><div id="netBar" class="progress-fill" style="background:#10b981;"></div></div>
@@ -282,7 +281,6 @@
 
 <script>
   (function() {
-    // دوال مساعدة
     function $(id) { return document.getElementById(id); }
     function fileToDataURL(file) {
       return new Promise(resolve => { let r = new FileReader(); r.onload = () => resolve(r.result); r.readAsDataURL(file); });
@@ -291,24 +289,16 @@
       return new Promise(resolve => { let img = new Image(); img.onload = () => resolve(img); img.src = src; });
     }
 
-    // ====== 1. تحليل الصور والفيديوهات ======
+    // 1. تحليل الصور والفيديوهات
     const analysisModal = $('analysisModal');
     $('openAnalysisModalBtn').addEventListener('click', () => analysisModal.style.display = 'flex');
     $('closeAnalysisModalBtn').addEventListener('click', () => analysisModal.style.display = 'none');
     const tabBtns = document.querySelectorAll('#analysisModal .tab-btn');
-    const uploadAreaImg = $('uploadAreaImage');
-    const uploadAreaVid = $('uploadAreaVideo');
-    const fileInputImg = $('fileInputImage');
-    const fileInputVid = $('fileInputVideo');
-    const previewImage = $('previewImage');
-    const previewVideo = $('previewVideo');
-    const mediaPreview = $('mediaPreview');
-    const analyzeBtn = $('analyzeBtn');
-    const analysisResult = $('analysisResult');
-    const elaImage = $('elaImage');
-    const verdict = $('verdict');
-    let currentMediaType = 'image';
-    let currentFile = null;
+    const uploadAreaImg = $('uploadAreaImage'), uploadAreaVid = $('uploadAreaVideo');
+    const fileInputImg = $('fileInputImage'), fileInputVid = $('fileInputVideo');
+    const previewImage = $('previewImage'), previewVideo = $('previewVideo'), mediaPreview = $('mediaPreview');
+    const analyzeBtn = $('analyzeBtn'), analysisResult = $('analysisResult'), elaImage = $('elaImage'), verdict = $('verdict');
+    let currentMediaType = 'image', currentFile = null;
 
     tabBtns.forEach(btn => btn.addEventListener('click', function() {
       tabBtns.forEach(b => b.classList.remove('active')); this.classList.add('active');
@@ -321,14 +311,14 @@
     uploadAreaImg.addEventListener('click', () => fileInputImg.click());
     uploadAreaVid.addEventListener('click', () => fileInputVid.click());
     fileInputImg.addEventListener('change', function(e) {
-      if (this.files[0]) { currentFile = this.files[0]; mediaPreview.style.display = 'block'; previewImage.style.display = 'block'; previewVideo.style.display = 'none'; previewImage.src = URL.createObjectURL(this.files[0]); analyzeBtn.disabled = false; analysisResult.style.display = 'none'; }
+      if (this.files[0]) { currentFile = this.files[0]; mediaPreview.style.display = 'block'; previewImage.style.display = 'block'; previewVideo.style.display = 'none'; previewImage.src = URL.createObjectURL(this.files[0]); analyzeBtn.disabled = false; }
     });
     fileInputVid.addEventListener('change', function(e) {
-      if (this.files[0]) { currentFile = this.files[0]; mediaPreview.style.display = 'block'; previewImage.style.display = 'none'; previewVideo.style.display = 'block'; previewVideo.src = URL.createObjectURL(this.files[0]); analyzeBtn.disabled = false; analysisResult.style.display = 'none'; previewVideo.onloadedmetadata = () => { previewVideo.currentTime = 1; }; }
+      if (this.files[0]) { currentFile = this.files[0]; mediaPreview.style.display = 'block'; previewImage.style.display = 'none'; previewVideo.style.display = 'block'; previewVideo.src = URL.createObjectURL(this.files[0]); analyzeBtn.disabled = false; previewVideo.onloadedmetadata = () => { previewVideo.currentTime = 1; }; }
     });
 
     function performELA(sourceImage, callback) {
-      const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+      const canvas = document.createElement('canvas'), ctx = canvas.getContext('2d');
       canvas.width = sourceImage.width; canvas.height = sourceImage.height;
       ctx.drawImage(sourceImage, 0, 0); const originalData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
       canvas.toBlob(function(blob) {
@@ -336,10 +326,10 @@
         reader.onload = function(e) {
           const img = new Image();
           img.onload = function() {
-            const canvas2 = document.createElement('canvas'); const ctx2 = canvas2.getContext('2d');
+            const canvas2 = document.createElement('canvas'), ctx2 = canvas2.getContext('2d');
             canvas2.width = img.width; canvas2.height = img.height; ctx2.drawImage(img, 0, 0);
             const compressedData = ctx2.getImageData(0, 0, canvas2.width, canvas2.height).data;
-            const elaCanvas = document.createElement('canvas'); const elaCtx = elaCanvas.getContext('2d');
+            const elaCanvas = document.createElement('canvas'), elaCtx = elaCanvas.getContext('2d');
             elaCanvas.width = canvas.width; elaCanvas.height = canvas.height;
             const elaImageData = elaCtx.createImageData(canvas.width, canvas.height);
             let sumDiff = 0;
@@ -370,7 +360,7 @@
       }
     });
 
-    // ====== 2. السيرة الذاتية ======
+    // 2. السيرة الذاتية
     $('openAtsModalBtn').addEventListener('click', () => $('atsModal').style.display = 'flex');
     $('closeAtsModalBtn').addEventListener('click', () => $('atsModal').style.display = 'none');
     $('generateResumeBtn').addEventListener('click', async function() {
@@ -400,7 +390,7 @@
       } finally { document.body.removeChild(div); }
     });
 
-    // ====== 3. تعديل الصور ======
+    // 3. تعديل الصور
     const photoModal = $('photoModal');
     $('openPhotoModalBtn').addEventListener('click', () => { resetPhotoModal(); photoModal.style.display = 'flex'; });
     $('closePhotoModalBtn').addEventListener('click', () => photoModal.style.display = 'none');
@@ -440,7 +430,7 @@
 
     function resetPhotoModal() { $('photoPreviewContainer').style.display = 'none'; processBtn.disabled = downloadBtn.disabled = true; pReqList.innerHTML = '<div class="req-item"><i class="fas fa-info-circle"></i> جاهز</div>'; oImg = null; pBlob = null; }
 
-    // ====== 4. تحويل الصور إلى PDF ======
+    // 4. تحويل الصور إلى PDF
     const pdfModal = $('pdfModal');
     $('openPdfModalBtn').addEventListener('click', () => pdfModal.style.display = 'flex');
     $('closePdfModalBtn').addEventListener('click', () => pdfModal.style.display = 'none');
@@ -472,7 +462,7 @@
       pdf.save('images.pdf'); genPdfBtn.disabled = false;
     });
 
-    // ====== 5. محرر الأكواد ======
+    // 5. محرر الأكواد
     const editorModal = $('editorModal');
     $('openEditorModal').addEventListener('click', () => editorModal.style.display = 'flex');
     $('closeEditorModal').addEventListener('click', () => editorModal.style.display = 'none');
@@ -526,7 +516,7 @@
 
     $('clearEditorBtn').addEventListener('click', () => { editorTextarea.value = ''; if (currentLang === 'html') previewFrame.srcdoc = ''; else outputDiv.innerHTML = ''; });
 
-    // ====== 6. محلل الشبكة ======
+    // 6. محلل الشبكة
     const networkModal = $('networkModal');
     $('openNetworkModal').addEventListener('click', () => networkModal.style.display = 'flex');
     $('closeNetworkModal').addEventListener('click', () => networkModal.style.display = 'none');
@@ -541,7 +531,7 @@
       } catch (e) { responseArea.innerHTML = `<div style="color:#f87171;">فشل: ${e.message}</div>`; }
     });
 
-    // ====== 7. مولد مفاتيح التشفير ======
+    // 7. مولد مفاتيح التشفير
     const cryptoModal = $('cryptoModal');
     $('openCryptoModal').addEventListener('click', () => cryptoModal.style.display = 'flex');
     $('closeCryptoModal').addEventListener('click', () => cryptoModal.style.display = 'none');
@@ -558,7 +548,7 @@
       output.style.display = 'block';
     });
 
-    // ====== 8. مراقب النظام ======
+    // 8. مراقب النظام
     const vitalsModal = $('vitalsModal');
     let vitalsInterval;
     $('openVitalsModal').addEventListener('click', () => { vitalsModal.style.display = 'flex'; vitalsInterval = setInterval(updateVitals, 1500); });
@@ -570,7 +560,6 @@
       $('netValue').textContent = net + ' Mbps'; $('netBar').style.width = (net * 10) + '%';
     }
 
-    // إغلاق المودالات بالنقر خارجها
     document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', function(e) { if (e.target === m) m.style.display = 'none'; }));
   })();
 </script>
